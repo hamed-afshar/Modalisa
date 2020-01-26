@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/orders', function() {
+    // validate
+    // persist
+    App\Order::create(request(['']));
+    // redirect
+});
