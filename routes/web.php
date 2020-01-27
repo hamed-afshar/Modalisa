@@ -15,9 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/orders', function() {
-    // validate
-    // persist
-    App\Order::create(request(['']));
-    // redirect
-});
+Route::get('/orders', 'OrdersController@index');
+Route::post('/orders', 'OrdersController@store');

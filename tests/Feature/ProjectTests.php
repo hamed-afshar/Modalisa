@@ -20,8 +20,16 @@ class ProjectTests extends TestCase
             'created_at' => $this->faker->dateTime,
             'country' => 'Turkey'
         ];
-        $this->post('/orders', $attributes);
+        $this->post('/orders', $attributes)->assertRedirect('/orders');
         $this->assertDatabaseHas('Orders', $attributes);
+        $this->get('/orders')->assertSee($attributes['orderID']);
                 
+    }
+    /** @test */
+    public function an_order_requires_all_fields() {
+        $attributes = factory('App\order')->make();
+        $this->post('\orders', [])->assertSessionHasErrors('orderID');
+    
+        
     }
 }
