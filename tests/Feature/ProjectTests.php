@@ -26,10 +26,21 @@ class ProjectTests extends TestCase
                 
     }
     /** @test */
-    public function an_order_requires_all_fields() {
-        $attributes = factory('App\order')->make();
-        $this->post('\orders', [])->assertSessionHasErrors('orderID');
+    public function an_order_requires_orderID() 
+    {
+        $attributes = factory('App\Order')->raw(['orderID' => '']);
+        $this->post('\orders', $attributes)->assertSessionHasErrors('orderID');
+      
+    }
     
-        
+    /** @test */
+    public function a_user_can_view_an_order() 
+    {
+        $this->withoutExceptionHandling();
+        $order =  factory('App\Order')->create();
+        $this->get($order->path())
+                ->assertSee($order->id)
+                ->assertSee($order->orderID);
+       
     }
 }

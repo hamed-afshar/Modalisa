@@ -18,10 +18,9 @@ class CreateOrdersTable extends Migration
             $table->bigInteger('orderID');
             $table->integer('Users_id');
             $table->integer('Status_statusID');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->string('country');
-            $table->timestamp('updated_at');
-            
+            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
         });
     }
 

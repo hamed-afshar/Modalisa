@@ -17,13 +17,23 @@ class OrdersController extends Controller {
     public function store() {
         
         //validate
-        request()->validate(['orderID' => 'required']);
+        $attributes = request()->validate([
+            'orderID' => 'required',
+            'Users_id' => 'required',
+            'Status_statusID' => 'required',
+            'created_at' => 'required',
+            'country' => 'required'
+            ]);
         
         //persist
-        Order::create(request(['orderID', 'Users_id', 'Status_statusID', 'created_at', 'country']));
+        Order::create($attributes);
         
         //redirect
         return redirect('/orders');
     }
-
+    
+    public function show(Order $order) 
+    {
+        return view('orders.show', compact('order'));
+    }
 }

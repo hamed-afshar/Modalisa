@@ -8,9 +8,13 @@
     <body>
         <h1> Modalisa </h1>
         <ul>
-            @foreach($orders as $order)
-                <li>{{ $order->orderID }}</li>
-            @endforeach
+            @forelse($orders as $order)
+                <li>
+                    <a href = "{{ $order->path() }}"> {{ $order->orderID }} </a>
+                </li>
+            @empty
+                <li> No Project Yet </li>
+            @endforelse
         </ul>
         
     </body>
