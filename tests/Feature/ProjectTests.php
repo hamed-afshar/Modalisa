@@ -41,7 +41,6 @@ class ProjectTests extends TestCase
        $attributes = [
             'orderID' => $this->faker->numberBetween($min = 3000, $max = 4000),
             'users_id' => $user->id,
-            'Status_statusID' => 1,
             'country' => 'Turkey'
         ];
         $this->post('/orders', $attributes)->assertRedirect('/orders');

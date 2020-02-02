@@ -21,7 +21,6 @@ class OrdersController extends Controller {
         auth()->user()->orders()->create(request()->validate([
                'orderID' => 'required',
             //'users_id' => 'required',
-            'Status_statusID' => 'required',
             //'created_at' => 'required',
             'country' => 'required',
             //'updated_at' => 'required'

@@ -16,7 +16,6 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigInteger('orderID');
             $table->unsignedBigInteger('users_id');
-            $table->integer('Status_statusID');
             $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->string('country');
             $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP'));

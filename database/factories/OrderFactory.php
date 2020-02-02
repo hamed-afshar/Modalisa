@@ -11,7 +11,6 @@ $factory->define(Order::class, function (Faker $faker) {
         'users_id' => function() {
             return factory(App\User::class)->create()->id;
         },
-        'Status_statusID' => '1',
         'created_at' => $faker->dateTimeThisMonth, 
         'country' => 'Turkey',
         'updated_at' => $faker->dateTimeThisMonth
