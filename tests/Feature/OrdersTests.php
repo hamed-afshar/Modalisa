@@ -64,27 +64,13 @@ class ProjectTests extends TestCase
     }
     
     /** @test */
-    public function an_order_requires_country() 
+   public function an_order_requires_country() 
     {   
         $this->actingAs(factory('App\User')->create());
         $attributes = factory('App\Order')->raw(['country' => '']);
         $this->post('/orders', $attributes)->assertSessionHasErrors('country');    
     }
-    
-    /** @test */
-    public function product_can_be_submited_with_order()
-    {
-        $this->actingAs(factory('App\User'))->create();
-        
-        
-    }
-    
-    /** @test */
-    public function an_order_must_have_at_least_one_product()
-    {
-        
-    }
-    
+     
     /** @test */
     public function a_user_can_view_their_order() 
     {

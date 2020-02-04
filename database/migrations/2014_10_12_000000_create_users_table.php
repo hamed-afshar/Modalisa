@@ -20,6 +20,14 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('access_level');
+            $table->timestamp('last_login')->nullable();
+            $table->boolean('lock');
+            $table->ipAddress('last_ip');
+            $table->string('language');
+            $table->string('tel');
+            $table->string('country');
+            $table->string('communication_media');
             $table->timestamps();
         });
     }
