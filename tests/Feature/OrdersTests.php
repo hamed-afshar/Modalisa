@@ -13,7 +13,6 @@ class ProjectTests extends TestCase
     /** @test */
     public function guests_cannot_create_orders()
     {
-        //$this->withoutExceptionHandling();
         $attributes = factory('App\Order')->raw();
         $this->post('/orders', $attributes)->assertRedirect('login');
     }
@@ -32,7 +31,6 @@ class ProjectTests extends TestCase
     }
     
     /** @test */
-    
     public function a_user_can_make_an_order() 
     {
        $this->withoutExceptionHandling();
@@ -48,14 +46,43 @@ class ProjectTests extends TestCase
         $this->get('/orders')->assertSee($attributes['orderID']);
                 
     }
+    
     /** @test */
     public function an_order_requires_orderID() 
     {   
-        //$this->withoutExceptionHandling();
         $this->actingAs(factory('App\User')->create());
         $attributes = factory('App\Order')->raw(['orderID' => '']);
-        $this->post('/orders', $attributes)->assertSessionHasErrors('orderID');
-       
+        $this->post('/orders', $attributes)->assertSessionHasErrors('orderID');    
+    }
+    
+    /** @test */
+    public function an_order_requires_userID() 
+    {   
+        $this->actingAs(factory('App\User')->create());
+        $attributes = factory('App\Order')->raw(['users_id' => '']);
+        $this->post('/orders', $attributes)->assertSessionHasErrors('users_id');    
+    }
+    
+    /** @test */
+    public function an_order_requires_country() 
+    {   
+        $this->actingAs(factory('App\User')->create());
+        $attributes = factory('App\Order')->raw(['country' => '']);
+        $this->post('/orders', $attributes)->assertSessionHasErrors('country');    
+    }
+    
+    /** @test */
+    public function product_can_be_submited_with_order()
+    {
+        $this->actingAs(factory('App\User'))->create();
+        
+        
+    }
+    
+    /** @test */
+    public function an_order_must_have_at_least_one_product()
+    {
+        
     }
     
     /** @test */
@@ -69,7 +96,7 @@ class ProjectTests extends TestCase
     }
     
     /** @test */
-    public function an_authenticated_user_cannot_view_the_projects_of_others() 
+    public function an_authenticated_user_cannot_view_the_orders_of_others() 
     {
         $this->be(factory('App\User')->create());
         //$this->withoutExceptionHandling();
