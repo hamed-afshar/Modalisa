@@ -11,9 +11,6 @@
   |
  */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrdersController@index');
@@ -22,10 +19,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Auth::routes();
+Route::post('/register-retailers', 'RetailersController@register');
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
 
 

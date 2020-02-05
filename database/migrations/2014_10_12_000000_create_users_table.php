@@ -20,9 +20,9 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('access_level');
+            $table->string('access_level')->default('Retailer');
             $table->timestamp('last_login')->nullable();
-            $table->boolean('lock');
+            $table->boolean('lock')->default(0);
             $table->ipAddress('last_ip');
             $table->string('language');
             $table->string('tel');
