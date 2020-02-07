@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 
-class RetailersController extends Controller {
+class RegisterController extends Controller {
 
     // function for retailers registration
     public function register() {
@@ -33,6 +33,12 @@ class RetailersController extends Controller {
             'country' => request('country'),
             'communication_media' => request('communication_media')
         ]);
+    }
+    
+    //only SystemAdmin users can view the all users list
+    public function getAllUserList() {
+        $allUsers = User::all();
+        return view('users.all-users', compact('allUsers'));
     }
 
 }

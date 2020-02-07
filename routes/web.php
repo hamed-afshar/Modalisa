@@ -19,7 +19,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::post('/register-retailers', 'RetailersController@register');
+Route::post('/register', 'RegisterController@register');
+Route::get('/all-users', 'RegisterController@getAllUserList');
 
 
 
