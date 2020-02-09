@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use App\User;
 
@@ -66,7 +67,22 @@ class UsersTests extends TestCase {
     /** @test */
     public function only_SystemAdmin_users_can_see_the_all_users_list() {
         $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create(["access_level" => "SystemAdmin"]));
-        $this->get('/all-users')->assertSee(User::g);
+        $user = factory('App\User')->create(['access_level' => 'SystemAdmin']);
+        $this->actingAs($user);               
+        $this->get('/all-users')->assertSee($user->name);
+    }
+    
+    /** @test */ 
+    public function other_users_cant_see_the_all_users_list() {
+        $this->withoutExceptionHandling();
+        $user = factory('App\User')->create();
+        $this->actingAs($user);
+        $this->get('/all-users')->assertSee('Access Denied');
+    }
+    
+    /** @test */
+    public function guests_cannot_view_all_users_list() {
+        $this->withoutExceptionHandling();
+        $this->get('/all-users')->assertRedirect('/access-denied');
     }
 }

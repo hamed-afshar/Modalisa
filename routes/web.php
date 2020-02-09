@@ -22,5 +22,5 @@ Route::group(['middleware' => 'auth'], function() {
 Route::post('/register', 'RegisterController@register');
 Route::get('/all-users', 'RegisterController@getAllUserList');
 
-
+Route::get('/access-denied', 'RegisterController@showAccessDenied');
 

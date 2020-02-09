@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller {
 
@@ -37,8 +38,17 @@ class RegisterController extends Controller {
     
     //only SystemAdmin users can view the all users list
     public function getAllUserList() {
+        $access_level = DB::table('users')->where('id', auth()->id())->value('access_level');
+        if($access_level != "SystemAdmin") {  
+            return redirect('/access-denied');
+        }
         $allUsers = User::all();
         return view('users.all-users', compact('allUsers'));
     }
-
+    
+    //show access denied
+    public function showAccessDenied() {
+        return view('others.access-denied');
+    }
+    
 }
