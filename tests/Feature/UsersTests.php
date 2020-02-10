@@ -92,6 +92,7 @@ class UsersTests extends TestCase {
         $attributes = factory('App\User')->raw();
         $this->post('/register', $attributes);
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $this->patch(\)
     }
 
     /** @test */
