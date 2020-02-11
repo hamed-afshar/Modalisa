@@ -15,8 +15,7 @@ class OrdersController extends Controller {
 
     //store an order
     public function store() {
-        
-       
+               
         //validate and persist
         auth()->user()->orders()->create(request()->validate([
                'orderID' => 'required',

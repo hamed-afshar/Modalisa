@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->boolean('confirmed')->default(0);
             $table->string('access_level')->default('Retailer');
             $table->timestamp('last_login')->nullable();
-            $table->boolean('lock')->default(0);
+            $table->boolean('lock')->default(1);
             $table->ipAddress('last_ip');
             $table->string('language');
             $table->string('tel');

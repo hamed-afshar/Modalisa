@@ -46,6 +46,17 @@ class RegisterController extends Controller {
         return view('users.all-users', compact('allUsers'));
     }
     
+    //SystemAdmin can confirm user or change access level
+    public function update(User $user) {
+        
+        $data = request()->validate([
+            'confirmed' => 'required',
+            'access_level' => 'required',
+            'lock' => 'required'
+        ]);
+        $user->update($data);
+    }
+    
     //show access denied
     public function showAccessDenied() {
         return view('others.access-denied');

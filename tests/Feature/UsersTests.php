@@ -87,22 +87,21 @@ class UsersTests extends TestCase {
     }
 
     /** @test */
-    public function just_SystemAdmin_can_confirm_users() {
+    public function just_SystemAdmin_can_edit_users() {
         $this->withoutExceptionHandling();
-        $attributes = factory('App\User')->raw();
-        $this->post('/register', $attributes);
+        //$attributes = factory('App\User')->raw();
+        $user = factory('App\User')->create();
+        //$this->post('/register', $attributes);
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $this->patch(\)
+        $this->patch('/all-users/' . $user->id, [
+            'confirmed' => 1,
+            'access_level' => 'BuyerAdmin',
+            'lock' => 0
+        ]);
+        $this->assertEquals(1, DB::table('users')->where('id',$user->id)->value('confirmed'));
+        $this->assertEquals('BuyerAdmin', DB::table('users')->where('id',$user->id)->value('access_level'));
+        $this->assertEquals(0, DB::table('users')->where('id',$user->id)->value('lock'));
     }
 
-    /** @test */
-    public function just_SystemAdmin_can_lock_users() {
-        
-    }
-
-    /** @test */
-    public function just_SystemAdmin_can_change_access_level_for_users() {
-        
-    }
 
 }
