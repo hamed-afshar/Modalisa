@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use App\User;
+use Carbon\Carbon;
 
 class UsersTests extends TestCase {
 
@@ -17,8 +18,14 @@ class UsersTests extends TestCase {
     public function users_can_register_into_the_system() {
         $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
-        $this->post('/register', $attributes)->assertOk();
+        $this->post('/register', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
+    }
+
+    /** @test */
+    public function see_pending_for_confirmation_after_user_registration() {
+        $this->withoutExceptionHandling();
+        $this->get('/pending-for-confirmation')->assertSee('Please wait for confirmation');
     }
 
     /** @test */
@@ -66,7 +73,6 @@ class UsersTests extends TestCase {
 
     /** @test */
     public function only_SystemAdmin_users_can_see_the_all_users_list() {
-        $this->withoutExceptionHandling();
         $user = factory('App\User')->create(['access_level' => 'SystemAdmin']);
         $this->actingAs($user);
         $this->get('/all-users')->assertSee($user->name);
@@ -74,7 +80,6 @@ class UsersTests extends TestCase {
 
     /** @test */
     public function other_users_cant_see_the_all_users_list() {
-        $this->withoutExceptionHandling();
         $user = factory('App\User')->create();
         $this->actingAs($user);
         $this->get('/all-users')->assertSee('access-denied');
@@ -82,26 +87,44 @@ class UsersTests extends TestCase {
 
     /** @test */
     public function guests_cannot_view_all_users_list() {
-        $this->withoutExceptionHandling();
         $this->get('/all-users')->assertRedirect('/access-denied');
     }
 
     /** @test */
     public function just_SystemAdmin_can_edit_users() {
-        $this->withoutExceptionHandling();
-        //$attributes = factory('App\User')->raw();
         $user = factory('App\User')->create();
-        //$this->post('/register', $attributes);
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
         $this->patch('/all-users/' . $user->id, [
             'confirmed' => 1,
             'access_level' => 'BuyerAdmin',
             'lock' => 0
         ]);
-        $this->assertEquals(1, DB::table('users')->where('id',$user->id)->value('confirmed'));
-        $this->assertEquals('BuyerAdmin', DB::table('users')->where('id',$user->id)->value('access_level'));
-        $this->assertEquals(0, DB::table('users')->where('id',$user->id)->value('lock'));
+        $this->assertEquals(1, DB::table('users')->where('id', $user->id)->value('confirmed'));
+        $this->assertEquals('BuyerAdmin', DB::table('users')->where('id', $user->id)->value('access_level'));
+        $this->assertEquals(0, DB::table('users')->where('id', $user->id)->value('lock'));
     }
 
+    /** @test */
+    public function only_SystemAdmin_can_see_users_profile_page() {
+        $this->withoutExceptionHandling();
+        $user = factory('App\User')->create();
+        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $response = $this->get($user->path());
+        $this->assertInstanceOf(Carbon::class, DB::table('users')->where('id', $user->id)->last_login);
+        $response->assertSeeTextInOrder([
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->confirmed,
+            $user->access_level,
+//            $user->last_login,
+            $user->lock,
+            $user->last_ip,
+            $user->language,
+            $user->tel,
+            $user->country,
+            $user->communication_media,
+        ]);
+    }
 
 }

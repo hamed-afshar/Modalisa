@@ -19,6 +19,8 @@ class User extends Authenticatable
         'name', 'email', 'password', 'confirmed', 'access_level', 'last_login', 'lock', 'last_ip', 'language',
         'tel', 'country', 'communication_media'
     ];
+    
+    protected $dates = ['last_login'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -42,4 +44,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'users_id');
     }
+    
+    //function to return a path to any user
+    public function path() {
+        return '/user/' . $this->id;
+    }
+    
+    
 }

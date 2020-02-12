@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller {
+    
+    
 
     // function for retailers registration
     public function register() {
@@ -34,6 +36,12 @@ class RegisterController extends Controller {
             'country' => request('country'),
             'communication_media' => request('communication_media')
         ]);
+        return redirect('/pending-for-confirmation');
+    }
+    
+    //function to show pending-for-confirmation-page
+    public function showPendingForConfirmation() {
+        return view('others.pending-for-confirmation');
     }
     
     //only SystemAdmin users can view the all users list
@@ -60,6 +68,11 @@ class RegisterController extends Controller {
     //show access denied
     public function showAccessDenied() {
         return view('others.access-denied');
+    }
+    
+    //show users profile to SystemAdmin
+    public function showUserProfile(User $user) {
+        return view('users.user-profile', compact('user'));
     }
     
 }

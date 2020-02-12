@@ -23,4 +23,6 @@ Route::post('/register', 'RegisterController@register');
 Route::get('/all-users', 'RegisterController@getAllUserList');
 Route::patch('/all-users/{user}', 'RegisterController@update');
 Route::get('/access-denied', 'RegisterController@showAccessDenied');
+Route::get('/pending-for-confirmation', 'RegisterController@showPendingForConfirmation');
+Route::get('/user/{user}', 'RegisterController@showUserProfile');
 
