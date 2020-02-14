@@ -16,13 +16,18 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
+    Route::get('/users', 'RegisterController@getAllUserList');
+    Route::get('/user/{user}', 'RegisterController@showUserProfile');
+    Route::patch('/users/{user}', 'RegisterController@update');
+    Route::post('/subscriptions', 'SubscriptionController@store');
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::post('/register', 'RegisterController@register');
-Route::get('/all-users', 'RegisterController@getAllUserList');
-Route::patch('/all-users/{user}', 'RegisterController@update');
+Route::post('/users', 'RegisterController@register');
 Route::get('/access-denied', 'RegisterController@showAccessDenied');
 Route::get('/pending-for-confirmation', 'RegisterController@showPendingForConfirmation');
-Route::get('/user/{user}', 'RegisterController@showUserProfile');
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

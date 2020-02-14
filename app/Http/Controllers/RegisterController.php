@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller {
-    
-    
 
     // function for retailers registration
     public function register() {
@@ -38,41 +36,56 @@ class RegisterController extends Controller {
         ]);
         return redirect('/pending-for-confirmation');
     }
-    
+
     //function to show pending-for-confirmation-page
     public function showPendingForConfirmation() {
         return view('others.pending-for-confirmation');
     }
-    
+
     //only SystemAdmin users can view the all users list
     public function getAllUserList() {
-        $access_level = DB::table('users')->where('id', auth()->id())->value('access_level');
-        if($access_level != "SystemAdmin") {  
-            return redirect('/access-denied');
+        $access_level = $this->getAccessLevel();
+        if ($access_level != "SystemAdmin") {
+            return redirect('access-denied');
+        } else {
+            $allUsers = User::all();
+            return view('users.all-users', compact('allUsers'));
         }
-        $allUsers = User::all();
-        return view('users.all-users', compact('allUsers'));
     }
-    
+
     //SystemAdmin can confirm user or change access level
     public function update(User $user) {
-        
-        $data = request()->validate([
-            'confirmed' => 'required',
-            'access_level' => 'required',
-            'lock' => 'required'
-        ]);
-        $user->update($data);
+        $access_level = $this->getAccessLevel();
+        if ($access_level != 'SystemAdmin') {
+            return redirect('access-denied');
+        } else {
+            $data = request()->validate([
+                'confirmed' => 'required',
+                'access_level' => 'required',
+                'lock' => 'required'
+            ]);
+            $user->update($data);
+        }
     }
-    
-    //show access denied
+
+    //redirect to access denied page
     public function showAccessDenied() {
         return view('others.access-denied');
     }
-    
+
     //show users profile to SystemAdmin
     public function showUserProfile(User $user) {
-        return view('users.user-profile', compact('user'));
+        $access_level = $this->getAccessLevel();
+        if ($access_level != 'SystemAdmin') {
+            return redirect('access-denied');
+        } else {
+            return view('users.user-profile', compact('user'));
+        }
     }
-    
+
+    //function to get access_level of the user
+    protected function getAccessLevel() {
+        return auth()->user()->access_level;
+    }
+
 }

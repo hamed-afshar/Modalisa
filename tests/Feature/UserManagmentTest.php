@@ -9,7 +9,7 @@ use Tests\TestCase;
 use App\User;
 use Carbon\Carbon;
 
-class UsersTests extends TestCase {
+class UserManagmentTest extends TestCase {
 
     use WithFaker,
         RefreshDatabase;
@@ -18,7 +18,7 @@ class UsersTests extends TestCase {
     public function users_can_register_into_the_system() {
         $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
-        $this->post('/register', $attributes)->assertRedirect('/pending-for-confirmation');
+        $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
     }
 
@@ -32,69 +32,58 @@ class UsersTests extends TestCase {
     public function a_name_is_required() {
 //        $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw(['name' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('name');
+        $this->post('/users', $attributes)->assertSessionHasErrors('name');
     }
 
     /** @test */
     public function an_email_is_required() {
         $attributes = factory('App\User')->raw(['email' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('email');
+        $this->post('/users', $attributes)->assertSessionHasErrors('email');
     }
 
     /** @test */
     public function password_is_required() {
         $attributes = factory('App\User')->raw(['password' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('password');
+        $this->post('/users', $attributes)->assertSessionHasErrors('password');
     }
 
     /** @test */
     public function language_is_required() {
         $attributes = factory('App\User')->raw(['language' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('language');
+        $this->post('/users', $attributes)->assertSessionHasErrors('language');
     }
 
     /** @test */
     public function tel_is_required() {
         $attributes = factory('App\User')->raw(['tel' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('tel');
+        $this->post('/users', $attributes)->assertSessionHasErrors('tel');
     }
 
     /** @test */
     public function country_is_required() {
         $attributes = factory('App\User')->raw(['country' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('country');
+        $this->post('/users', $attributes)->assertSessionHasErrors('country');
     }
 
     /** @test */
     public function communication_media_is_required() {
         $attributes = factory('App\User')->raw(['communication_media' => '']);
-        $this->post('/register', $attributes)->assertSessionHasErrors('communication_media');
+        $this->post('/users', $attributes)->assertSessionHasErrors('communication_media');
     }
 
     /** @test */
-    public function only_SystemAdmin_users_can_see_the_all_users_list() {
+    public function only_SystemAdmin_can_see_all_users() {
         $user = factory('App\User')->create(['access_level' => 'SystemAdmin']);
         $this->actingAs($user);
-        $this->get('/all-users')->assertSee($user->name);
-    }
-
-    /** @test */
-    public function other_users_cant_see_the_all_users_list() {
-        $user = factory('App\User')->create();
-        $this->actingAs($user);
-        $this->get('/all-users')->assertSee('access-denied');
-    }
-
-    /** @test */
-    public function guests_cannot_view_all_users_list() {
-        $this->get('/all-users')->assertRedirect('/access-denied');
+        $this->get('/users')->assertSee($user->name);
     }
 
     /** @test */
     public function just_SystemAdmin_can_edit_users() {
+        $this->withoutExceptionHandling();
         $user = factory('App\User')->create();
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $this->patch('/all-users/' . $user->id, [
+        $this->patch('/users/' . $user->id, [
             'confirmed' => 1,
             'access_level' => 'BuyerAdmin',
             'lock' => 0
@@ -110,7 +99,10 @@ class UsersTests extends TestCase {
         $user = factory('App\User')->create();
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
         $response = $this->get($user->path());
-        $this->assertInstanceOf(Carbon::class, DB::table('users')->where('id', $user->id)->last_login);
+        $this->assertInstanceOf(Carbon::class, $user->last_login);
+        $this->assertInstanceOf(Carbon::class, $user->created_at);
+        $this->assertInstanceOf(Carbon::class, $user->updated_at);
+        //$this->assertEquals($user->last_login, $user->last_login->format('Y/m/d'));
         $response->assertSeeTextInOrder([
             $user->id,
             $user->name,
@@ -125,6 +117,33 @@ class UsersTests extends TestCase {
             $user->country,
             $user->communication_media,
         ]);
+    }
+    
+    /** @test */
+    public function other_users_can_not_access_admin_sections ()
+    {
+        $user = factory('App\User')->create(['access_level' => 'Retailer']);
+        $this->actingAs($user);
+        //other users can not see users list
+        $this->get('/users')->assertRedirect('/access-denied');
+        //other users can not edit users
+        $this->patch('/users/' . $user->id)->assertRedirect('/access-denied');
+        //other users can not see user profil page
+        $this->get($user->path())->assertRedirect('/access-denied');
+        
+        
+    }
+    
+    /** @test */ 
+    public function guest_can_not_access_system() 
+    {
+        $user = factory('App\User')->create();
+        //guest can not view all users 
+        $this->get('/users')->assertRedirect('login');
+        //guest can not edit users
+        $this->patch('/users/' . $user->id)->assertRedirect('login');
+        //guest can not see user profile page
+        $this->get($user->path())->assertRedirect('login');
     }
 
 }

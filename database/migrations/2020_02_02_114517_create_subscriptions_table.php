@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSubscriptionTable extends Migration
+class CreateSubscriptionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class CreateSubscriptionTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscription', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('subscriptions', function (Blueprint $table) {
+            $table->bigIncrements('subscriptionID');
+            $table->string('plan');
+            $table->integer('cost_percentage');
             $table->timestamps();
         });
     }

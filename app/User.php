@@ -40,13 +40,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
+    // each user had many order relation
     public function orders() 
     {
         return $this->hasMany(Order::class, 'users_id');
     }
-    
+   
     //function to return a path to any user
-    public function path() {
+    public function path() 
+    {
         return '/user/' . $this->id;
     }
     
