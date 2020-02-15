@@ -6,15 +6,14 @@ use App\Subscription;
 use App\User;
 use Illuminate\Http\Request;
 
-class SubscriptionController extends Controller
-{
+class SubscriptionController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         //
     }
 
@@ -23,8 +22,7 @@ class SubscriptionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -34,20 +32,22 @@ class SubscriptionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store()
-    {
-      //validate and persist
-        
-        $data = request()->validate([
-            'plan' => 'required',
-            'cost_percentage' => 'required'
-        ]);
-        Subscription::create([
-            'subscriptionID' => request('subscripitonID'),
-            'plan' => request('plan'),
-            'cost_percentage' => request('cost_percentage')
-        ]);
-        return redirect('subscriptions');
+    public function store() {
+        //validate and persist
+        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
+            return auth()->user()->showAccessDenied();
+        } else {
+            $data = request()->validate([
+                'plan' => 'required',
+                'cost_percentage' => 'required'
+            ]);
+            Subscription::create([
+                'subscriptionID' => request('subscripitonID'),
+                'plan' => request('plan'),
+                'cost_percentage' => request('cost_percentage')
+            ]);
+            return redirect('subscriptions');
+        }    
     }
 
     /**
@@ -56,8 +56,7 @@ class SubscriptionController extends Controller
      * @param  \App\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
-    public function show(Subscription $subscription)
-    {
+    public function show(Subscription $subscription) {
         //
     }
 
@@ -67,8 +66,7 @@ class SubscriptionController extends Controller
      * @param  \App\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
-    public function edit(Subscription $subscription)
-    {
+    public function edit(Subscription $subscription) {
         //
     }
 
@@ -79,8 +77,7 @@ class SubscriptionController extends Controller
      * @param  \App\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Subscription $subscription)
-    {
+    public function update(Request $request, Subscription $subscription) {
         //
     }
 
@@ -90,8 +87,8 @@ class SubscriptionController extends Controller
      * @param  \App\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Subscription $subscription)
-    {
+    public function destroy(Subscription $subscription) {
         //
     }
+
 }

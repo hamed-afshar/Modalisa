@@ -6,8 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
+
     use Notifiable;
 
     /**
@@ -19,7 +19,6 @@ class User extends Authenticatable
         'name', 'email', 'password', 'confirmed', 'access_level', 'last_login', 'lock', 'last_ip', 'language',
         'tel', 'country', 'communication_media'
     ];
-    
     protected $dates = ['last_login'];
 
     /**
@@ -39,18 +38,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+
     // each user had many order relation
-    public function orders() 
-    {
+    public function orders() {
         return $this->hasMany(Order::class, 'users_id');
     }
-   
+
     //function to return a path to any user
-    public function path() 
-    {
+    public function path() {
         return '/user/' . $this->id;
     }
-    
-    
+
+    //function to return user access level
+    public function getAccessLevel() {
+        return $this->access_level;
+    }
+
+    //function to show access denied
+    public function showAccessDenied() {
+        return redirect('access-denied');
+    }
+
 }

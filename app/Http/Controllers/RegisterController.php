@@ -44,9 +44,8 @@ class RegisterController extends Controller {
 
     //only SystemAdmin users can view the all users list
     public function getAllUserList() {
-        $access_level = $this->getAccessLevel();
-        if ($access_level != "SystemAdmin") {
-            return redirect('access-denied');
+        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
+            return auth()->user()->showAccessDenied();
         } else {
             $allUsers = User::all();
             return view('users.all-users', compact('allUsers'));
@@ -55,9 +54,8 @@ class RegisterController extends Controller {
 
     //SystemAdmin can confirm user or change access level
     public function update(User $user) {
-        $access_level = $this->getAccessLevel();
-        if ($access_level != 'SystemAdmin') {
-            return redirect('access-denied');
+        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
+            return auth()->user()->showAccessDenied();
         } else {
             $data = request()->validate([
                 'confirmed' => 'required',
@@ -75,17 +73,11 @@ class RegisterController extends Controller {
 
     //show users profile to SystemAdmin
     public function showUserProfile(User $user) {
-        $access_level = $this->getAccessLevel();
-        if ($access_level != 'SystemAdmin') {
-            return redirect('access-denied');
+        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
+            return auth()->user()->showAccessDenied();
         } else {
             return view('users.user-profile', compact('user'));
         }
-    }
-
-    //function to get access_level of the user
-    protected function getAccessLevel() {
-        return auth()->user()->access_level;
     }
 
 }
