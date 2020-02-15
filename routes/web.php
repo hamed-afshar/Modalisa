@@ -20,6 +20,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/user/{user}', 'RegisterController@showUserProfile');
     Route::patch('/users/{user}', 'RegisterController@update');
     Route::post('/subscriptions', 'SubscriptionController@store');
+    Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update');
     Route::get('/home', 'HomeController@index')->name('home');
 });
 

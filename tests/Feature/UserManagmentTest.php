@@ -120,7 +120,7 @@ class UserManagmentTest extends TestCase {
     }
     
     /** @test */
-    public function other_users_can_not_access_admin_sections ()
+    public function other_users_can_not_access_user_managment_system ()
     {
         $user = factory('App\User')->create(['access_level' => 'Retailer']);
         $this->actingAs($user);
@@ -135,7 +135,7 @@ class UserManagmentTest extends TestCase {
     }
     
     /** @test */ 
-    public function guest_can_not_access_system() 
+    public function guest_can_not_access_user_managment_system() 
     {
         $user = factory('App\User')->create();
         //guest can not view all users 

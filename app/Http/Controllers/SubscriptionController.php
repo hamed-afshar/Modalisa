@@ -47,7 +47,7 @@ class SubscriptionController extends Controller {
                 'cost_percentage' => request('cost_percentage')
             ]);
             return redirect('subscriptions');
-        }    
+        }
     }
 
     /**
@@ -77,8 +77,16 @@ class SubscriptionController extends Controller {
      * @param  \App\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Subscription $subscription) {
-        //
+    public function update(Subscription $subscription) {
+        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
+            return auth()->user()->showAccessDenied();
+        } else {
+            $data = request()->validate([
+                'plan' => 'required',
+                'cost_percentage' => 'required'
+            ]);
+            $subscription->update($data);
+        }
     }
 
     /**
