@@ -41,7 +41,7 @@ class User extends Authenticatable {
 
     // each user had many order relation
     public function orders() {
-        return $this->hasMany(Order::class, 'users_id');
+        return $this->hasMany(Order::class, 'user_id');
     }
 
     //function to return a path to any user

@@ -14,7 +14,7 @@ class CreateSubscriptionsTable extends Migration
     public function up()
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->bigIncrements('subscriptionID');
+            $table->bigIncrements('subscription_ID');
             $table->string('plan');
             $table->integer('cost_percentage');
             $table->timestamps();

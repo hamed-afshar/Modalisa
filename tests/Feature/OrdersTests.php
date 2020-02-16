@@ -37,13 +37,13 @@ class ProjectTests extends TestCase
        $user = factory('App\User')->create();
        $this->actingAs($user);
        $attributes = [
-            'orderID' => $this->faker->numberBetween($min = 3000, $max = 4000),
-            'users_id' => $user->id,
+            'id' => $this->faker->numberBetween($min = 3000, $max = 4000),
+            'user_id' => $user->id,
             'country' => 'Turkey'
         ];
         $this->post('/orders', $attributes)->assertRedirect('/orders');
         $this->assertDatabaseHas('Orders', $attributes);
-        $this->get('/orders')->assertSee($attributes['orderID']);
+        $this->get('/orders')->assertSee($attributes['id']);
                 
     }
     
@@ -51,16 +51,16 @@ class ProjectTests extends TestCase
     public function an_order_requires_orderID() 
     {   
         $this->actingAs(factory('App\User')->create());
-        $attributes = factory('App\Order')->raw(['orderID' => '']);
-        $this->post('/orders', $attributes)->assertSessionHasErrors('orderID');    
+        $attributes = factory('App\Order')->raw(['id' => '']);
+        $this->post('/orders', $attributes)->assertSessionHasErrors('id');    
     }
     
     /** @test */
     public function an_order_requires_userID() 
     {   
         $this->actingAs(factory('App\User')->create());
-        $attributes = factory('App\Order')->raw(['users_id' => '']);
-        $this->post('/orders', $attributes)->assertSessionHasErrors('users_id');    
+        $attributes = factory('App\Order')->raw(['user_id' => '']);
+        $this->post('/orders', $attributes)->assertSessionHasErrors('user_id');    
     }
     
     /** @test */
@@ -76,17 +76,18 @@ class ProjectTests extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->be(factory('App\User')->create());
-        $order =  factory('App\Order')->create(['users_id' => auth()->id()]);
+        $order =  factory('App\Order')->create(['user_id' => auth()->id()]);
         $this->get($order->path())
-              ->assertSee($order->orderID);
+              ->assertSee($order->id);
     }
     
     /** @test */
     public function an_authenticated_user_cannot_view_the_orders_of_others() 
     {
+//        $this->withoutExceptionHandling();
         $this->be(factory('App\User')->create());
-        //$this->withoutExceptionHandling();
         $order = factory('App\Order')->create();
+        dd($order);
         $this->get($order->path())->assertStatus(403);
     }
     

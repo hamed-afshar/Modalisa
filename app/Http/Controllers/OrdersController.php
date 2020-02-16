@@ -18,8 +18,8 @@ class OrdersController extends Controller {
                
         //validate and persist
         auth()->user()->orders()->create(request()->validate([
-               'orderID' => 'required',
-               'users_id' => 'required',
+               'id' => 'required',
+               'user_id' => 'required',
                'country' => 'required',
             
         ]));
@@ -30,7 +30,7 @@ class OrdersController extends Controller {
     
     public function show(Order $order) 
     {
-        if(auth()->id() != $order->users_id) {
+        if(auth()->id() != $order->user_id) {
             abort(403);
         }
         return view('orders.show', compact('order'));
