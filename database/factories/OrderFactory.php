@@ -11,8 +11,8 @@ $factory->define(Order::class, function (Faker $faker) {
         'user_id' => function() {
             return factory(App\User::class)->create()->id;
         },
-        'created_at' => $faker->dateTimeThisMonth, 
+        //'created_at' => $faker->dateTimeThisMonth, 
         'country' => 'Turkey',
-        'updated_at' => $faker->dateTimeThisMonth
+        //'updated_at' => $faker->dateTimeThisMonth
     ];
 });

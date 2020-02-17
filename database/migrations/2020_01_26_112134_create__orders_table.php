@@ -14,11 +14,15 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->bigInteger('id');
+            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('user_id');
-            $table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            //$table->timestamp('created_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
             $table->string('country');
-            $table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            //$table->timestamp('updated_at')->default(\DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamps();
+            
+            
+            $table->primary('id');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

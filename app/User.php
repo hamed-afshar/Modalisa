@@ -39,7 +39,7 @@ class User extends Authenticatable {
         'email_verified_at' => 'datetime',
     ];
 
-    // each user had many order relation
+    // each user has many order relation
     public function orders() {
         return $this->hasMany(Order::class, 'user_id');
     }

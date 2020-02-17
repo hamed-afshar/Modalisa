@@ -6,8 +6,8 @@
         </title>
     </head>
     <body>
-        <h1> {{ $order->users_id }} </h1>
-        <div> {{ $order->orderID }}</div>
+        <h1> {{ $order->user_id }} </h1>
+        <div> {{ $order->id }}</div>
     </body>
 </html>
 

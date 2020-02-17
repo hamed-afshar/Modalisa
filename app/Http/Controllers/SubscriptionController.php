@@ -42,7 +42,7 @@ class SubscriptionController extends Controller {
                 'cost_percentage' => 'required'
             ]);
             Subscription::create([
-                'subscriptionID' => request('subscripitonID'),
+                'id' => request('id'),
                 'plan' => request('plan'),
                 'cost_percentage' => request('cost_percentage')
             ]);

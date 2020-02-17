@@ -26,12 +26,12 @@ class SubscriptionManagmentTest extends TestCase {
         $user = factory('App\User')->create();
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
         $subscription = factory('App\Subscription')->create();
-        $this->patch('/subscriptions/' . $subscription->subscriptionID, [
+        $this->patch('/subscriptions/' . $subscription->id, [
             'plan' => 'Gold',
             'cost_percentage' => 20,
         ]);
-        $this->assertEquals('Gold', DB::table('subscriptions')->where('subscriptionID', $subscription->subscriptionID)->value('plan'));
-        $this->assertEquals(20, DB::table('subscriptions')->where('subscriptionID', $subscription->subscriptionID)->value('cost_percentage'));
+        $this->assertEquals('Gold', DB::table('subscriptions')->where('id', $subscription->id)->value('plan'));
+        $this->assertEquals(20, DB::table('subscriptions')->where('id', $subscription->id)->value('cost_percentage'));
     }
     
     /** @test */
@@ -51,7 +51,7 @@ class SubscriptionManagmentTest extends TestCase {
         //other users can not make a subscription
         $this->post('/subscriptions')->assertRedirect('/access-denied');
         //other users can not edit subscription
-        $this->patch('/subscriptions/' . $subscription->subscriptionID)->assertRedirect('/access-denied');
+        $this->patch('/subscriptions/' . $subscription->id)->assertRedirect('/access-denied');
     }
 
     /** @test */
@@ -60,7 +60,7 @@ class SubscriptionManagmentTest extends TestCase {
         //guests can not make susbciption
         $this->post('/subscriptions')->assertRedirect('login');
         //guests can not edit subscription
-        $this->patch('/subscriptions/' . $subscription->subscriptionID)->assertRedirect('login');
+        $this->patch('/subscriptions/' . $subscription->id)->assertRedirect('login');
     }
 
 }

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $guarded = [];
-
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+   
 
     public function path()
     {

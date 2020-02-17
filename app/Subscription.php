@@ -8,7 +8,6 @@ class Subscription extends Model
 
 {
     protected $fillable = [
-        'subscriptionID', 'plan', 'cost_percentage'
+        'plan', 'cost_percentage'
     ];
-    protected $primaryKey = 'subscriptionID';
 }
