@@ -1,16 +1,16 @@
 <?php
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-
-use App\Order;
+use App\UserSubscription;
 use Faker\Generator as Faker;
 
-$factory->define(Order::class, function (Faker $faker) {
+$factory->define(UserSubscription::class, function (Faker $faker) {
     return [
-        'id' => $faker->numberBetween($min = 3000, $max = 4000),
         'user_id' => function() {
             return factory(App\User::class)->create()->id;
         },
-        'country' => 'Turkey',
+        'subscription_id' => function() {
+            return factory(App\Subscription::class)->create()->id;
+        }
     ];
 });

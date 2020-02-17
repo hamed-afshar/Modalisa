@@ -12,9 +12,9 @@ class ProjectTests extends TestCase {
         RefreshDatabase;
 
     /** @test */
-    public function a_user_can_make_an_order() {
+    public function a_retailer_can_make_an_order() {
         $this->withoutExceptionHandling();
-        $user = factory('App\User')->create();
+        $user = factory('App\User')->create(['access_level' => 'Retailer']);
         $this->actingAs($user);
         $attributes = [
             'id' => $this->faker->numberBetween($min = 3000, $max = 4000),
@@ -49,7 +49,6 @@ class ProjectTests extends TestCase {
 
     /** @test */
     public function a_user_can_view_their_order() {
-        //$this->withoutExceptionHandling();
         $this->be(factory('App\User')->create());
         $order = factory('App\Order')->create(['user_id' => auth()->id()]);
         $this->get($order->path())
@@ -58,16 +57,24 @@ class ProjectTests extends TestCase {
 
     /** @test */
     public function an_authenticated_user_cannot_view_the_orders_of_others() {
-//        $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         $this->be(factory('App\User')->create());
         $order = factory('App\Order')->create();
-        $this->get($order->path())->assertStatus(403);
+        $this->get($order->path())->assertRedirect('/access-denied');
     }
 
     /** @test */
     public function it_belongs_to_a_user() {
         $order = factory('App\Order')->create();
         $this->assertInstanceOf('App\User', $order->owner);
+    }
+
+    /** @test */
+    public function other_users_can_not_access_order_managment_system() {
+        $user = factory('App\User')->create(['access_level' => 'Accountant']);
+        $this->actingAs($user);
+        // other users can not make order
+        $this->post('/orders')->assertRedirect('/access-denied');
     }
 
     /** @test */
@@ -81,4 +88,10 @@ class ProjectTests extends TestCase {
         //guests can not view a single order
         $this->get($order->path())->assertRedirect('login');
     }
+
+    /** @test */
+    public function orders_can_not_be_deleted_from_system() {
+        $this->delete('/orders')->assertRedirect('access-denied');
+    }
+
 }

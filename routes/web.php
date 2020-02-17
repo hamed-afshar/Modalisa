@@ -25,6 +25,8 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 Route::post('/users', 'RegisterController@register');
+Route::delete('/users', 'RegisterController@destroy');
+Route::delete('/orders', 'OrdersController@destroy');
 Route::get('/access-denied', 'RegisterController@showAccessDenied');
 Route::get('/pending-for-confirmation', 'RegisterController@showPendingForConfirmation');
 

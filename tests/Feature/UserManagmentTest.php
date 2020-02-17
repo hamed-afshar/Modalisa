@@ -145,5 +145,11 @@ class UserManagmentTest extends TestCase {
         //guest can not see user profile page
         $this->get($user->path())->assertRedirect('login');
     }
+    
+    /** @test */
+    public function users_can_not_be_deleted_from_system() {
+        $this->withoutExceptionHandling();
+        $this->delete('/users')->assertRedirect('/access-denied');
+    }
 
 }

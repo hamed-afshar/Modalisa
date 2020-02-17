@@ -66,6 +66,16 @@ class RegisterController extends Controller {
         }
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Subscription  $subscription
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy() {
+        return redirect('access-denied');
+    }
+
     //redirect to access denied page
     public function showAccessDenied() {
         return view('others.access-denied');

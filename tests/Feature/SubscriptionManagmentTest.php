@@ -21,6 +21,21 @@ class SubscriptionManagmentTest extends TestCase {
     }
 
     /** @test */
+    public function subscription_requires_a_plan() {
+        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $attributes = factory('App\Subscription')->raw(['plan' => '']);
+        $this->post('/subscriptions', $attributes)->assertSessionHasErrors('plan');
+    }
+    
+    /** @test */
+    public function subscription_requires_a_cost_percentage() {
+         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $attributes = factory('App\Subscription')->raw(['cost_percentage' => '']);
+        $this->post('/subscriptions', $attributes)->assertSessionHasErrors('cost_percentage');
+    }
+    
+
+    /** @test */
     public function SystemAdmin_can_edit_subscription_plan() {
         $this->withoutExceptionHandling();
         $user = factory('App\User')->create();
@@ -33,7 +48,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->assertEquals('Gold', DB::table('subscriptions')->where('id', $subscription->id)->value('plan'));
         $this->assertEquals(20, DB::table('subscriptions')->where('id', $subscription->id)->value('cost_percentage'));
     }
-    
+
     /** @test */
     public function SystemAdmin_can_assign_a_subscription_plan_to_user() {
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
