@@ -50,6 +50,14 @@ class SubscriptionManagmentTest extends TestCase {
     }
 
     /** @test */
+    public function SystemAdmin_can_see_subscription_list() {
+        $this->withoutExceptionHandling();
+        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $subscription  = factory('App\Subscription')->create();
+        $this->get('/subscriptions')->assertSee($subscription->id);
+    }
+
+    /** @test */
     public function SystemAdmin_can_assign_a_subscription_plan_to_user() {
         $this->withoutExceptionHandling();
         $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
@@ -91,16 +99,24 @@ class SubscriptionManagmentTest extends TestCase {
         $user = factory('App\User')->create(['access_level' => 'Retailer']);
         $subscription = factory('App\Subscription')->create();
         $this->actingAs($user);
+        //other users can not see subscriptions list
+        $this->get('/subscriptions')->assertRedirect('/access-denied');
         //other users can not make a subscription
         $this->post('/subscriptions')->assertRedirect('/access-denied');
         //other users can not edit subscription
         $this->patch('/subscriptions/' . $subscription->id)->assertRedirect('/access-denied');
+        //other users can not assign subscription to users
+        $this->post('/user-subscription')->assertRedirect('/access-denied');
+        //other users can not view users subscription
+        $this->get('/user-subscription')->assertRedirect('/access-denied');
     }
 
     /** @test */
     public function guests_can_not_access_subscriptions_system() {
 //        $this->withoutExceptionHandling();
         $subscription = factory('App\Subscription')->create();
+        //guests can not see subscription list
+        $this->get('/subscriptions')->assertRedirect('login');
         //guests can not make susbciption
         $this->post('/subscriptions')->assertRedirect('login');
         //guests can not edit subscription
@@ -109,6 +125,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->post('/user-subscription')->assertRedirect('login');
         //gustes can not view users subscriptions
         $this->get('/user-subscription')->assertRedirect('login');
+        
     }
 
 }

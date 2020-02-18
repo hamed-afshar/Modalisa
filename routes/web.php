@@ -19,6 +19,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/users', 'RegisterController@getAllUserList');
     Route::get('/user/{user}', 'RegisterController@showUserProfile');
     Route::patch('/users/{user}', 'RegisterController@update');
+    Route::get('/subscriptions', 'SubscriptionController@index');
     Route::post('/subscriptions', 'SubscriptionController@store');
     Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update');
     Route::post('/user-subscription', 'SubscriptionController@assignSubscription');

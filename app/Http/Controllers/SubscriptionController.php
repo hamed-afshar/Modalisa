@@ -11,12 +11,17 @@ use Illuminate\Support\Facades\DB;
 class SubscriptionController extends Controller {
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of all defined subscriptions
      *
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        //
+        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
+            return auth()->user()->showAccessDenied();
+        } else {
+            $subscriptionList = Subscription::all();
+            return view('subscriptions.subscriptions-list', compact('subscriptionList'));
+        }
     }
 
     /**
@@ -126,9 +131,9 @@ class SubscriptionController extends Controller {
     public function indexUserSubscription() {
         if(auth()->user()->getAccessLevel() != 'SystemAdmin') {
             return auth()->user()->showAccessDenied();
-        } else {
+} else {
             $userSubscription = UserSubscription::all();
-            return view('subscriptions.user-subscription', compact($userSubscription));
+            return view('subscriptions.user-subscription', compact('userSubscription'));
         }
     }
 
