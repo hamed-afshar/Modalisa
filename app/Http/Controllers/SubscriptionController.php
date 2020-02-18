@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Subscription;
 use App\User;
+use App\UserSubscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SubscriptionController extends Controller {
 
@@ -97,6 +99,37 @@ class SubscriptionController extends Controller {
      */
     public function destroy(Subscription $subscription) {
         //
+    }
+
+    /** assign a subscription to a user
+     * 
+     */
+    public function assignSubscription() {
+        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
+            return auth()->user()->showAccessDenied();
+        } else {
+            $data = request()->validate([
+                'user_id' => 'required',
+                'subscription_id' => 'required'
+            ]);
+            UserSubscription::create([
+                'user_id' => request('user_id'),
+                'subscription_id' => request('subscription_id')
+            ]);
+            return redirect('/user-subscription');
+        }
+    }
+    
+    /** index all assigned subscriptions
+     * 
+     */
+    public function indexUserSubscription() {
+        if(auth()->user()->getAccessLevel() != 'SystemAdmin') {
+            return auth()->user()->showAccessDenied();
+        } else {
+            $userSubscription = UserSubscription::all();
+            return view('subscriptions.user-subscription', compact($userSubscription));
+        }
     }
 
 }

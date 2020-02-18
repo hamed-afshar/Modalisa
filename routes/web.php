@@ -21,6 +21,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/users/{user}', 'RegisterController@update');
     Route::post('/subscriptions', 'SubscriptionController@store');
     Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update');
+    Route::post('/user-subscription', 'SubscriptionController@assignSubscription');
+    Route::get('/user-subscription', 'SubscriptionController@indexUserSubscription');
+
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
