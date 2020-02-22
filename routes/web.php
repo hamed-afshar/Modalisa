@@ -16,6 +16,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
+
     Route::get('/users', 'RegisterController@getAllUserList');
     Route::get('/user/{user}', 'RegisterController@showUserProfile');
     Route::patch('/users/{user}', 'RegisterController@update');
@@ -29,6 +30,7 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 Route::post('/users', 'RegisterController@register');
+Route::get('/users/create', 'RegisterController@create');
 Route::delete('/users', 'RegisterController@destroy');
 Route::delete('/orders', 'OrdersController@destroy');
 Route::get('/access-denied', 'RegisterController@showAccessDenied');

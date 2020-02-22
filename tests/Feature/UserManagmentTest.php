@@ -18,6 +18,7 @@ class UserManagmentTest extends TestCase {
     public function users_can_register_into_the_system() {
         $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
+        $this->get('/users/create')->assertOk(200);
         $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
     }
@@ -118,7 +119,7 @@ class UserManagmentTest extends TestCase {
             $user->communication_media,
         ]);
     }
-    
+
     /** @test */
     public function other_users_can_not_access_user_managment_system ()
     {
@@ -130,22 +131,22 @@ class UserManagmentTest extends TestCase {
         $this->patch('/users/' . $user->id)->assertRedirect('/access-denied');
         //other users can not see user profil page
         $this->get($user->path())->assertRedirect('/access-denied');
-        
-        
+
+
     }
-    
-    /** @test */ 
-    public function guest_can_not_access_user_managment_system() 
+
+    /** @test */
+    public function guest_can_not_access_user_managment_system()
     {
         $user = factory('App\User')->create();
-        //guest can not view all users 
+        //guest can not view all users
         $this->get('/users')->assertRedirect('login');
         //guest can not edit users
         $this->patch('/users/' . $user->id)->assertRedirect('login');
         //guest can not see user profile page
         $this->get($user->path())->assertRedirect('login');
     }
-    
+
     /** @test */
     public function users_can_not_be_deleted_from_system() {
         $this->withoutExceptionHandling();
