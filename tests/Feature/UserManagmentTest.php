@@ -18,7 +18,7 @@ class UserManagmentTest extends TestCase {
     public function users_can_register_into_the_system() {
         $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
-        $this->get('/users/create')->assertOk(200);
+        $this->get('/create')->assertOk(200);
         $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
     }

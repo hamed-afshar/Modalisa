@@ -1,14 +1,10 @@
-<!DOCTYPE HTML>
+@extends ('layouts.app')
+        <!DOCTYPE HTML>
 <html>
-    <head>
-        <title>
-            
-        </title>
-    </head>
-    <body>
-        <h1> All Users </h1>
-        <ul>
-            @forelse($allUsers as $user)
+@section('content')
+    <h1> All Users </h1>
+    <ul>
+        @forelse($allUsers as $user)
             <li>
                 <h2> {{$user->name}} </h2>
                 <h2> {{$user->email}} </h2>
@@ -22,10 +18,9 @@
                 <h2> {{$user->country}} </h2>
                 <h2> {{$user->communication_media}} </h2>
             </li>
-            @empty
+        @empty
             <li> Not any registerd user yet</li>
-            @endforelse
-        </ul>
-    </body>
-</html>
+        @endforelse
+    </ul>
+@endsection
 
