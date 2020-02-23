@@ -6,13 +6,14 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class RegisterController extends Controller {
+class UserController extends Controller {
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function create() {
+
         return view('users.create');
     }
 
