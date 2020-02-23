@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller {
     /**
@@ -32,13 +31,13 @@ class UserController extends Controller {
         User::create([
             'name' => request('name'),
             'email' => request('email'),
-            //'email_verified_at' => request('email_verified_at'),
-            'password' => Hash::make($data['password']),
-            //'remember_token' => request('remember_token'),
-            //'access_level' => request('access_level'),
-            //'last_login' => request('last_login'),
-            //'lock' => request('lock'),
-            'last_ip' => request()->ip(),
+            'email_verified_at' => request('email_verified_at'),
+            'password' => request('password'),
+            'remember_token' => request('remember_token'),
+            'access_level' => request('access_level'),
+            'last_login' => request('last_login'),
+            'lock' => request('lock'),
+            'last_ip' => request('last_ip'),
             'language' => request('language'),
             'tel' => request('tel'),
             'country' => request('country'),
