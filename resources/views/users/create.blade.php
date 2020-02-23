@@ -71,7 +71,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="communication_media" class="col-md-4 col-form-label text-md-right">{{ __('Social-ID') }}</label>
+                                <label for="communication_media" class="col-md-4 col-form-label text-md-right">{{ __('Social Media') }}</label>
 
                                 <div class="col-md-6">
                                     <input id="communication_media" type="socialID" class="form-control" name="communication_media">
