@@ -2,13 +2,14 @@
 @section('content')
     <div class="container">
         <div class="jumbotron">
-            <h1 class="display-4">Waiting For Confirmation</h1>
-            <p class="lead"> Now we are checking your information </p>
+            <h1 class="display-4">{{ __("translate.pending_for_confirmation_title") }}</h1>
+            <p class="lead"> {{ __("translate.pending_for_confirmation_text1") }}</p>
             <hr class="my-4">
-            <p> We are very glad to have you as our reliable partner, so that our team will review your account and contact you in a short time! </p>
+            <p> {{ __("translate.pending_for_confirmation_text2") }} </p>
         </div>
 
     </div>
+    @include('layouts.footer')
 
 @endsection
 
