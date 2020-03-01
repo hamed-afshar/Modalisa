@@ -26,7 +26,7 @@ class UserManagmentTest extends TestCase {
     /** @test */
     public function see_pending_for_confirmation_after_user_registration() {
         $this->withoutExceptionHandling();
-        $this->get('/pending-for-confirmation')->assertSee('Please wait for confirmation');
+        $this->get('/pending-for-confirmation')->assertOk(200);
     }
 
     /** @test */
@@ -121,7 +121,7 @@ class UserManagmentTest extends TestCase {
     }
 
     /** @test */
-    public function other_users_can_not_access_user_managment_system ()
+    public function other_users_can_not_access_user_management_system ()
     {
         $user = factory('App\User')->create(['access_level' => 'Retailer']);
         $this->actingAs($user);
@@ -136,7 +136,7 @@ class UserManagmentTest extends TestCase {
     }
 
     /** @test */
-    public function guest_can_not_access_user_managment_system()
+    public function guest_can_not_access_user_management_system()
     {
         $user = factory('App\User')->create();
         //guest can not view all users
