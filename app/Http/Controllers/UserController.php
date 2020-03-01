@@ -31,7 +31,6 @@ class UserController extends Controller {
         ]);
         User::create([
             'name' => request('name'),
-            'roles_id' =>request('roles_id'),
             'email' => request('email'),
             'password' => Hash::make($data['password']),
             'last_ip' => request()->ip(),
