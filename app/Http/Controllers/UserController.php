@@ -31,13 +31,9 @@ class UserController extends Controller {
         ]);
         User::create([
             'name' => request('name'),
+            'roles_id' =>request('roles_id'),
             'email' => request('email'),
-            //'email_verified_at' => request('email_verified_at'),
             'password' => Hash::make($data['password']),
-            //'remember_token' => request('remember_token'),
-            //'access_level' => request('access_level'),
-            //'last_login' => request('last_login'),
-            //'lock' => request('lock'),
             'last_ip' => request()->ip(),
             'language' => request('language'),
             'tel' => request('tel'),

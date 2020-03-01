@@ -15,7 +15,7 @@ class UserManagmentTest extends TestCase {
         RefreshDatabase;
 
     /** @test */
-    public function users_can_register_into_the_system() {
+        public function users_can_register_into_the_system() {
         $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
         $this->get('/create')->assertOk(200);
