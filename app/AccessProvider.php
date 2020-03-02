@@ -2,15 +2,19 @@
 
 
 namespace App;
+
+use App\Permission;
 use App\UserRole;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
 
 class AccessProvider
 // This class provides access permission for users
 {
-    public $role;
-    public $userID;
-    public $request;
+    private $role;
+    private $userID;
+    private $request;
+    private $requestID;
 
     /**
      * AccessProvider constructor.
@@ -22,7 +26,28 @@ class AccessProvider
     {
         $this->userID = $userID;
         $this->request = $request;
-        $this->role = UserRole::find(1);
+        $this->role = UserRole::find($userID)->role_id;
+        $this->requestID = Permission::where('name', $this->request)->first()->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequestID()
+    {
+        return $this->requestID;
+    }
+
+
+    /**
+     * return permission
+     */
+    public function getPermission()
+    {
+        $permission = Role::find($this->role)->rolepermissions;
+//        return $permission->search($this->requestID);
+        return $permission;
+
     }
 
     /**
@@ -32,17 +57,6 @@ class AccessProvider
     {
         return $this->role;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getRequest()
-    {
-
-        return $this->request;
-    }
-
-
 
 
 }
