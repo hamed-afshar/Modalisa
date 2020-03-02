@@ -7,6 +7,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Role::class, function (Faker $faker) {
     return [
-        'name' => 'SystemAdmin'
+        'name' => $faker->randomElement($array = array('SystemAdmin', 'BuyerAdmin', 'accountant', 'retailer'))
     ];
 });
