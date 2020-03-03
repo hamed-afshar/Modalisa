@@ -27,15 +27,11 @@ class AccessProvider
         $this->userID = $userID;
         $this->request = $request;
         $this->role = UserRole::find($userID)->role_id;
-        $this->requestID = Permission::where('name', $this->request)->first()->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRequestID()
-    {
-        return $this->requestID;
+        if (!Permission::where('name', $this->request)->first()) {
+            $this->requestID = null;
+        } else {
+            $this->requestID = Permission::where('name', $this->request)->first()->id;
+        }
     }
 
 
@@ -44,18 +40,21 @@ class AccessProvider
      */
     public function getPermission()
     {
-        $permission = Role::find($this->role)->rolepermissions;
-//        return $permission->search($this->requestID);
-        return $permission;
-
+        if ($this->requestID == null) {
+            return false;
+        } elseif (Role::find($this->role)->assignedPermissions->where('permission_id', $this->requestID)->first() != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * @return mixed
+     * return access denied
      */
-    public function getRole()
+    public function accessDenied()
     {
-        return $this->role;
+        return redirect('access-denied');
     }
 
 
