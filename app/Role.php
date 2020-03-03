@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    protected $fillable = [
-        'name'
-    ];
+    protected $guarded = [];
 
-    public function rolepermissions()
+    //each role has many assigned permissions
+    public function assignedPermissions()
     {
         return $this->hasMany('App\RolePermission');
     }
+
 }

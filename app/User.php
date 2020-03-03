@@ -19,7 +19,7 @@ class User extends Authenticatable {
         'name', 'roles_id', 'email', 'password', 'confirmed', 'access_level', 'last_login', 'lock', 'last_ip', 'language',
         'tel', 'country', 'communication_media'
     ];
-    
+
     protected $dates = ['last_login'];
 
     /**
@@ -40,10 +40,17 @@ class User extends Authenticatable {
         'email_verified_at' => 'datetime',
     ];
 
+    //each user has one role
+    public function roles()
+    {
+        return $this->hasOne('App\UserRole');
+    }
+
     // each user has many order relation
     public function orders() {
-        return $this->hasMany(Order::class, 'user_id');
+        return $this->hasMany('App\Order','user_id');
     }
+
 
     //function to return a path to any user
     public function path() {
@@ -55,9 +62,9 @@ class User extends Authenticatable {
         return $this->access_level;
     }
 
-    //function to show access denied
-    public function showAccessDenied() {
-        return redirect('access-denied');
-    }
+//function to show access denied
+//    public function showAccessDenied() {
+//        return redirect('access-denied');
+//    }
 
 }
