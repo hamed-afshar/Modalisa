@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\AccessProvider;
 use App\Role;
+use App\RolePermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,11 +14,14 @@ class RoleController extends Controller
     public function store()
     {
         $accessProvider = new AccessProvider(auth()->user()->id, 'create-role');
-       //dd(DB::table('roles')->where('id', 1)->first()->name);
-        dd($accessProvider->getPermission());
-        Role::create(request([
-            'name' => 'name'
-        ]));
+        if ($accessProvider->getPermission()) {
+            Role::create(request([
+                'name' => 'name'
+            ]));
+        } else {
+            return $accessProvider->accessDenied();
+        }
+
     }
 
     //index roles
