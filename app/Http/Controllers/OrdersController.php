@@ -38,7 +38,7 @@ class OrdersController extends Controller {
         }
         return view('orders.show', compact('order'));
     }
-    
+
      /**
      * Remove the specified resource from storage.
      *
