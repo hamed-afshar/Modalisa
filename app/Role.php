@@ -14,4 +14,11 @@ class Role extends Model
         return $this->hasMany('App\RolePermission');
     }
 
+    //return role path
+    public function path()
+    {
+        return "/roles/{$this->id}";
+
+    }
+
 }
