@@ -16,16 +16,25 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
+
     Route::get('/users', 'UserController@getAllUserList');
     Route::get('/user/{user}', 'UserController@showUserProfile');
     Route::patch('/users/{user}', 'UserController@update');
+
     Route::get('/subscriptions', 'SubscriptionController@index');
     Route::post('/subscriptions', 'SubscriptionController@store');
     Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update');
     Route::post('/user-subscription', 'SubscriptionController@assignSubscription');
     Route::get('/user-subscription', 'SubscriptionController@indexUserSubscription');
-    Route::post('/roles', 'RoleController@store');
+
     Route::get('/roles', 'RoleController@index');
+    Route::post('/roles', 'RoleController@store');
+    Route::get('/roles/create', 'RoleController@create');
+    Route::get('/roles/{id}', 'RoleController@show');
+    Route::get('/roles/{id}/edit', 'RoleController@edit');
+    Route::patch('/roles/{role}', 'RoleController@update');
+
+
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
