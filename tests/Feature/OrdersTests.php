@@ -70,7 +70,7 @@ class ProjectTests extends TestCase {
     }
 
     /** @test */
-    public function other_users_can_not_access_order_managment_system() {
+    public function other_users_can_not_access_order_management_system() {
         $user = factory('App\User')->create(['access_level' => 'Accountant']);
         $this->actingAs($user);
         // other users can not make order
