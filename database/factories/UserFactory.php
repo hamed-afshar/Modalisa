@@ -25,7 +25,6 @@ $factory->define(User::class, function (Faker $faker) {
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
         'remember_token' => Str::random(10),
         'confirmed' => 0,
-        'access_level' => 'Retailer',
         'last_login' => $faker->dateTimeThisMonth,
         'lock' => 0,
         'last_ip' => $faker->ipv4,
