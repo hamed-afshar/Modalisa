@@ -2,11 +2,11 @@
 <html>
     <head>
         <title>
-            
+
         </title>
     </head>
     <body>
-        <h1> Modalisa </h1>
+        <h1> Roles </h1>
         <ul>
             @forelse($orders as $order)
                 <li>
@@ -16,6 +16,6 @@
                 <li> No Project Yet </li>
             @endforelse
         </ul>
-        
+
     </body>
 </html>
