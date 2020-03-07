@@ -79,7 +79,7 @@ class AccessManagementTest extends TestCase
     /** @test */
     public function form_is_available_to_edit_a_role()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmih', 'edit-roles');
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles');
         $role = Role::find(1);
         $this->get($role->path() . '/edit')->assertSee($role->name);
 
@@ -98,6 +98,15 @@ class AccessManagementTest extends TestCase
         $this->assertEquals($newAttributes['name'] , Role::where('id', $role->id)->value('name'));
     }
 
+    /** @test */
+    public function only_SystemAdmin_can_delete_a_role()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-roles');
+        $role = Role::find(1);
+        $this->delete($role->path());
+        $this->assertDatabaseMissing('roles', ['id' => $role->id]);
+    }
 
 
     /** @test */
