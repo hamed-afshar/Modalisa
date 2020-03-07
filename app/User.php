@@ -40,6 +40,12 @@ class User extends Authenticatable {
         'email_verified_at' => 'datetime',
     ];
 
+    //return a path
+    public function path()
+    {
+        return "/users/{$this->id}";
+    }
+
     //each user has one role
     public function roles()
     {
@@ -51,20 +57,5 @@ class User extends Authenticatable {
         return $this->hasMany('App\Order','user_id');
     }
 
-
-    //function to return a path to any user
-    public function path() {
-        return '/user/' . $this->id;
-    }
-
-    //function to return user access level
-    public function getAccessLevel() {
-        return $this->access_level;
-    }
-
-//function to show access denied
-//    public function showAccessDenied() {
-//        return redirect('access-denied');
-//    }
 
 }

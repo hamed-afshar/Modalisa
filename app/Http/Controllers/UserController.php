@@ -2,24 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\AccessProvider;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller {
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() {
+class UserController extends Controller
+{
 
+    //index users
+    public function index()
+    {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
+        if ($accessProvider->getPermission()) {
+            $users = User::all();
+            return view('users.index', compact('users'));
+        } else {
+            return $accessProvider->accessDenied();
+        }
+    }
+
+    //create user form
+    public function create()
+    {
         return view('users.create');
     }
 
-    // function for retailers registration
-    public function register() {
+    // store users
+    public function store()
+    {
         $data = request()->validate([
             'name' => 'required',
             'email' => 'required',
@@ -43,22 +55,37 @@ class UserController extends Controller {
     }
 
     //function to show pending-for-confirmation-page
-    public function showPendingForConfirmation() {
+    public function showPendingForConfirmation()
+    {
         return view('others.pending-for-confirmation');
     }
 
-    //only SystemAdmin users can view the all users list
-    public function getAllUserList() {
-        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
-            return auth()->user()->showAccessDenied();
+    //show a single user
+    public function show(User $user)
+    {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
+        if ($accessProvider->getPermission()) {
+            return view('users.show', compact('user'));
         } else {
-            $allUsers = User::all();
-            return view('users.all-users', compact('allUsers'));
+            return $accessProvider->accessDenied();
         }
     }
 
+    //user edit form
+    public function edit(User $user)
+    {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-users');
+        if ($accessProvider->getPermission()) {
+            return view('users.edit', compact('user'));
+        } else {
+            return $accessProvider->accessDenied();
+        }
+    }
+
+
     //SystemAdmin can confirm user or change access level
-    public function update(User $user) {
+    public function update(User $user)
+    {
         if (auth()->user()->getAccessLevel() != "SystemAdmin") {
             return auth()->user()->showAccessDenied();
         } else {
@@ -74,25 +101,13 @@ class UserController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Subscription  $subscription
+     * @param \App\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy() {
+    public function destroy()
+    {
         return redirect('access-denied');
     }
 
-    //redirect to access denied page
-    public function showAccessDenied() {
-        return view('others.access-denied');
-    }
-
-    //show users profile to SystemAdmin
-    public function showUserProfile(User $user) {
-        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
-            return auth()->user()->showAccessDenied();
-        } else {
-            return view('users.user-profile', compact('user'));
-        }
-    }
 
 }
