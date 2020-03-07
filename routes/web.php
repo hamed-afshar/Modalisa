@@ -17,8 +17,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
 
-    Route::get('/users', 'UserController@getAllUserList');
-    Route::get('/user/{user}', 'UserController@showUserProfile');
+    Route::get('/users', 'UserController@index');
+    Route::get('/users/{user}', 'UserController@show');
+    Route::get('/users/{user}/edit', 'UserController@edit');
     Route::patch('/users/{user}', 'UserController@update');
 
     Route::get('/subscriptions', 'SubscriptionController@index');
@@ -30,17 +31,19 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/roles', 'RoleController@index');
     Route::post('/roles', 'RoleController@store');
     Route::get('/roles/create', 'RoleController@create');
-    Route::get('/roles/{id}', 'RoleController@show');
-    Route::get('/roles/{id}/edit', 'RoleController@edit');
+    Route::get('/roles/{role}', 'RoleController@show');
+    Route::get('/roles/{role}/edit', 'RoleController@edit');
     Route::patch('/roles/{role}', 'RoleController@update');
+    Route::delete('/roles/{role}', 'RoleController@destroy');
 
 
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::post('/users', 'UserController@register');
+Route::post('/users', 'UserController@store');
+Route::get('/users/create', 'UserController@create');
 Route::delete('/users', 'UserController@destroy');
-Route::get('/create', 'UserController@create');
+
 Route::delete('/orders', 'OrdersController@destroy');
 Route::get('/access-denied', 'UserController@showAccessDenied');
 Route::get('/pending-for-confirmation', 'UserController@showPendingForConfirmation');
