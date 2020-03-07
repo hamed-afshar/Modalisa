@@ -12,7 +12,6 @@ class RoleController extends Controller
 {
     //index roles
     public function index()
-
     {
         $accessProvider = new AccessProvider(auth()->user()->id, 'see-roles');
         if ($accessProvider->getPermission()) {
@@ -20,6 +19,17 @@ class RoleController extends Controller
             return view('roles.index', compact('roles'));
         } else {
             return ($accessProvider->accessDenied());
+        }
+    }
+
+    //create form for role creation
+    public function create()
+    {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'create-roles');
+        if ($accessProvider->getPermission()) {
+            return view('roles.create');
+        } else {
+            return $accessProvider->accessDenied();
         }
     }
 
@@ -36,35 +46,22 @@ class RoleController extends Controller
         }
     }
 
-    //create form for role creation
-    public function create()
-    {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'create-roles');
-        if ($accessProvider->getPermission()) {
-            return view('roles.create');
-        } else {
-            return $accessProvider->accessDenied();
-        }
-    }
-
     //show a single role
-    public function show($id)
+    public function show(Role $role)
     {
         $accessProvider = new AccessProvider(auth()->user()->id, 'see-roles');
         if ($accessProvider->getPermission()) {
-            $role = Role::find(1);
             return view('roles.show', compact('role'));
         } else {
             return $accessProvider->accessDenied();
         }
     }
 
-    //edit a role
-    public function edit($id)
+    //edit form
+    public function edit(Role $role)
     {
         $accessProvider = new AccessProvider(auth()->user()->id, 'edit-roles');
         if ($accessProvider->getPermission()) {
-            $role = Role::find($id);
             return view('roles.edit', compact('role'));
         } else {
             return $accessProvider->accessDenied();
@@ -84,6 +81,17 @@ class RoleController extends Controller
             return $accessProvider->accessDenied();
         }
 
+    }
+
+    //delete a role
+    public function destroy(Role $role)
+    {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'delete-roles');
+        if ($accessProvider->getPermission()) {
+            $role->delete();
+        } else {
+            return $accessProvider->accessDenied();
+        }
     }
 
 
