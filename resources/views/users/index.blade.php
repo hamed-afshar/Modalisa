@@ -4,12 +4,11 @@
 @section('content')
     <h1> All Users </h1>
     <ul>
-        @forelse($allUsers as $user)
+        @forelse($users as $user)
             <li>
                 <h2> {{$user->name}} </h2>
                 <h2> {{$user->email}} </h2>
                 <h2> {{$user->confirmed}} </h2>
-                <h2> {{$user->access_level}} </h2>
                 <h2> {{$user->last_login}} </h2>
                 <h2> {{$user->lock}} </h2>
                 <h2> {{$user->last_ip}} </h2>
