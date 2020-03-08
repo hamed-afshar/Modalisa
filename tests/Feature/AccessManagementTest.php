@@ -44,6 +44,13 @@ class AccessManagementTest extends TestCase
     }
 
     /** @test */
+    public function form_is_available_to_create_roles()
+    {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles');
+        $this->get('/roles/create')->assertOk();
+    }
+
+    /** @test */
     public function only_SystemAdmin_can_create_roles()
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles');
@@ -55,16 +62,9 @@ class AccessManagementTest extends TestCase
     /** @test */
     public function named_is_required()
     {
-        $this->prepare_SystemAdmin_env();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles');
         $attributes = factory('App\Role')->raw(['name' => '']);
         $this->post('/roles', $attributes)->assertSessionHasErrors('name');
-    }
-
-    /** @test */
-    public function form_is_available_to_create_roles()
-    {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles');
-        $this->get('/roles/create')->assertOk();
     }
 
     /** @test */
