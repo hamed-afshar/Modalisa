@@ -12,6 +12,11 @@
  */
 
 
+Route::post('/users', 'UserController@store');
+Route::get('/users/create', 'UserController@create');
+Route::delete('/users', 'UserController@destroy');
+Route::get('/pending-for-confirmation', 'UserController@showPendingForConfirmation');
+
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
@@ -21,6 +26,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/users/{user}', 'UserController@show');
     Route::get('/users/{user}/edit', 'UserController@edit');
     Route::patch('/users/{user}', 'UserController@update');
+    Route::delete('/users/{user}', 'UserController@destroy');
+
 
     Route::get('/subscriptions', 'SubscriptionController@index');
     Route::post('/subscriptions', 'SubscriptionController@store');
@@ -40,27 +47,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
-Route::post('/users', 'UserController@store');
-Route::get('/users/create', 'UserController@create');
-Route::delete('/users', 'UserController@destroy');
 
 Route::delete('/orders', 'OrdersController@destroy');
-Route::get('/access-denied', 'UserController@showAccessDenied');
-Route::get('/pending-for-confirmation', 'UserController@showPendingForConfirmation');
-
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
