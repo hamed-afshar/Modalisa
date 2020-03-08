@@ -14,7 +14,7 @@ class UserController extends Controller
     //index users
     public function index()
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
+      $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
         if ($accessProvider->getPermission()) {
             $users = User::all();
             return view('users.index', compact('users'));
@@ -74,7 +74,7 @@ class UserController extends Controller
     //user edit form
     public function edit(User $user)
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-users');
+        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-profile');
         if ($accessProvider->getPermission()) {
             return view('users.edit', compact('user'));
         } else {
@@ -83,30 +83,34 @@ class UserController extends Controller
     }
 
 
-    //SystemAdmin can confirm user or change access level
+    //Edit user's profile
     public function update(User $user)
     {
-        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
-            return auth()->user()->showAccessDenied();
-        } else {
+        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-profile');
+        if ($accessProvider->getPermission()) {
             $data = request()->validate([
-                'confirmed' => 'required',
-                'access_level' => 'required',
-                'lock' => 'required'
+                'email' => 'required',
+                'password' => 'required',
+                'language' => 'required',
+                'tel' => 'required',
+                'country' => 'required',
+                'communication_media' => 'required'
             ]);
             $user->update($data);
+        } else {
+            $accessProvider->accessDenied();
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Subscription $subscription
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy()
+// Remove user from db
+    public function destroy(User $user)
     {
-        return redirect('access-denied');
+        $accessProvider = new AccessProvider(auth()->user()->id, 'delete-user');
+        if ($accessProvider->getPermission()) {
+            $user->delete();
+        } else {
+            return $accessProvider->accessDenied();
+        }
     }
 
 
