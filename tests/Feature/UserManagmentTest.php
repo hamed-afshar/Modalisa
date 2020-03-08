@@ -11,7 +11,7 @@ use Tests\TestCase;
 use App\User;
 use Carbon\Carbon;
 
-class UserManagmentTest extends TestCase
+class UserManagementTest extends TestCase
 {
     use WithFaker,
         RefreshDatabase;
@@ -39,7 +39,6 @@ class UserManagmentTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_users()
     {
-        $this->withoutExceptionHandling();
         $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users');
         $user = User::find(1);
         $this->get('/users')->assertSee($user->name);
@@ -48,14 +47,12 @@ class UserManagmentTest extends TestCase
     /** @test */
     public function form_is_available_to_create_user()
     {
-        $this->withoutExceptionHandling();
         $this->get('/users/create')->assertOk();
     }
 
     /** @test */
     public function users_can_register_in_system()
     {
-        $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
         $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
@@ -64,7 +61,6 @@ class UserManagmentTest extends TestCase
     /** @test */
     public function see_pending_for_confirmation_after_user_registration()
     {
-        $this->withoutExceptionHandling();
         $this->get('/pending-for-confirmation')->assertOk(200);
     }
 
@@ -131,46 +127,57 @@ class UserManagmentTest extends TestCase
     /** @test */
     public function form_is_available_to_edit_a_user()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-users');
+        $this->prepare_SystemAdmin_env('retailer', 'edit-profile');
         $user = User::find(1);
         $this->get($user->path() . '/edit')->assertSee($user->name);
     }
 
     /** @test */
-    public function just_SystemAdmin_can_edit_users()
+    public function users_can_update_their_profiles()
     {
-        $user = factory('App\User')->create();
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $this->patch('/users/' . $user->id, [
-            'confirmed' => 1,
-            'access_level' => 'BuyerAdmin',
-            'lock' => 0
+        $this->prepare_other_users_env('retailer', 'edit-profile');
+        $newDetails = factory('App\User')->raw();
+        $user = User::find(1);
+        $this->patch($user->path(), [
+            'email' => $newDetails['email'],
+            'password' => $newDetails['password'],
+            'language'=> $newDetails['language'],
+            'tel' => $newDetails['tel'],
+            'country'=>$newDetails['country'],
+            'communication_media' => $newDetails['communication_media']
         ]);
-        $this->assertEquals(1, DB::table('users')->where('id', $user->id)->value('confirmed'));
-        $this->assertEquals('BuyerAdmin', DB::table('users')->where('id', $user->id)->value('access_level'));
-        $this->assertEquals(0, DB::table('users')->where('id', $user->id)->value('lock'));
-    }
-
-
-    /** @test */
-    public function other_users_can_not_access_user_management()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepare_other_users_env('retailer', 'submit-orders');
-        $this->get('/users')->assertRedirect('/access-denied');
-    }
-
-    /** @test */
-    public function guest_can_not_access_user_management_system()
-    {
-        $this->get('/users')->assertRedirect('login');
+        $this->assertEquals($newDetails['email'], User::where('id', $user->id)->value('email'));
     }
 
     /** @test */
     public function users_can_not_be_deleted_from_system()
     {
         $this->withoutExceptionHandling();
-        $this->delete('/users')->assertRedirect('/access-denied');
+        $this->prepare_other_users_env('retailer', 'submit-orders');
+        $user = User::find(1);
+        $this->delete($user->path())->assertRedirect('/access-denied');
+    }
+
+
+    /** @test */
+    public function other_users_can_not_access_user_management()
+    {
+        $this->prepare_other_users_env('retailer', 'submit-orders');
+        $this->get('/users')->assertRedirect('/access-denied');
+        $user = User::find(1);
+        $this->get($user->path())->assertRedirect('/access-denied');
+        $this->delete($user->path())->assertRedirect('/access-denied');
+    }
+
+    /** @test */
+    public function guest_can_not_access_user_management_system()
+    {
+        $this->get('/users')->assertRedirect('login');
+        $this->get('/users/1')->assertRedirect('login');
+        $this->get('users/1/edit')->assertRedirect('login');
+        $this->patch('users/1')->assertRedirect('login');
+        $this->delete('/users/1')->assertRedirect('login');
+
     }
 
 }
