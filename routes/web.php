@@ -14,8 +14,6 @@
 
 Route::post('/users', 'UserController@store')->name('user-register');
 Route::get('/users/create', 'UserController@create')->name('user-register-form');
-Route::get('/pending-for-confirmation', 'UserController@showPendingForConfirmation')->name('pending-for-confirmation');
-Route::get('/locked', 'UserController@showLocked')->name('show-locked');
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/users', 'UserController@index')->name('all-users')->middleware('AccessProvider:see-users, all-users');
