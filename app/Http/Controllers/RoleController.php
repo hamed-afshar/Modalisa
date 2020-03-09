@@ -13,13 +13,6 @@ class RoleController extends Controller
     //index roles
     public function index()
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'see-roles');
-//        if ($accessProvider->getPermission()) {
-//            $roles = Role::all();
-//            return view('roles.index', compact('roles'));
-//        } else {
-//            return ($accessProvider->accessDenied());
-//        }
         $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
@@ -27,26 +20,12 @@ class RoleController extends Controller
     //create form for role creation
     public function create()
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'create-roles');
-//        if ($accessProvider->getPermission()) {
-//            return view('roles.create');
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         return view('roles.create');
     }
 
     //store role instance in db
     public function store()
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'create-roles');
-//        if ($accessProvider->getPermission()) {
-//            Role::create(request()->validate([
-//                'name' => 'required'
-//            ]));
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         Role::create(request()->validate([
             'name' => 'required'
         ]));
@@ -55,55 +34,27 @@ class RoleController extends Controller
     //show a single role
     public function show(Role $role)
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'see-roles');
-//        if ($accessProvider->getPermission()) {
-//            return view('roles.show', compact('role'));
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         return view('roles.show', compact('role'));
     }
 
     //edit form
     public function edit(Role $role)
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-roles');
-//        if ($accessProvider->getPermission()) {
-//            return view('roles.edit', compact('role'));
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         return view('roles.edit', compact('role'));
     }
 
     //update a role
     public function update(Role $role)
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-roles');
-//        if ($accessProvider->getPermission()) {
-//            $data = request()->validate([
-//                'name' => 'required',
-//            ]);
-//            $role->update($data);
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         $data = request()->validate([
             'name' => 'required',
         ]);
         $role->update($data);
-
     }
 
     //delete a role
     public function destroy(Role $role)
     {
-//        $accessProvider = new AccessProvider(auth()->user()->id, 'delete-roles');
-//        if ($accessProvider->getPermission()) {
-//            $role->delete();
-//        } else {
-//            return $accessProvider->accessDenied();
-//        }
         $role->delete();
     }
 
