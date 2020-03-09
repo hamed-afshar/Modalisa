@@ -22,11 +22,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
 
-    Route::get('/users', 'UserController@index');
-    Route::get('/users/{user}', 'UserController@show');
-    Route::get('/users/{user}/edit', 'UserController@edit');
-    Route::patch('/users/{user}', 'UserController@update');
-    Route::delete('/users/{user}', 'UserController@destroy');
+    Route::get('/users', 'UserController@index')->name('all-users')->middleware('AccessProvider:see-users');
+    Route::get('/users/{user}', 'UserController@show')->name('show-user')->middleware('AccessProvider:see-users');
+    Route::get('/users/{user}/edit', 'UserController@edit')->name('user-edit-form')->middleware('AccessProvider:edit-profile');
+    Route::patch('/users/{user}', 'UserController@update')->name('user-profile')->middleware('AccessProvider:edit-profile');
+    Route::delete('/users/{user}', 'UserController@destroy')->name('user-delete')->middleware('AccessProvider:delete-user');
 
 
     Route::get('/subscriptions', 'SubscriptionController@index');
