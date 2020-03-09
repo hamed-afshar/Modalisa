@@ -17,18 +17,18 @@ class AccessProviderMiddleware
      */
     public function handle($request, Closure $next, $requestedAccess, $requestedPage)
     {
-        $accessProvider = new AccessProvider($request->user()->id, $requestedAccess);
+        $accessProvider = new AccessProvider($request->user()->id, $requestedAccess);;
+
 
         //user is not confirmed yet
-        if ($accessProvider->getPermission() == 'not-confirmed') {
-            route('pending-for-confirmation');
+        if ($accessProvider->getPermission() === 'not-confirmed') {
+            return $accessProvider->pendingForConfirmation();
         }
 
         //user is locked
-        if ($accessProvider->getPermission() == 'locked') {
-            route('pending-for-confirmation');
+        if ($accessProvider->getPermission() === 'locked') {
+            return $accessProvider->userLocked();
         }
-
         // check permissions
         if ($accessProvider->getPermission()) {
             switch ($requestedPage) {
