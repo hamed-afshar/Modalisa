@@ -152,10 +152,19 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_not_be_deleted_from_system()
     {
-        $this->withoutExceptionHandling();
         $this->prepare_other_users_env('retailer', 'submit-orders');
         $user = User::find(1);
         $this->delete($user->path())->assertRedirect('/access-denied');
+    }
+
+    /** @test */
+    public function locked_users_can_not_access_system()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_other_users_env('retailer','edit-profile');
+        $user = User::find(1);
+        $this->get($user->path() . '/edit')->assertRedirect('/locked');
+
     }
 
 
