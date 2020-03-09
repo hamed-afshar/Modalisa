@@ -16,9 +16,9 @@ class UserManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    public function prepare_SystemAdmin_env($role, $request)
+    public function prepare_SystemAdmin_env($role, $request, $confirmed, $locked)
     {
-        $user = factory('App\User')->create(['id' => '1']);
+        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->roles()->create(['user_id' => $user->id, 'role_id' => $role->id]);
@@ -26,9 +26,9 @@ class UserManagementTest extends TestCase
         $this->actingAs($user);
     }
 
-    public function prepare_other_users_env($role, $request)
+    public function prepare_other_users_env($role, $request, $confirmed, $locked)
     {
-        $user = factory('App\User')->create(['id' => '1']);
+        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->roles()->create(['user_id' => $user->id, 'role_id' => $role->id]);
@@ -39,8 +39,9 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_users()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users');
-        $user = User::find(1);
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
+        $user = User::find(1)->first();
         $this->get('/users')->assertSee($user->name);
     }
 
@@ -56,12 +57,6 @@ class UserManagementTest extends TestCase
         $attributes = factory('App\User')->raw();
         $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
         $this->assertCount(1, User::all());
-    }
-
-    /** @test */
-    public function see_pending_for_confirmation_after_user_registration()
-    {
-        $this->get('/pending-for-confirmation')->assertOk(200);
     }
 
     /** @test */
@@ -116,7 +111,7 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_vew_a_single_user()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin','see-users');
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
         $user = User::find(1);
         $this->get($user->path())->assertSee($user->name);
         $this->assertInstanceOf(Carbon::class, $user->last_login);
@@ -127,7 +122,7 @@ class UserManagementTest extends TestCase
     /** @test */
     public function form_is_available_to_edit_a_user()
     {
-        $this->prepare_SystemAdmin_env('retailer', 'edit-profile');
+        $this->prepare_other_users_env('retailer', 'edit-profile', 1, 0);
         $user = User::find(1);
         $this->get($user->path() . '/edit')->assertSee($user->name);
     }
@@ -135,15 +130,15 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_update_their_profiles()
     {
-        $this->prepare_other_users_env('retailer', 'edit-profile');
+        $this->prepare_other_users_env('retailer', 'edit-profile', 1, 0);
         $newDetails = factory('App\User')->raw();
         $user = User::find(1);
         $this->patch($user->path(), [
             'email' => $newDetails['email'],
             'password' => $newDetails['password'],
-            'language'=> $newDetails['language'],
+            'language' => $newDetails['language'],
             'tel' => $newDetails['tel'],
-            'country'=>$newDetails['country'],
+            'country' => $newDetails['country'],
             'communication_media' => $newDetails['communication_media']
         ]);
         $this->assertEquals($newDetails['email'], User::where('id', $user->id)->value('email'));
@@ -152,7 +147,7 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_not_be_deleted_from_system()
     {
-        $this->prepare_other_users_env('retailer', 'submit-orders');
+        $this->prepare_other_users_env('retailer', 'submit-orders', 1, 0);
         $user = User::find(1);
         $this->delete($user->path())->assertRedirect('/access-denied');
     }
@@ -161,17 +156,25 @@ class UserManagementTest extends TestCase
     public function locked_users_can_not_access_system()
     {
         $this->withoutExceptionHandling();
-        $this->prepare_other_users_env('retailer','edit-profile');
-        $user = User::find(1);
+        $this->prepare_other_users_env('retailer', 'edit-profile', 1, 1);
+        $user = User::find(1)->first();
+        //for example accessing edit form
         $this->get($user->path() . '/edit')->assertRedirect('/locked');
-
     }
 
+    /** @test */
+    public function not_confirmed_users_can_not_access_system()
+    {
+        $this->prepare_other_users_env('retailer', 'submit-orders', 0, 0);
+        $user = User::find(1)->first();
+        //for example accessing edit form
+        $this->get($user->path())->assertRedirect('/pending-for-confirmation');
+    }
 
     /** @test */
     public function other_users_can_not_access_user_management()
     {
-        $this->prepare_other_users_env('retailer', 'submit-orders');
+        $this->prepare_other_users_env('retailer', 'submit-orders', 1, 0);
         $this->get('/users')->assertRedirect('/access-denied');
         $user = User::find(1);
         $this->get($user->path())->assertRedirect('/access-denied');
