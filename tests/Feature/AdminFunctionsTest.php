@@ -20,4 +20,16 @@ class AdminFunctionsTest extends TestCase
 
     }
 
+    /** @test */
+    public function not_confirmed_users_can_not_access_system()
+    {
+
+    }
+
+    /** @test */
+    public function locked_users_can_not_access_system()
+    {
+
+    }
+
 }
