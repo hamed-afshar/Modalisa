@@ -9,6 +9,12 @@ use Tests\TestCase;
 class AdminFunctionsTest extends TestCase
 {
     /** @test */
+    public function form_is_available_to_edit_users()
+    {
+
+    }
+
+    /** @test */
     public function SystemAdmin_can_confirm_or_lock_users()
     {
 
