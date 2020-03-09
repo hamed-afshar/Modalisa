@@ -40,14 +40,14 @@ class AccessProvider
      */
     public function getPermission()
     {
-        if (User::find($this->userID)->first()->confirmed = 0) {
+        if (User::find($this->userID)->first()->confirmed == 0) {
             return 'not-confirmed';
         }
 
-        if (User::find($this->userID)->first->locked == 1) {
+
+        if (User::find($this->userID)->first()->locked == 1) {
             return 'locked';
         }
-
         if ($this->requestID == null) {
             return false;
         } elseif (Role::find($this->role)->assignedPermissions->where('permission_id', $this->requestID)->first() != null) {
