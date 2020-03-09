@@ -26,7 +26,7 @@ $factory->define(User::class, function (Faker $faker) {
         'remember_token' => Str::random(10),
         'confirmed' => 0,
         'last_login' => $faker->dateTimeThisMonth,
-        'lock' => 0,
+        'locked' => 0,
         'last_ip' => $faker->ipv4,
         'language' => 'Persian',
         'tel' => $faker->phoneNumber,
