@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->boolean('confirmed')->default(0);
             $table->timestamp('last_login')->nullable();
-            $table->boolean('lock')->default(1);
+            $table->boolean('locked')->default(1);
             $table->ipAddress('last_ip');
             $table->string('language');
             $table->string('tel');
