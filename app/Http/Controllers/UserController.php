@@ -14,13 +14,8 @@ class UserController extends Controller
     //index users
     public function index()
     {
-      $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
-        if ($accessProvider->getPermission()) {
-            $users = User::all();
-            return view('users.index', compact('users'));
-        } else {
-            return $accessProvider->accessDenied();
-        }
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
 
     //create user form
@@ -63,54 +58,40 @@ class UserController extends Controller
     //show a single user
     public function show(User $user)
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'see-users');
-        if ($accessProvider->getPermission()) {
-            return view('users.show', compact('user'));
-        } else {
-            return $accessProvider->accessDenied();
-        }
+        return view('users.show', compact('user'));
     }
 
     //user edit form
     public function edit(User $user)
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-profile');
-        if ($accessProvider->getPermission()) {
-            return view('users.edit', compact('user'));
-        } else {
-            return $accessProvider->accessDenied();
-        }
+        return view('users.edit', compact('user'));
     }
 
 
     //Edit user's profile
     public function update(User $user)
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'edit-profile');
-        if ($accessProvider->getPermission()) {
-            $data = request()->validate([
-                'email' => 'required',
-                'password' => 'required',
-                'language' => 'required',
-                'tel' => 'required',
-                'country' => 'required',
-                'communication_media' => 'required'
-            ]);
-            $user->update($data);
-        } else {
-            $accessProvider->accessDenied();
-        }
+        $data = request()->validate([
+            'email' => 'required',
+            'password' => 'required',
+            'language' => 'required',
+            'tel' => 'required',
+            'country' => 'required',
+            'communication_media' => 'required'
+        ]);
+        $user->update($data);
     }
 
 // Remove user from db
     public function destroy(User $user)
     {
-        $accessProvider = new AccessProvider(auth()->user()->id, 'delete-user');
-        if ($accessProvider->getPermission()) {
-            $user->delete();
-        } else {
-            return $accessProvider->accessDenied();
-        }
+        $user->delete();
+    }
+
+    //lock users
+    public function showLocked()
+    {
+        return redirect('/locked');
     }
 
 
