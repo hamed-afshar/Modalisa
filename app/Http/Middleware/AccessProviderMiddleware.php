@@ -32,42 +32,55 @@ class AccessProviderMiddleware
         // check permissions
         if ($accessProvider->getPermission()) {
             switch ($requestedPage) {
-                case 'all-users' :
-                    route('all-users');
+                case 'users.index' :
+                    route('users.index');
                     break;
-                case 'show-user':
-                    route('show-user');
+                case 'users.show':
+                    route('users.show');
                     break;
-                case 'user-edit-form':
-                    route('user-edit-form');
+                case 'users.edit':
+                    route('users.edit');
                     break;
-                case 'user-profile':
-                    route('user-profile');
+                case 'users.update':
+                    route('users.update');
                     break;
-                case 'user-delete':
-                    route('user-delete');
+                case 'users.delete':
+                    route('users.delete');
                     break;
-                case 'all-roles':
-                    route('all-roles');
+                case 'roles.index':
+                    route('roles.index');
                     break;
-                case 'role-create-form':
-                    route('role-create-form');
+                case 'roles.create':
+                    route('roles.create');
                     break;
-                case 'save-role':
-                    route('save-role');
+                case 'roles.store':
+                    route('roles.store');
                     break;
-                case 'show-role':
-                    route('show-role');
+                case 'roles.show':
+                    route('roles.show');
                     break;
-                case'role-edit-form':
-                    route('role-edit-form');
+                case'roles.edit':
+                    route('roles.edit');
                     break;
-                case 'update-role':
-                    route('update-role');
+                case 'roles.update':
+                    route('roles.update');
                     break;
-                case 'delete-role':
-                    route('delete-role');
+                case 'roles.delete':
+                    route('roles.delete');
                     break;
+                case 'see-permissions':
+                    route('permissions.index');
+                    break;
+                case 'permissions.create':
+                    route('permissions.create');
+                    break;
+                case 'permissions.store':
+                    route('permissions.store');
+                    break;
+                case 'permissions.show':
+                    route('permissions.show');
+                    break;
+
                 default:
             }
 
