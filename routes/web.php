@@ -12,23 +12,30 @@
  */
 
 
-Route::post('/users', 'UserController@store')->name('user-register');
-Route::get('/users/create', 'UserController@create')->name('user-register-form');
+Route::post('/users', 'UserController@store')->name('users.store');
+Route::get('/users/create', 'UserController@create')->name('users.create');
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('/users', 'UserController@index')->name('all-users')->middleware('AccessProvider:see-users, all-users');
-    Route::get('/users/{user}', 'UserController@show')->name('show-user')->middleware('AccessProvider:see-users, show-user');
-    Route::get('/users/{user}/edit', 'UserController@edit')->name('user-edit-form')->middleware('AccessProvider:edit-profile, user-edit-form');
-    Route::patch('/users/{user}', 'UserController@update')->name('user-profile')->middleware('AccessProvider:edit-profile, user-profile');
-    Route::delete('/users/{user}', 'UserController@destroy')->name('user-delete')->middleware('AccessProvider:delete-user, user-delete');
+    Route::get('/users', 'UserController@index')->name('users.index')->middleware('AccessProvider:see-users, users.index');
+    Route::get('/users/{user}', 'UserController@show')->name('users.show')->middleware('AccessProvider:see-users, users.show');
+    Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit')->middleware('AccessProvider:edit-profile, users.edit');
+    Route::patch('/users/{user}', 'UserController@update')->name('users.update')->middleware('AccessProvider:edit-profile, users.update');
+    Route::delete('/users/{user}', 'UserController@destroy')->name('users.delete')->middleware('AccessProvider:delete-user, users.delete');
 
-    Route::get('/roles', 'RoleController@index')->name('all-roles')->middleware('AccessProvider:see-roles, all-roles');
-    Route::get('/roles/create', 'RoleController@create')->name('role-create-form')->middleware('AccessProvider:create-roles, role-create-form');
-    Route::post('/roles', 'RoleController@store')->name('save-role')->middleware('AccessProvider:create-roles, save-role');
-    Route::get('/roles/{role}', 'RoleController@show')->name('show-role')->middleware('AccessProvider:see-roles, show-role');
-    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('role-edit-form')->middleware('AccessProvider:edit-roles, role-edit-form');
-    Route::patch('/roles/{role}', 'RoleController@update')->name('update-role')->middleware('AccessProvider:edit-roles, update-role');
-    Route::delete('/roles/{role}', 'RoleController@destroy')->name('delete-role')->middleware('AccessProvider:delete-roles, delete-role');
+    Route::get('/roles', 'RoleController@index')->name('roles.index')->middleware('AccessProvider:see-roles, roles.index');
+    Route::get('/roles/create', 'RoleController@create')->name('roles.create')->middleware('AccessProvider:create-roles, roles.create');
+    Route::post('/roles', 'RoleController@store')->name('roles.store')->middleware('AccessProvider:create-roles, roles.store');
+    Route::get('/roles/{role}', 'RoleController@show')->name('roles.show')->middleware('AccessProvider:see-roles, roles.show');
+    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit')->middleware('AccessProvider:edit-roles, roles.edit');
+    Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update')->middleware('AccessProvider:edit-roles, roles.update');
+    Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.delete')->middleware('AccessProvider:delete-roles, roles.delete');
+
+    Route::get('/permissions', 'PermissionController@index')->name('permissions.index')->middleware('AccessProvider:see-permissions, permissions.index');
+    Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create')->middleware('AccessProvider:create-permissions, permissions.create');
+    Route::post('/permissions', 'PermissionController@store')->name('permissions.store')->middleware('AccessProvider:create-permissions, permissions.store');
+    Route::get('/permissions/{permission}', 'PermissionController@show')->name('permissions.show')->middleware('AccessProvider:see-permissions, permissions.show');
+
+
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
