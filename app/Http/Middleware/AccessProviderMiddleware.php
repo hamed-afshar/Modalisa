@@ -30,7 +30,8 @@ class AccessProviderMiddleware
             return $accessProvider->userLocked();
         }
         // check permissions
-        if ($accessProvider->getPermission()) {
+        $result = $accessProvider->getPermission();
+        if ($result === true) {
             switch ($requestedPage) {
                 case 'users.index' :
                     route('users.index');
@@ -44,8 +45,8 @@ class AccessProviderMiddleware
                 case 'users.update':
                     route('users.update');
                     break;
-                case 'users.delete':
-                    route('users.delete');
+                case 'users.destroy':
+                    route('users.destroy');
                     break;
                 case 'roles.index':
                     route('roles.index');
@@ -65,8 +66,8 @@ class AccessProviderMiddleware
                 case 'roles.update':
                     route('roles.update');
                     break;
-                case 'roles.delete':
-                    route('roles.delete');
+                case 'roles.destroy':
+                    route('roles.destroy');
                     break;
                 case 'see-permissions':
                     route('permissions.index');
@@ -80,11 +81,18 @@ class AccessProviderMiddleware
                 case 'permissions.show':
                     route('permissions.show');
                     break;
-
-                default:
+                case 'permissions.edit':
+                    route('permissions.edit');
+                    break;
+                case 'permissions.update':
+                    route('permissions.update');
+                    break;
+                case 'permissions.destroy':
+                    route('permissions.destroy');
+                    break;
             }
 
-        } else {
+        } elseif ($result === false) {
             return $accessProvider->accessDenied();
         }
         return $next($request);
