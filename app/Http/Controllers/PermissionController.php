@@ -33,4 +33,26 @@ class PermissionController extends Controller
     {
         return view('permissions.show', compact('permission'));
     }
+
+    //edit form
+    public function edit(Permission $permission)
+    {
+        return view('permissions.edit', compact('permission'));
+    }
+
+    //update permission
+    public function update(Permission $permission)
+    {
+        $data = request()->validate([
+           'name' => 'required'
+        ]);
+        $permission->update($data);
+    }
+
+    //delete a permission
+    //delete a role
+    public function destroy(Permission $permission)
+    {
+        $permission->delete();
+    }
 }
