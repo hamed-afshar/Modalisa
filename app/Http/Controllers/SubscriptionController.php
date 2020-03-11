@@ -8,83 +8,55 @@ use App\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class SubscriptionController extends Controller {
+class SubscriptionController extends Controller
+{
 
-    /**
-     * Display a listing of all defined subscriptions
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index() {
-        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
-            return auth()->user()->showAccessDenied();
-        } else {
-            $subscriptionList = Subscription::all();
-            return view('subscriptions.subscriptions-list', compact('subscriptionList'));
-        }
+    // index subscriptions
+    public function index()
+    {
+        $subscriptions = Subscription::all();
+        return view('subscriptions.index', compact('subscriptions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() {
-        //
+
+    //show subscriptions create form
+    public function create()
+    {
+        return view('subscriptions.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store() {
-        //validate and persist
-        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
-            return auth()->user()->showAccessDenied();
-        } else {
-            $data = request()->validate([
-                'plan' => 'required',
-                'cost_percentage' => 'required'
-            ]);
-            Subscription::create([
-                'id' => request('id'),
-                'plan' => request('plan'),
-                'cost_percentage' => request('cost_percentage')
-            ]);
-            return redirect('subscriptions');
-        }
+    // store subscriptions
+    public function store()
+    {
+        Subscription::create(request()->validate([
+            'plan' => 'required',
+            'cost_percentage' => 'required'
+        ]));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Subscription  $subscription
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Subscription $subscription) {
-        //
+
+    // show a single subscription
+    public function show(Subscription $subscription)
+    {
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Subscription  $subscription
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Subscription $subscription) {
-        //
+    //edit form is available
+    public function edit(Subscription $subscription)
+    {
+
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Subscription  $subscription
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
-    public function update(Subscription $subscription) {
+    public
+    function update(Subscription $subscription)
+    {
         if (auth()->user()->getAccessLevel() != "SystemAdmin") {
             return auth()->user()->showAccessDenied();
         } else {
@@ -99,17 +71,21 @@ class SubscriptionController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Subscription  $subscription
+     * @param \App\Subscription $subscription
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Subscription $subscription) {
+    public
+    function destroy(Subscription $subscription)
+    {
         //
     }
 
     /** assign a subscription to a user
-     * 
+     *
      */
-    public function assignSubscription() {
+    public
+    function assignSubscription()
+    {
         if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
             return auth()->user()->showAccessDenied();
         } else {
@@ -124,14 +100,16 @@ class SubscriptionController extends Controller {
             return redirect('/user-subscription');
         }
     }
-    
+
     /** index all assigned subscriptions
-     * 
+     *
      */
-    public function indexUserSubscription() {
-        if(auth()->user()->getAccessLevel() != 'SystemAdmin') {
+    public
+    function indexUserSubscription()
+    {
+        if (auth()->user()->getAccessLevel() != 'SystemAdmin') {
             return auth()->user()->showAccessDenied();
-} else {
+        } else {
             $userSubscription = UserSubscription::all();
             return view('subscriptions.user-subscription', compact('userSubscription'));
         }
