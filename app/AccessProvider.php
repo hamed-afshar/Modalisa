@@ -62,7 +62,8 @@ class AccessProvider
      */
     public function accessDenied()
     {
-        return redirect('access-denied');
+        //return redirect('access-denied');
+        route('others.access-denied');
     }
 
     /**
