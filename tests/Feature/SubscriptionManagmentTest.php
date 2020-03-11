@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Permission;
+use App\Role;
+use App\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +16,72 @@ class SubscriptionManagmentTest extends TestCase {
     use WithFaker,
         RefreshDatabase;
 
-    /** @test */
-    public function SystemAdmin_can_define_subscription_plan() {
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $attributes = factory('App\Subscription')->raw();
-        $this->post('/subscriptions', $attributes)->assertRedirect('/subscriptions');
-        $this->assertDatabaseHas('Subscriptions', $attributes);
+    public function prepare_SystemAdmin_env($role, $request, $confirmed, $locked)
+    {
+        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
+        $role = Role::create(['id' => 1, 'name' => $role]);
+        $permission = Permission::create(['id' => 1, 'name' => $request]);
+        $userRole = $user->roles()->create(['user_id' => $user->id, 'role_id' => $role->id]);
+        $rolePermission = $role->assignedPermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $this->actingAs($user);
     }
 
     /** @test */
-    public function subscription_requires_a_plan() {
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+    public function only_SystemAdmin_can_see_subscriptions() {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1,0);
+        $subscription  = factory('App\Subscription')->create();
+        $this->get('/subscriptions')->assertSee($subscription->id);
+    }
+
+    /** @test */
+    public function form_is_available_to_create_roles()
+    {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1,0);
+        $this->get('/subscriptions/create')->assertOk();
+    }
+
+    /** @test */
+    public function only_SystemAdmin_can_create_subscription()
+    {
+
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
+        $attributes = factory('App\Subscription')->raw();
+        $this->post('/subscriptions', $attributes);
+        $this->assertDatabaseHas('subscriptions', $attributes);
+    }
+
+    /** @test */
+    public function name_is_required() {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
         $attributes = factory('App\Subscription')->raw(['plan' => '']);
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('plan');
     }
 
     /** @test */
-    public function subscription_requires_a_cost_percentage() {
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+    public function cost_percentage_is_required() {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
         $attributes = factory('App\Subscription')->raw(['cost_percentage' => '']);
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('cost_percentage');
+    }
+
+    /** @test */
+    public function only_SystemAdmin_can_vew_a_single_subscription()
+    {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1, 0);
+        factory('App\Subscription')->create();
+        $subscription = Subscription::find(1);
+        $this->get($subscription->path())->assertSee($subscription->name);
+    }
+
+    /** @test */
+    public function form_is_available_to_edit_a_subscription()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
+        factory('App\Subscription')->create();
+        $subscription = Subscription::find(1);
+        $this->get($subscription->path() . '/edit')->assertSee($subscription->name);
+
     }
 
     /** @test */
@@ -49,13 +98,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->assertEquals(20, DB::table('subscriptions')->where('id', $subscription->id)->value('cost_percentage'));
     }
 
-    /** @test */
-    public function SystemAdmin_can_see_subscription_list() {
-        $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $subscription  = factory('App\Subscription')->create();
-        $this->get('/subscriptions')->assertSee($subscription->id);
-    }
+
 
     /** @test */
     public function SystemAdmin_can_assign_a_subscription_plan_to_user() {
@@ -125,7 +168,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->post('/user-subscription')->assertRedirect('login');
         //gustes can not view users subscriptions
         $this->get('/user-subscription')->assertRedirect('login');
-        
+
     }
 
 }
