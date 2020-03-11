@@ -63,4 +63,37 @@ class PermissionManagementTest extends TestCase
         $permission = Permission::find(1);
         $this->get($permission->path())->assertSee($permission->name);
     }
+
+    /** test  */
+    /** @test */
+    public function form_is_available_to_edit_a_permission()
+    {
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
+        $permission = Permission::find(1);
+        $this->get($permission->path() . '/edit')->assertSee($permission->name);
+
+    }
+
+    /** @test */
+    public function only_SystemAdmin_can_edit_a_permission()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
+        $permission = Permission::find(1);
+        $newAttributes = [
+            'name' => 'New Name'
+        ];
+        $this->patch($permission->path(), $newAttributes);
+        $this->assertEquals($newAttributes['name'], Permission::where('id', $permission->id)->value('name'));
+    }
+
+    /** @test */
+    public function only_SystemAdmin_can_delete_a_permission()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-permissions', 1, 0);
+        $permission = Permission::find(1);
+        $this->delete($permission->path());
+        $this->assertDatabaseMissing('permissions', ['id' => $permission->id]);
+    }
 }
