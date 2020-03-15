@@ -90,6 +90,9 @@ class AccessProviderMiddleware
                 case 'permissions.destroy':
                     route('permissions.destroy');
                     break;
+                case 'subscriptions.edit':
+                    route('subscriptions.edit');
+                    break;
             }
 
         } elseif ($result === false) {
