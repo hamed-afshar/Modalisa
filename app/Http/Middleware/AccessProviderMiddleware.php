@@ -32,72 +32,9 @@ class AccessProviderMiddleware
         // check permissions
         $result = $accessProvider->getPermission();
         if ($result === true) {
-            switch ($requestedPage) {
-                case 'users.index' :
-                    route('users.index');
-                    break;
-                case 'users.show':
-                    route('users.show');
-                    break;
-                case 'users.edit':
-                    route('users.edit');
-                    break;
-                case 'users.update':
-                    route('users.update');
-                    break;
-                case 'users.destroy':
-                    route('users.destroy');
-                    break;
-                case 'roles.index':
-                    route('roles.index');
-                    break;
-                case 'roles.create':
-                    route('roles.create');
-                    break;
-                case 'roles.store':
-                    route('roles.store');
-                    break;
-                case 'roles.show':
-                    route('roles.show');
-                    break;
-                case'roles.edit':
-                    route('roles.edit');
-                    break;
-                case 'roles.update':
-                    route('roles.update');
-                    break;
-                case 'roles.destroy':
-                    route('roles.destroy');
-                    break;
-                case 'see-permissions':
-                    route('permissions.index');
-                    break;
-                case 'permissions.create':
-                    route('permissions.create');
-                    break;
-                case 'permissions.store':
-                    route('permissions.store');
-                    break;
-                case 'permissions.show':
-                    route('permissions.show');
-                    break;
-                case 'permissions.edit':
-                    route('permissions.edit');
-                    break;
-                case 'permissions.update':
-                    route('permissions.update');
-                    break;
-                case 'permissions.destroy':
-                    route('permissions.destroy');
-                    break;
-                case 'subscriptions.edit':
-                    route('subscriptions.edit');
-                    break;
-            }
-
+            return $next($request);
         } elseif ($result === false) {
             return $accessProvider->accessDenied();
         }
-        return $next($request);
     }
 }
