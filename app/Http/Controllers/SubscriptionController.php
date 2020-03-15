@@ -47,37 +47,21 @@ class SubscriptionController extends Controller
         return view('subscriptions.edit', compact('subscription'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Subscription $subscription
-     * @return \Illuminate\Http\Response
-     */
-    public
-    function update(Subscription $subscription)
+    // update a subscription
+    public function update(Subscription $subscription)
     {
-        if (auth()->user()->getAccessLevel() != "SystemAdmin") {
-            return auth()->user()->showAccessDenied();
-        } else {
-            $data = request()->validate([
-                'plan' => 'required',
-                'cost_percentage' => 'required'
-            ]);
-            $subscription->update($data);
-        }
+        $data = request()->validate([
+            'plan' => 'required',
+            'cost_percentage' => 'required'
+        ]);
+        $subscription->update($data);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Subscription $subscription
-     * @return \Illuminate\Http\Response
-     */
+    //delete a subscription
     public
     function destroy(Subscription $subscription)
     {
-        //
+        $subscription->delete();
     }
 
     /** assign a subscription to a user
