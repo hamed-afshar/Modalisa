@@ -30,7 +30,7 @@ class SubscriptionManagmentTest extends TestCase {
     public function only_SystemAdmin_can_see_subscriptions() {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1,0);
         $subscription  = factory('App\Subscription')->create();
-        $this->get('/subscriptions')->assertSee($subscription->id);
+        $this->get('/subscriptions')->assertSeeText($subscription->id);
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
         $attributes = factory('App\Subscription')->raw();
         $this->post('/subscriptions', $attributes);
-        $this->assertDatabaseHas('subscriptions', $attributes);
+        $this->assertDatabaseHas('subscriptions', e$attributes);
     }
 
     /** @test */
@@ -81,7 +81,6 @@ class SubscriptionManagmentTest extends TestCase {
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
         $this->get($subscription->path() . '/edit')->assertSee($subscription->plan);
-//        $this->get('/subscriptions/1/edit')->assertSee($subscription->plan);
     }
 
     /** @test */
