@@ -12,10 +12,10 @@ class AccessProviderMiddleware
      *
      * @param \Illuminate\Http\Request $request
      * @param \Closure $next
-     * @param $role
+     * @param $requestedAccess
      * @return mixed
      */
-    public function handle($request, Closure $next, $requestedAccess, $requestedPage)
+    public function handle($request, Closure $next, $requestedAccess)
     {
         $accessProvider = new AccessProvider($request->user()->id, $requestedAccess);;
 
