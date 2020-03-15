@@ -38,7 +38,7 @@ class SubscriptionController extends Controller
     // show a single subscription
     public function show(Subscription $subscription)
     {
-
+        return view('subscriptions.show', compact('subscription'));
     }
 
     //edit form is available
