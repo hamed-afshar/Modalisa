@@ -70,7 +70,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1, 0);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
-        $this->get($subscription->path())->assertSee($subscription->name);
+        $this->get($subscription->path())->assertSeeText($subscription->plan);
     }
 
     /** @test */
@@ -80,12 +80,8 @@ class SubscriptionManagmentTest extends TestCase {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
-        //$this->get($subscription->path() . '/edit')->assertSee($subscription->plan);
-        $this->get('/subscriptions/1/edit')->assertSee($subscription->plan);
-
-//        $this->get($subscription->path() . '/edit')->assertOk();
-
-
+        $this->get($subscription->path() . '/edit')->assertSee($subscription->plan);
+//        $this->get('/subscriptions/1/edit')->assertSee($subscription->plan);
     }
 
     /** @test */
