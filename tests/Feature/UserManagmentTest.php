@@ -150,6 +150,7 @@ class UserManagementTest extends TestCase
         $this->prepare_other_users_env('retailer', 'submit-orders', 1, 0);
         $user = User::find(1);
         $this->delete($user->path())->assertRedirect('/access-denied');
+
     }
 
     /** @test */
