@@ -2,6 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\AccessProvider;
+use App\Permission;
+use App\Role;
+use App\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
