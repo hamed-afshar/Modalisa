@@ -42,7 +42,9 @@ class UserManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
         $user = User::find(1)->first();
-        $this->get('/users')->assertSee($user->name);
+        $this->get('/users')->assertSeeText($user->name);
+
+
     }
 
     /** @test */
