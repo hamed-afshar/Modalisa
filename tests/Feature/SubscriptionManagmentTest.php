@@ -47,7 +47,7 @@ class SubscriptionManagmentTest extends TestCase {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
         $attributes = factory('App\Subscription')->raw();
         $this->post('/subscriptions', $attributes);
-        $this->assertDatabaseHas('subscriptions', e$attributes);
+        $this->assertDatabaseHas('subscriptions', $attributes);
     }
 
     /** @test */
@@ -76,7 +76,6 @@ class SubscriptionManagmentTest extends TestCase {
     /** @test */
     public function form_is_available_to_edit_a_subscription()
     {
-        $this->withoutExceptionHandling();
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
@@ -85,18 +84,26 @@ class SubscriptionManagmentTest extends TestCase {
 
     /** @test */
     public function SystemAdmin_can_edit_subscription_plan() {
-        $this->withoutExceptionHandling();
-        $user = factory('App\User')->create();
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1,0);
         $subscription = factory('App\Subscription')->create();
-        $this->patch('/subscriptions/' . $subscription->id, [
+        $this->patch($subscription->path(), [
             'plan' => 'Gold',
             'cost_percentage' => 20,
         ]);
-        $this->assertEquals('Gold', DB::table('subscriptions')->where('id', $subscription->id)->value('plan'));
-        $this->assertEquals(20, DB::table('subscriptions')->where('id', $subscription->id)->value('cost_percentage'));
+        $this->assertEquals('Gold', Subscription::where('id', $subscription->id)->value('plan'));
+        $this->assertEquals(20, Subscription::where('id', $subscription->id)->value('cost_percentage'));
     }
 
+    /** @test */
+    public function only_SystemAdmin_can_delete_a_subscription()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-subscriptions', 1, 0);
+        factory('App\Subscription')->create();
+        $subscription = Subscription::find(1);
+        $this->delete($subscription->path());
+        $this->assertDatabaseMissing('subscriptions', ['id' => $subscription->id]);
+    }
 
 
     /** @test */
@@ -127,13 +134,6 @@ class SubscriptionManagmentTest extends TestCase {
         $this->post('/user-subscription', $attributes)->assertSessionHasErrors('subscription_id');
     }
 
-    /** @test */
-    public function SystemAdmin_can_view_users_subscription() {
-        $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create(['access_level' => 'SystemAdmin']));
-        $userSubscription = factory('App\UserSubscription')->create();
-        $this->get('/user-subscription')->assertSee($userSubscription->user_id);
-    }
 
     /** @test */
     public function other_users_can_not_access_subscription_system() {
