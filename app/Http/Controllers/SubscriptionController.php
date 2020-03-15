@@ -44,7 +44,7 @@ class SubscriptionController extends Controller
     //edit form is available
     public function edit(Subscription $subscription)
     {
-
+        return view('subscriptions.edit', compact('subscription'));
     }
 
     /**
