@@ -94,5 +94,11 @@ class UserController extends Controller
         return redirect('/locked');
     }
 
+    //show access denied
+    public function  showAccessDenied()
+    {
+        return redirect('others.access-denied');
+    }
+
 
 }
