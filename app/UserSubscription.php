@@ -6,5 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserSubscription extends Model
 {
-    protected $fillable = ['user_id','subscription_id'];
+    protected $guarded = [];
+
+    //belongs to subscription
+    public function owner()
+    {
+       return $this->belongsTo('App\subscription')->withDefault();
+    }
+
 }
