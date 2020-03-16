@@ -18,8 +18,8 @@ class CreateUserSubscriptionsTable extends Migration {
             $table->unsignedBigInteger('subscription_id');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade');
-            $table->foreign('subscription_id')->references('id')->on('subscriptions')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('subscription_id')->references('id')->on('subscriptions')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
