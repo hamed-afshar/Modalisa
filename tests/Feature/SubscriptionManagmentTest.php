@@ -105,6 +105,13 @@ class SubscriptionManagmentTest extends TestCase {
         $this->assertDatabaseMissing('subscriptions', ['id' => $subscription->id]);
     }
 
+    /** @test */
+    public function UserSubscription_belongs_to_subscription() {
+        $this->withoutExceptionHandling();
+        $userSubscription = factory('App\UserSubscription')->create();
+        $this->assertInstanceOf('App\Subscription', $userSubscription->owner);
+    }
+
 
     /** @test */
     public function SystemAdmin_can_assign_a_subscription_plan_to_user() {
