@@ -9,7 +9,7 @@ class Subscription extends Model
 {
     protected $guarded = [];
 
-    // each subscription has many assigned users
+    // each susbscription has many assigned users
     public function userSubscriptions()
     {
         return $this->hasMany('App\UserSubscription');
