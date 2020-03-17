@@ -29,6 +29,7 @@ class RoleController extends Controller
         Role::create(request()->validate([
             'name' => 'required'
         ]));
+        return redirect()->route('roles.index');
     }
 
     //show a single role
@@ -50,12 +51,14 @@ class RoleController extends Controller
             'name' => 'required',
         ]);
         $role->update($data);
+        return redirect()->route('roles.show', $role);
     }
 
     //delete a role
     public function destroy(Role $role)
     {
         $role->delete();
+        return redirect()->route('roles.index');
     }
 
 
