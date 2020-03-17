@@ -8,6 +8,12 @@ class Role extends Model
 {
     protected $guarded = [];
 
+    //each role assigned to one user
+    public function userRole()
+    {
+        return $this->hasOne('App\UserRole');
+    }
+
     //each role has many assigned permissions
     public function assignedPermissions()
     {
