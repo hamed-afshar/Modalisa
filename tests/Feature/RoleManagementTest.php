@@ -55,7 +55,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1, 0);
         $attributes = factory('App\Role')->raw();
-        $this->post('/roles', $attributes);
+        $this->post('/roles', $attributes)->assertRedirect('/roles');
         $this->assertDatabaseHas('roles', $attributes);
     }
 
@@ -73,7 +73,6 @@ class RoleManagementTest extends TestCase
         $this->prepare_SystemAdmin_env('SystemAdmin', 'see-roles', 1, 0);
         $role = Role::find(1);
         $this->get($role->path())->assertSee($role->name);
-
     }
 
     /** @test */
@@ -82,18 +81,17 @@ class RoleManagementTest extends TestCase
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $role = Role::find(1);
         $this->get($role->path() . '/edit')->assertSee($role->name);
-
     }
 
     /** @test */
-    public function only_SystemAdmin_can_edit_a_role()
+    public function only_SystemAdmin_can_update_a_role()
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $role = Role::find(1);
         $newAttributes = [
             'name' => 'New Name'
         ];
-        $this->patch($role->path(), $newAttributes);
+        $this->patch($role->path(), $newAttributes)->assertRedirect($role->path());
         $this->assertEquals($newAttributes['name'], Role::where('id', $role->id)->value('name'));
     }
 
@@ -102,8 +100,15 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-roles', 1, 0);
         $role = Role::find(1);
-        $this->delete($role->path());
+        $this->delete($role->path())->assertRedirect('/roles');
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
+    }
+
+    /** @test */
+    public function UserRole_belongs_to_one_role()
+    {
+        $userRole = factory('App\UserRole')->create();
+        $this->assertInstanceOf('App\Role', $userRole->roleOwner);
     }
 
 
