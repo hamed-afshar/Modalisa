@@ -53,7 +53,7 @@ class SubscriptionController extends Controller
     {
         $data = request()->validate([
             'plan' => 'required',
-            'cost_percentage' => 'required'
+            'cost_percentage' => 'required|integer'
         ]);
         $subscription->update($data);
         return redirect()->route('subscriptions.show', $subscription);
