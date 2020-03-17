@@ -14,4 +14,10 @@ class UserSubscription extends Model
        return $this->belongsTo('App\subscription')->withDefault();
     }
 
+    //return a path to a subscription
+    public function path()
+    {
+        return "/user-subscriptions/{$this->id}";
+    }
+
 }
