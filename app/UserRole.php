@@ -14,10 +14,15 @@ class UserRole extends Model
         return $this->belongsTo('App\Role')->withDefault();
     }
 
-    //each role belongs to one user
-    public function user()
+    //each user has one role
+    public function userOwner()
     {
-        return $this->hasOne('App\user');
+        return $this->belongsTo('App\User')->withDefault();
     }
 
+    //return a path
+    public function path()
+    {
+        return '/user-roles/' . $this->id;
+    }
 }
