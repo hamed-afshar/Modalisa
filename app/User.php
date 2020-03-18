@@ -47,7 +47,7 @@ class User extends Authenticatable {
     }
 
     //each user has one role
-    public function roles()
+    public function role()
     {
         return $this->hasOne('App\UserRole');
     }
