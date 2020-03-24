@@ -8,8 +8,18 @@ class RolePermission extends Model
 {
     protected $guarded = [];
 
-    public function role()
+    public function roleOwner()
     {
-        return $this->belongsTo('App\Role');
+        return $this->belongsTo('App\Role')->withDefault();
+    }
+
+    public function permissionOwner()
+    {
+        return $this->belongsTo('App\Permission')->withDefault();
+    }
+
+    public function path()
+    {
+        return "/role-permissions/{$this->id}";
     }
 }
