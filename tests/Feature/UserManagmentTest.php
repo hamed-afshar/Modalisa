@@ -22,7 +22,7 @@ class UserManagementTest extends TestCase
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->assignedPermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
         $this->actingAs($user);
     }
 
@@ -32,7 +32,7 @@ class UserManagementTest extends TestCase
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->assignedPermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
         $this->actingAs($user);
     }
 
