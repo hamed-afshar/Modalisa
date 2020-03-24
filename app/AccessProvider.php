@@ -50,7 +50,7 @@ class AccessProvider
         }
         if ($this->requestID == null) {
             return false;
-        } elseif (Role::find($this->role)->assignedPermissions->where('permission_id', $this->requestID)->first() != null) {
+        } elseif (Role::find($this->role)->rolePermissions->where('permission_id', $this->requestID)->first() != null) {
             return true;
         } else {
             return false;
