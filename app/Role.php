@@ -15,7 +15,7 @@ class Role extends Model
     }
 
     //each role has many assigned permissions
-    public function assignedPermissions()
+    public function rolePermissions()
     {
         return $this->hasMany('App\RolePermission');
     }
