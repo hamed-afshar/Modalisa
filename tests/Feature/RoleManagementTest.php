@@ -21,7 +21,7 @@ class RoleManagementTest extends TestCase
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->assignedPermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
         $this->actingAs($user);
     }
 
@@ -31,7 +31,7 @@ class RoleManagementTest extends TestCase
         $role = Role::create(['id' => 1, 'name' => $role]);
         $permission = Permission::create(['id' => 1, 'name' => $request]);
         $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->assignedPermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
         $this->actingAs($user);
     }
 
@@ -194,7 +194,6 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function SystemAdmin_can_delete_a_role_assigned_to_user()
     {
-        $this->withoutExceptionHandling();
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $userRole = factory('App\UserRole')->create();
         $this->delete($userRole->path())->assertRedirect('/user-roles');
@@ -206,21 +205,45 @@ class RoleManagementTest extends TestCase
     public function other_users_can_not_access_role_management()
     {
         $this->prepare_other_users_env('retailer', 'submit-orders',1,0);
-        $attributes = factory('App\Role')->raw();
-        $this->post('/roles', $attributes)->assertRedirect('/access-denied');
-        $this->get('/roles/create')->assertRedirect('/access-denied');
+        $role = factory('App\Role')->create();
+        $userRole = factory('App\UserRole')->create();
         $this->get('/roles')->assertRedirect('/access-denied');
-        $this->get('/roles/1')->assertRedirect('/access-denied');
-        $this->get('/roles/1/edit')->assertRedirect('/access-denied');
+        $this->get('/roles/create')->assertRedirect('/access-denied');
+        $this->post('/roles')->assertRedirect('/access-denied');
+        $this->get($role->path())->assertRedirect('/access-denied');
+        $this->get($role->path() .'/edit')->assertRedirect('/access-denied');
+        $this->patch($role->path())->assertRedirect('/access-denied');
+        $this->delete($role->path())->assertRedirect('/access-denied');
+
+        $this->get('/user-roles')->assertRedirect('/access-denied');
+        $this->get('/user-roles/create')->assertRedirect('/access-denied');
+        $this->post('/user-roles')->assertRedirect('/access-denied');
+        $this->get($userRole->path())->assertRedirect('/access-denied');
+        $this->get($userRole->path() .'/edit')->assertRedirect('/access-denied');
+        $this->patch($userRole->path())->assertRedirect('/access-denied');
+        $this->delete($userRole->path())->assertRedirect('/access-denied');
+
     }
 
     /** @test */
     public function guests_can_not_access_role_management()
     {
-        $this->post('/roles')->assertRedirect('login');
-        $this->get('/roles/create')->assertRedirect('login');
+        $role = factory('App\Role')->create();
+        $userRole = factory('App\UserRole')->create();
         $this->get('/roles')->assertRedirect('login');
-        $this->get('/roles/1')->assertRedirect('login');
-        $this->get('/roles/1/edit')->assertRedirect('login');
+        $this->get('/roles/create')->assertRedirect('login');
+        $this->post('/roles')->assertRedirect('login');
+        $this->get($role->path())->assertRedirect('login');
+        $this->get($role->path() . '/edit')->assertRedirect('login');
+        $this->patch($role->path())->assertRedirect('login');
+        $this->delete($role->path())->assertRedirect('login');
+
+        $this->get('/user-roles')->assertRedirect('login');
+        $this->get('/user-roles/create')->assertRedirect('login');
+        $this->post('/user-roles')->assertRedirect('login');
+        $this->get($userRole->path())->assertRedirect('login');
+        $this->get($userRole->path() . '/edit')->assertRedirect('login');
+        $this->patch($userRole->path())->assertRedirect('login');
+        $this->delete($userRole->path())->assertRedirect('login');
     }
 }
