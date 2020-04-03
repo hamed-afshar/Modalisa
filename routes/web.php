@@ -74,13 +74,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
 
-
-
-
-
-
-
-
     Route::get('/home', 'HomeController@index')->name('home');
 });
 
