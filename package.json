@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "npm-watch": "^0.6.0",
         "tailwindcss": "^1.2.0"
     }
 }
