@@ -20,17 +20,11 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-       <nav class="flex justify-between bg-gray-200 px-12 py-6">
-           <div>
-               <h1 style="font-size: 40px" class="text-gray-900 font-extrabold"> Modalisa </h1>
-           </div>
-           <div class="lg:flex">
-               <a href = "#" class="inline-block bg-blue-400 p-6"> Sign In</a>
-           </div>
-       </nav>
-
-
+<div id="app">
+    <div class="bg-gray-200 py-1 shadow-lg">
+        <h1 class="text-gray-800 text-md font-weight-bold font-extrabold text-center"> Modalisa </h1>
     </div>
+</div>
+@yield('content')
 </body>
 </html>
