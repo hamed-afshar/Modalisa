@@ -82,5 +82,11 @@ Route::delete('/orders', 'OrdersController@destroy');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/welcome', function () {
+    return view('welcome');
+});
+
+Route::get('/retailer', function () {
+    return view('retailer');
+});
 
