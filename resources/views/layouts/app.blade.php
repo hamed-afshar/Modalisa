@@ -19,12 +19,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body>
-<div id="app">
-    <div class="bg-gray-200 py-1 shadow-lg">
-        <h1 class="text-gray-800 text-md font-weight-bold font-extrabold text-center"> Modalisa </h1>
-    </div>
-</div>
+<body class="bg-gray-100">
 @yield('content')
 </body>
 </html>
