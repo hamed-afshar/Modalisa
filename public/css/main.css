@@ -14040,6 +14040,35 @@ video {
           transition-duration: 1000ms;
 }
 
+.top-navbar-item {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom-width: 2px;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.top-navbar-item:hover {
+  border-color: #38a169;
+  color: #38a169;
+}
+
+.info-button {
+  background-color: #48bb78;
+  color: #fff;
+  font-weight: 500;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+}
+
+.info-button:hover {
+  background-color: #38a169;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;
@@ -67715,5 +67744,3 @@ video {
             transition-duration: 1000ms;
   }
 }
-
-
