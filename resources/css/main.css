@@ -2,16 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap');
+
+.h-96 {
+    height: 24rem;
+}
+
+.logo-large {
+    font-family: 'IM Fell French Canon SC', serif;
+    font-size: 50px;
+}
+
+.logo-medium {
+    font-family: 'IM Fell French Canon SC', serif;
+    font-size: 35px;
+}
+
+.logo-small {
+    font-family: 'IM Fell French Canon SC', serif;
+    font-size: 20px;
+}
+
+
 .top-navbar-item {
     @apply .text-sm .font-semibold .pb-2 .border-b-2 .border-solid .border-transparent;
 }
 
 .top-navbar-item:hover {
-    @apply .border-green-600 .text-green-600;
+    @apply .border-pink-600 .text-pink-600;
 }
 
 .info-button {
-    @apply .bg-green-500 .text-white .font-medium .py-2 .px-4 .rounded-lg;
+    @apply .bg-green-500 .text-white .font-medium .py-1 .px-4 .rounded-lg;
 }
 
 .info-button:hover {
