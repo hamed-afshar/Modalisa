@@ -1,4 +1,4 @@
-/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
+@import url(https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap);/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document
    ========================================================================== */
@@ -14040,6 +14040,25 @@ video {
           transition-duration: 1000ms;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
+.logo-large {
+  font-family: 'IM Fell French Canon SC', serif;
+  font-size: 50px;
+}
+
+.logo-medium {
+  font-family: 'IM Fell French Canon SC', serif;
+  font-size: 35px;
+}
+
+.logo-small {
+  font-family: 'IM Fell French Canon SC', serif;
+  font-size: 20px;
+}
+
 .top-navbar-item {
   font-size: 0.875rem;
   font-weight: 600;
@@ -14050,16 +14069,16 @@ video {
 }
 
 .top-navbar-item:hover {
-  border-color: #38a169;
-  color: #38a169;
+  border-color: #d53f8c;
+  color: #d53f8c;
 }
 
 .info-button {
   background-color: #48bb78;
   color: #fff;
   font-weight: 500;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
   padding-left: 1rem;
   padding-right: 1rem;
   border-radius: 0.5rem;
