@@ -14088,6 +14088,39 @@ video {
   background-color: #38a169;
 }
 
+.label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.input-text {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background-color: #e2e8f0;
+  display: block;
+  border-width: 1px;
+  line-height: 1.25;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  color: #4a5568;
+}
+
+.input-text:focus {
+  outline: 0;
+  background-color: #fff;
+  border-color: #d53f8c
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;
@@ -67763,3 +67796,4 @@ video {
             transition-duration: 1000ms;
   }
 }
+
