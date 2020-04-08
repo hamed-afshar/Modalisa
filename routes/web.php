@@ -90,3 +90,7 @@ Route::get('/retailer', function () {
     return view('retailer');
 });
 
+Route::get('/create2', function () {
+    return view('users.create2');
+});
+
