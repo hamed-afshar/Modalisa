@@ -8,6 +8,7 @@
     height: 24rem;
 }
 
+
 .logo-large {
     font-family: 'IM Fell French Canon SC', serif;
     font-size: 50px;
@@ -25,17 +26,30 @@
 
 
 .top-navbar-item {
-    @apply .text-sm .font-semibold .pb-2 .border-b-2 .border-solid .border-transparent;
+    @apply text-sm font-semibold pb-2 border-b-2 border-solid border-transparent;
 }
 
 .top-navbar-item:hover {
-    @apply .border-pink-600 .text-pink-600;
+    @apply border-pink-600 text-pink-600;
 }
 
 .info-button {
-    @apply .bg-green-500 .text-white .font-medium .py-1 .px-4 .rounded-lg;
+    @apply bg-green-500 text-white font-medium py-1 px-4 rounded-lg;
 }
 
 .info-button:hover {
-    @apply .bg-green-600;
+    @apply bg-green-600;
 }
+
+.label {
+    @apply block font-bold mb-1 py-1 text-gray-700 text-sm;
+}
+
+.input-text {
+    @apply appearance-none bg-gray-300 block border leading-tight py-1 px-2 rounded shadow text-gray-700;
+}
+
+.input-text:focus {
+    @apply outline-none bg-white border-pink-600
+}
+
