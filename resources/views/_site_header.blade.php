@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('content')
     <div class="bg-white shadow-lg">
-        <div class="container bg-white flex flex-wrap mx-auto p-4">
-            <div class="w-1/2">
+        <div class="container grid grid-cols-1 md:grid-cols-2 bg-white mx-auto p-4">
+            <div>
                 <h1 class="logo-medium"> Modalisa </h1>
             </div>
-            <div class="flex-wrap md:flex justify-end">
-                <button class="info-button w-full md:w-1/2"> Login </button>
-                <button class="info-button w-full md:w-1/2 ml-2"> Sign Up </button>
+            <div class="flex flex-wrap justify-end">
+                <button class="info-button md:w-1/4 lg:w-1/6 w-full block"> Login </button>
+                <button class="info-button mt-2 md:mt-0 md:ml-2 w-full md:w-1/4 lg:w-1/6"> Sign Up </button>
             </div>
         </div> <!-- end container -->
     </div>
