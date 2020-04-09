@@ -53,7 +53,7 @@
 }
 
 .label {
-    @apply block font-bold mb-1 py-1 text-gray-700 text-sm;
+    @apply block font-bold text-gray-700 text-sm;
 }
 
 .input {
