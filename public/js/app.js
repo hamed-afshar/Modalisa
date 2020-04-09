@@ -49661,8 +49661,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\Hamed\PhpstormProjects\Modalisa\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\Hamed\PhpstormProjects\Modalisa\resources\css\main.css */"./resources/css/main.css");
+__webpack_require__(/*! C:\Users\shadi\Documents\GitHub\Modalisa\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\shadi\Documents\GitHub\Modalisa\resources\css\main.css */"./resources/css/main.css");
 
 
 /***/ })
