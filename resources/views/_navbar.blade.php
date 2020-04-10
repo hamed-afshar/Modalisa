@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="bg-white shadow-lg">
+    <div class="bg-white shadow-2xl">
         <div class="bg-white container mx-auto p-2">
             <div class="flex flex-wrap">
                 <div class="w-full">
