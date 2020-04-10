@@ -14191,6 +14191,24 @@ video {
   border-color: #d53f8c;
 }
 
+.box {
+  background-color: #fff;
+  color: #a0aec0;
+  border-width: 1px;
+  border-radius: 0.5rem;
+  height: 12rem;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.box-item {
+  color: #d53f8c;
+}
+
+.box-item:hover {
+  color: #97266d;
+}
+
 @media (min-width: 640px) {
   .sm\:sr-only {
     position: absolute;

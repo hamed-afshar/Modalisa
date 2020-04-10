@@ -25,55 +25,67 @@
 
 
 .top-navbar-item {
-    @apply text-sm font-semibold pb-2 border-b-2 border-solid border-transparent;
+    @apply .text-sm .font-semibold .pb-2 .border-b-2 .border-solid .border-transparent;
 }
 
 .top-navbar-item:hover {
-    @apply border-pink-600 text-pink-600;
+    @apply .border-pink-600 .text-pink-600;
 }
 
 .btn {
-    @apply text-white font-medium py-3 px-4 rounded-lg;
+    @apply .text-white .font-medium .py-3 .px-4 .rounded-lg;
 }
 
 .btn-pink {
-    @apply btn bg-pink-600;
+    @apply .btn .bg-pink-600;
 }
 
 .btn-pink:hover {
-    @apply bg-pink-800;
+    @apply .bg-pink-800;
 }
 
 .btn-green {
-    @apply btn bg-green-500;
+    @apply .btn .bg-green-500;
 }
 
 .btn-green:hover {
-    @apply bg-green-600;
+    @apply .bg-green-600;
 }
 
 .label {
-    @apply block font-bold text-gray-700 text-sm;
+    @apply .block .font-bold .text-gray-700 .text-sm;
 }
 
 .input {
-    @apply appearance-none bg-gray-300 border rounded leading-tight py-2 px-2 shadow;
+    @apply .appearance-none .bg-gray-300 .border .rounded .leading-tight .py-2 .px-2 .shadow;
 }
 
 .input-text {
-    @apply input text-gray-700;
+    @apply .input .text-gray-700;
 }
 
 .input-text:focus {
-    @apply outline-none bg-white border-pink-600;
+    @apply .outline-none .bg-white .border-pink-600;
 }
 
 .input-option {
-    @apply input text-gray-700;
+    @apply .input .text-gray-700;
 }
 
 .input-option:hover {
-    @apply input outline-none bg-white border-pink-600;
+    @apply .input .outline-none .bg-white .border-pink-600;
+}
+
+.box {
+    @apply .bg-white .text-gray-500 .border .rounded-lg .h-48 .p-2 .cursor-pointer;
+}
+
+.box-item {
+    @apply .text-pink-600;
+}
+
+.box-item:hover {
+    @apply .text-pink-800;
 }
 
 
