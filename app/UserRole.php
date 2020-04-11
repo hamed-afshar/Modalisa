@@ -23,6 +23,6 @@ class UserRole extends Model
     //return a path
     public function path()
     {
-        return '/user-roles/' . $this->id;
+        return '/user/roles/' . $this->id;
     }
 }
