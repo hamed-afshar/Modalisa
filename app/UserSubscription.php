@@ -17,7 +17,7 @@ class UserSubscription extends Model
     //return a path to a subscription
     public function path()
     {
-        return "/user-subscriptions/{$this->id}";
+        return "/user/subscriptions/{$this->id}";
     }
 
 }

@@ -28,6 +28,7 @@ class UserRoleController extends Controller
             'role_id' => 'required'
         ]));
         return redirect()->route('user-roles.index');
+
     }
 
     //show a single role assigned to a user

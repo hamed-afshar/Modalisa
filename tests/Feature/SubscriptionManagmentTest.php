@@ -17,16 +17,6 @@ class SubscriptionManagmentTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    public function prepare_SystemAdmin_env($role, $request, $confirmed, $locked)
-    {
-        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
-        $role = Role::create(['id' => 1, 'name' => $role]);
-        $permission = Permission::create(['id' => 1, 'name' => $request]);
-        $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
-        $this->actingAs($user);
-    }
-
     /** @test */
     public function only_SystemAdmin_can_see_subscriptions()
     {
@@ -121,14 +111,14 @@ class SubscriptionManagmentTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         $userSubscription = factory('App\UserSubscription')->create();
-        $this->get('/user-subscriptions')->assertSeeTextInOrder(array($userSubscription->user_id, $userSubscription->subscription_id));
+        $this->get('/user/subscriptions')->assertSeeTextInOrder(array($userSubscription->user_id, $userSubscription->subscription_id));
     }
 
     /** @test */
     public function form_is_available_to_assign_a_subscription_to_user()
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
-        $this->get('/user-subscriptions/create')->assertOk();
+        $this->get('/user/subscriptions/create')->assertOk();
     }
 
     /** @test */
@@ -141,7 +131,7 @@ class SubscriptionManagmentTest extends TestCase
             'user_id' => $user->id,
             'subscription_id' => $subscription->id,
         ];
-        $this->post('/user-subscriptions', $attributes)->assertRedirect('/user-subscriptions');
+        $this->post('/user/subscriptions', $attributes)->assertRedirect('/user/subscriptions');
         $this->assertDatabaseHas('user_subscriptions', $attributes);
     }
 
@@ -150,7 +140,7 @@ class SubscriptionManagmentTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         $attributes = factory('App\UserSubscription')->raw(['user_id' => '']);
-        $this->post('/user-subscriptions', $attributes)->assertSessionHasErrors('user_id');
+        $this->post('/user/subscriptions', $attributes)->assertSessionHasErrors('user_id');
     }
 
     /** @test */
@@ -158,7 +148,7 @@ class SubscriptionManagmentTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         $attributes = factory('App\UserSubscription')->raw(['subscription_id' => '']);
-        $this->post('/user-subscriptions', $attributes)->assertSessionHasErrors('subscription_id');
+        $this->post('/user/subscriptions', $attributes)->assertSessionHasErrors('subscription_id');
     }
 
     /** @test */
@@ -199,7 +189,7 @@ class SubscriptionManagmentTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
         $userSubscription = factory('App\UserSubscription')->create();
-        $this->delete($userSubscription->path())->assertRedirect('/user-subscriptions');
+        $this->delete($userSubscription->path())->assertRedirect('/user/subscriptions');
         $this->assertDatabaseMissing('user_subscriptions', ['id' => $userSubscription->id]);
     }
 
@@ -226,11 +216,11 @@ class SubscriptionManagmentTest extends TestCase
         $this->delete($subscription->path())->assertRedirect('/access-denied');
 
         //other users can not see user-subscriptions list
-        $this->get('/user-subscriptions')->assertRedirect('/access-denied');
+        $this->get('/user/subscriptions')->assertRedirect('/access-denied');
         //other users can not see user-subscriptions creation form
-        $this->get('/user-subscriptions/create')->assertRedirect('/access-denied');
+        $this->get('/user/subscriptions/create')->assertRedirect('/access-denied');
         //other users can not make a user-subscriptions
-        $this->post('/user-subscriptions')->assertRedirect('/access-denied');
+        $this->post('/user/subscriptions')->assertRedirect('/access-denied');
         //other users can not see a single user subscription
         $this->get($userSubscription->path())->assertRedirect('/access-denied');
         //other users can not see edit user-subscriptions form
@@ -263,11 +253,11 @@ class SubscriptionManagmentTest extends TestCase
         $this->delete($subscription->path())->assertRedirect('login');
 
         //guests can not see user-subscription list
-        $this->get('/user-subscriptions')->assertRedirect('login');
+        $this->get('/user/subscriptions')->assertRedirect('login');
         //guests can not see user-subscription creation form
-        $this->get('/user-subscriptions/create')->assertRedirect('login');
+        $this->get('/user/subscriptions/create')->assertRedirect('login');
         //guests can not make user-subscription
-        $this->post('/user-subscriptions')->assertRedirect('login');
+        $this->post('/user/subscriptions')->assertRedirect('login');
         //guests can not see a single user-subscription
         $this->get($userSubscription->path())->assertRedirect('login');
         //guests can not see user-subscription edit form

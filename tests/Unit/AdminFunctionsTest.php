@@ -13,6 +13,12 @@ use Tests\TestCase;
 class AdminFunctionsTest extends TestCase
 {
     /** @test */
+    public function SystemAdmin_can_assign_a_role_to_user()
+    {
+
+    }
+
+    /** @test */
     public function form_is_available_to_edit_users()
     {
 
