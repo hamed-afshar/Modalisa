@@ -18,7 +18,7 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-    //create user form
+    //form to create a user
     public function create()
     {
         return view('users.create');
@@ -46,29 +46,22 @@ class UserController extends Controller
             'country' => request('country'),
             'communication_media' => request('communication_media')
         ]);
-        return redirect('/pending-for-confirmation');
+        return redirect()->route('pending');
     }
 
-    //function to show pending-for-confirmation-page
-    public function showPendingForConfirmation()
-    {
-        return view('others.pending-for-confirmation');
-    }
-
-    //show a single user
+    //systemadmin can see a single user
     public function show(User $user)
     {
         return view('users.show', compact('user'));
     }
 
-    //user edit form
+    //edit form is available to edit a user
     public function edit(User $user)
     {
         return view('users.edit', compact('user'));
     }
 
-
-    //Edit user's profile
+    //update a user information
     public function update(User $user)
     {
         $data = request()->validate([
@@ -82,23 +75,15 @@ class UserController extends Controller
         $user->update($data);
     }
 
-// Remove user from db
+// delete a user
     public function destroy(User $user)
     {
-        $user->delete();
+        return redirect('access-denied');
     }
 
-    //lock users
-    public function showLocked()
+//show pending for confirmation page
+    public function pending()
     {
-        return redirect('/locked');
+        return view('/others/pending-for-confirmation');
     }
-
-    //show access denied
-    public function  showAccessDenied()
-    {
-        return redirect('others.access-denied');
-    }
-
-
 }
