@@ -8,7 +8,7 @@
                     Register
                 </div>
             </div>
-            <form method="POST" action="{{route('users.create')}}" class="bg-white shadow-md rounded px-8 py-8">
+            <form method="POST" action="{{ route('users.store')}}" class="bg-white shadow-md rounded px-8 py-8">
                 @csrf
                 <div class="flex flex-wrap mb-6 mt-6">
                     <div class="w-full lg:w-1/3">
@@ -33,7 +33,7 @@
                         <label class="label mb-1 py-1" for="mobile"> {{  __('Mobile')  }}</label>
                     </div>
                     <div class="w-full lg:w-2/3">
-                        <input class="input-text w-full" type="tel" id="mobile" name="mobile"
+                        <input class="input-text w-full" type="tel" id="tel" name="tel"
                                placeholder="00989123463474">
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     <div class="w-full lg:w-2/3">
                         <select
                             class="input-option w-full"
-                            id="media" name="media">
+                            id="communication_media" name="communication_media">
                             <option disabled selected>Communication Media</option>
                             <option value="Iran"> Whatsapp</option>
                             <option value="Turkey"> Telegram</option>
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div class="flex">
-                    <button class="btn-pink uppercase shadow-xl w-full">Signup</button>
+                    <button class="btn-pink uppercase shadow-xl w-full" type="submit">Signup</button>
                 </div>
                 <div class="flex justify-center mt-2 w-full">
                     <div class="label pt-2">Alredy have an account?</div>
