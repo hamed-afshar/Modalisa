@@ -106,14 +106,14 @@ class PermissionManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
         $rolePermission = factory('App\RolePermission')->create();
-        $this->get('role-permissions')->assertSeeTextInOrder(array($rolePermission->id, $rolePermission->user_id, $rolePermission->permission_id));
+        $this->get('role/permissions')->assertSeeTextInOrder(array($rolePermission->id, $rolePermission->user_id, $rolePermission->permission_id));
     }
 
     /** @test */
     public function form_is_available_to_assigned_a_permission_to_role()
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
-        $this->get('/role-permissions')->assertOk();
+        $this->get('/role/permissions')->assertOk();
     }
 
     /** @test */
@@ -121,7 +121,7 @@ class PermissionManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
         $attributes = factory('App\RolePermission')->raw();
-        $this->post('/role-permissions', $attributes)->assertRedirect('/role-permissions');
+        $this->post('/role/permissions', $attributes)->assertRedirect('/role/permissions');
         $this->assertDatabaseHas('role_permissions', $attributes);
     }
 
@@ -130,7 +130,7 @@ class PermissionManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
         $attributes = factory('App\RolePermission')->raw(['role_id' => '']);
-        $this->post('/role-permissions', $attributes)->assertSessionHasErrors('role_id');
+        $this->post('/role/permissions', $attributes)->assertSessionHasErrors('role_id');
     }
 
     /** @test */
@@ -138,7 +138,7 @@ class PermissionManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
         $attributes = factory('App\RolePermission')->raw(['permission_id' => '']);
-        $this->post('/role-permissions', $attributes)->assertSessionHasErrors('permission_id');
+        $this->post('/role/permissions', $attributes)->assertSessionHasErrors('permission_id');
     }
 
     /** @test */
@@ -182,7 +182,7 @@ class PermissionManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-permissions', 1, 0);
         $rolePermission = factory('App\RolePermission')->create();
-        $this->delete($rolePermission->path())->assertRedirect('/role-permissions');
+        $this->delete($rolePermission->path())->assertRedirect('/role/permissions');
         $this->assertDatabaseMissing('role_permissions', ['id' => $rolePermission->id]);
     }
 
@@ -200,9 +200,9 @@ class PermissionManagementTest extends TestCase
         $this->patch($permission->path())->assertRedirect('/access-denied');
         $this->delete($permission->path())->assertRedirect('/access-denied');
 
-        $this->get('/role-permissions')->assertRedirect('/access-denied');
-        $this->get('/role-permissions/create')->assertRedirect('/access-denied');
-        $this->post('/role-permissions')->assertRedirect('/access-denied');
+        $this->get('/role/permissions')->assertRedirect('/access-denied');
+        $this->get('/role/permissions/create')->assertRedirect('/access-denied');
+        $this->post('/role/permissions')->assertRedirect('/access-denied');
         $this->get($rolePermission->path())->assertRedirect('/access-denied');
         $this->get($rolePermission->path() .'/edit')->assertRedirect('/access-denied');
         $this->patch($rolePermission->path())->assertRedirect('/access-denied');
@@ -222,9 +222,9 @@ class PermissionManagementTest extends TestCase
         $this->patch($permission->path())->assertRedirect('login');
         $this->delete($permission->path())->assertRedirect('login');
 
-        $this->get('/role-permissions')->assertRedirect('login');
-        $this->get('/role-permissions/create')->assertRedirect('login');
-        $this->post('/role-permissions')->assertRedirect('login');
+        $this->get('/role/permissions')->assertRedirect('login');
+        $this->get('/role/permissions/create')->assertRedirect('login');
+        $this->post('/role/permissions')->assertRedirect('login');
         $this->get($rolePermission->path())->assertRedirect('login');
         $this->get($rolePermission->path() . '/edit')->assertRedirect('login');
         $this->patch($rolePermission->path())->assertRedirect('login');

@@ -33,8 +33,9 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_register_in_system()
     {
+        $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
-        $this->post('/users', $attributes)->assertRedirect('/pending-for-confirmation');
+        $this->post('/users', $attributes)->assertSee('confirmation');
         $this->assertCount(1, User::all());
     }
 
@@ -99,6 +100,7 @@ class UserManagementTest extends TestCase
     }
 
     /** @test */
+    //members have form to update their profiles
     public function form_is_available_to_edit_a_user()
     {
         $this->prepare_other_users_env('retailer', 'edit-profile', 1, 0);
@@ -107,6 +109,7 @@ class UserManagementTest extends TestCase
     }
 
     /** @test */
+    //members can update their profiles
     public function users_can_update_their_profiles()
     {
         $this->prepare_other_users_env('retailer', 'edit-profile', 1, 0);
@@ -126,7 +129,7 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_not_be_deleted_from_system()
     {
-        $this->prepare_other_users_env('retailer', 'submit-orders', 1, 0);
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-user', 1, 0);
         $user = User::find(1);
         $this->delete($user->path())->assertRedirect('/access-denied');
 
@@ -135,7 +138,6 @@ class UserManagementTest extends TestCase
     /** @test */
     public function locked_users_can_not_access_system()
     {
-        $this->withoutExceptionHandling();
         $this->prepare_other_users_env('retailer', 'edit-profile', 1, 1);
         $user = User::find(1)->first();
         //for example accessing edit form

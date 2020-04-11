@@ -102,14 +102,14 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $userRole = factory('App\UserRole')->create();
-        $this->get('/user-roles')->assertSeeTextInOrder(array($userRole->id, $userRole->user_id, $userRole->role_id));
+        $this->get('/user/roles')->assertSeeTextInOrder(array($userRole->id, $userRole->user_id, $userRole->role_id));
     }
 
     /** @test */
     public function form_is_available_to_assign_a_role_to_user()
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
-        $this->get('/user-roles/create')->assertOk();
+        $this->get('/user/roles/create')->assertOk();
 
     }
 
@@ -118,7 +118,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $attributes = factory('App\UserRole')->raw();
-        $this->post('/user-roles', $attributes)->assertRedirect('/user-roles');
+        $this->post('/user/roles', $attributes)->assertRedirect('/user/roles');
         $this->assertDatabaseHas('user_roles', $attributes);
     }
 
@@ -127,7 +127,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $attributes = factory('App\UserRole')->raw(['user_id' => '']);
-        $this->post('/user-roles', $attributes)->assertSessionHasErrors('user_id');
+        $this->post('/user/roles', $attributes)->assertSessionHasErrors('user_id');
     }
 
     /** @test */
@@ -135,7 +135,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $attributes = factory('App\UserRole')->raw(['role_id' => '']);
-        $this->post('/user-roles', $attributes)->assertSessionHasErrors('role_id');
+        $this->post('/user/roles', $attributes)->assertSessionHasErrors('role_id');
     }
 
     /** @test */
@@ -175,7 +175,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $userRole = factory('App\UserRole')->create();
-        $this->delete($userRole->path())->assertRedirect('/user-roles');
+        $this->delete($userRole->path())->assertRedirect('/user/roles');
         $this->assertDatabaseMissing('user_roles', ['id' => $userRole->id]);
     }
 
@@ -194,9 +194,9 @@ class RoleManagementTest extends TestCase
         $this->patch($role->path())->assertRedirect('/access-denied');
         $this->delete($role->path())->assertRedirect('/access-denied');
 
-        $this->get('/user-roles')->assertRedirect('/access-denied');
-        $this->get('/user-roles/create')->assertRedirect('/access-denied');
-        $this->post('/user-roles')->assertRedirect('/access-denied');
+        $this->get('/user/roles')->assertRedirect('/access-denied');
+        $this->get('/user/roles/create')->assertRedirect('/access-denied');
+        $this->post('/user/roles')->assertRedirect('/access-denied');
         $this->get($userRole->path())->assertRedirect('/access-denied');
         $this->get($userRole->path() .'/edit')->assertRedirect('/access-denied');
         $this->patch($userRole->path())->assertRedirect('/access-denied');
@@ -217,9 +217,9 @@ class RoleManagementTest extends TestCase
         $this->patch($role->path())->assertRedirect('login');
         $this->delete($role->path())->assertRedirect('login');
 
-        $this->get('/user-roles')->assertRedirect('login');
-        $this->get('/user-roles/create')->assertRedirect('login');
-        $this->post('/user-roles')->assertRedirect('login');
+        $this->get('/user/roles')->assertRedirect('login');
+        $this->get('/user/roles/create')->assertRedirect('login');
+        $this->post('/user/roles')->assertRedirect('login');
         $this->get($userRole->path())->assertRedirect('login');
         $this->get($userRole->path() . '/edit')->assertRedirect('login');
         $this->patch($userRole->path())->assertRedirect('login');
