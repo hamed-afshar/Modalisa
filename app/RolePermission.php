@@ -20,6 +20,6 @@ class RolePermission extends Model
 
     public function path()
     {
-        return "/role-permissions/{$this->id}";
+        return "/role/permissions/{$this->id}";
     }
 }
