@@ -48,6 +48,7 @@ class AccessProvider
         if (User::find($this->userID)->first()->locked == 1) {
             return 'locked';
         }
+
         if ($this->requestID == null) {
             return false;
         } elseif (Role::find($this->role)->rolePermissions->where('permission_id', $this->requestID)->first() != null) {
@@ -63,7 +64,6 @@ class AccessProvider
     public function accessDenied()
     {
         return redirect('access-denied');
-
     }
 
     /**
