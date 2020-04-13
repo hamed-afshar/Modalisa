@@ -8,16 +8,16 @@ class Role extends Model
 {
     protected $guarded = [];
 
-    //each role assigned to one user
-    public function userRole()
+    //Role might belongs to many users
+    public function users()
     {
-        return $this->hasOne('App\UserRole');
+        return $this->belongsToMany('App\User', 'user_roles')->withTimestamps();
     }
 
-    //each role has many assigned permissions
-    public function rolePermissions()
+    //Role might belongs to many permissions
+    public function permissions()
     {
-        return $this->hasMany('App\RolePermission');
+        return $this->belongsToMany('App\Permission', 'role_permissions');
     }
 
     //return role path

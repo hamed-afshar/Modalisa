@@ -46,10 +46,15 @@ class User extends Authenticatable {
         return "/users/{$this->id}";
     }
 
-    //each user has one role
-    public function role()
+    //user might belongs to many roles
+    public function roles()
     {
-        return $this->hasOne('App\UserRole');
+        return $this->belongsToMany('App\Role', 'user_roles')->withTimestamps();
+    }
+
+    //user belongs to one subscription
+    public function subscription() {
+        return $this->belongsTo('App\Subscription');
     }
 
     // each user has many order relation
