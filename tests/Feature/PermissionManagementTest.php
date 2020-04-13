@@ -88,17 +88,21 @@ class PermissionManagementTest extends TestCase
     }
 
     /** @test */
-    public function a_role_can_have_many_permissions()
+    public function role_belongs_to_many_permissions()
+        //many to many relationship
     {
-        $rolePermission = factory('App\RolePermission')->create();
-        $this->assertInstanceOf('App\Role', $rolePermission->roleOwner);
+        $role = factory('App\Role')->create();
+        $permission = factory('App\Permission')->create();
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $role->permissions);
     }
 
     /** @test */
-    public function a_permission_can_be_assigned_to_many_roles()
+    public function permission_belongs_to_many_permissions()
+        //many to many relationship
     {
-        $rolePermission = factory('App\RolePermission')->create();
-        $this->assertInstanceOf('App\Permission', $rolePermission->permissionOwner);
+        $role = factory('App\Role')->create();
+        $permission = factory('App\Permission')->create();
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $permission->roles);
     }
 
     /** @test */

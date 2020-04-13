@@ -14,6 +14,7 @@ use Tests\TestCase;
 class RoleManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
+
     /** @test */
     public function only_SystemAdmin_can_see_roles()
     {
@@ -25,7 +26,7 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function form_is_available_to_create_roles()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1,0);
+        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1, 0);
         $this->get('/roles/create')->assertOk();
     }
 
@@ -84,17 +85,21 @@ class RoleManagementTest extends TestCase
     }
 
     /** @test */
-    public function UserRole_belongs_to_one_role()
+    //many to many relationship
+    public function user_belongs_to_many_roles()
     {
-        $userRole = factory('App\UserRole')->create();
-        $this->assertInstanceOf('App\Role', $userRole->roleOwner);
+        $user = factory('App\User')->create();
+        $role = factory('App\Role')->create();
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $user->roles);
     }
 
     /** @test */
-    public function UserRole_belongs_to_one_user()
+    //many to many relationship
+    public function role_belongs_to_many_users()
     {
-        $userRole = factory('App\UserRole')->create();
-        $this->assertInstanceOf('App\User', $userRole->userOwner);
+        $user = factory('App\User')->create();
+        $role = factory('App\Role')->create();
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $role->users);
     }
 
     /** @test */
@@ -151,7 +156,7 @@ class RoleManagementTest extends TestCase
     {
         $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
         $userRole = factory('App\UserRole')->create();
-        $this->get($userRole->path().'/edit')->assertSeeTextInOrder(array($userRole->id, $userRole->user_id, $userRole->role_id));
+        $this->get($userRole->path() . '/edit')->assertSeeTextInOrder(array($userRole->id, $userRole->user_id, $userRole->role_id));
     }
 
     /** @test */
@@ -183,14 +188,14 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function other_users_can_not_access_role_management()
     {
-        $this->prepare_other_users_env('retailer', 'submit-orders',1,0);
+        $this->prepare_other_users_env('retailer', 'submit-orders', 1, 0);
         $role = factory('App\Role')->create();
         $userRole = factory('App\UserRole')->create();
         $this->get('/roles')->assertRedirect('/access-denied');
         $this->get('/roles/create')->assertRedirect('/access-denied');
         $this->post('/roles')->assertRedirect('/access-denied');
         $this->get($role->path())->assertRedirect('/access-denied');
-        $this->get($role->path() .'/edit')->assertRedirect('/access-denied');
+        $this->get($role->path() . '/edit')->assertRedirect('/access-denied');
         $this->patch($role->path())->assertRedirect('/access-denied');
         $this->delete($role->path())->assertRedirect('/access-denied');
 
@@ -198,7 +203,7 @@ class RoleManagementTest extends TestCase
         $this->get('/user/roles/create')->assertRedirect('/access-denied');
         $this->post('/user/roles')->assertRedirect('/access-denied');
         $this->get($userRole->path())->assertRedirect('/access-denied');
-        $this->get($userRole->path() .'/edit')->assertRedirect('/access-denied');
+        $this->get($userRole->path() . '/edit')->assertRedirect('/access-denied');
         $this->patch($userRole->path())->assertRedirect('/access-denied');
         $this->delete($userRole->path())->assertRedirect('/access-denied');
 
