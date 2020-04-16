@@ -52,6 +52,12 @@ class User extends Authenticatable {
         return $this->belongsToMany('App\Role', 'user_roles')->withTimestamps();
     }
 
+    //assign a role to user
+    public function assignRole($role)
+    {
+        $this->roles()->save($role);
+    }
+
     //user belongs to one subscription
     public function subscription() {
         return $this->belongsTo('App\Subscription');
