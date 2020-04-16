@@ -17,14 +17,19 @@ class Role extends Model
     //Role might belongs to many permissions
     public function permissions()
     {
-        return $this->belongsToMany('App\Permission', 'role_permissions');
+        return $this->belongsToMany('App\Permission', 'role_permissions')->withTimestamps();
+    }
+
+    //assign permission to role
+    public function allowTo($permission)
+    {
+        $this->permissions()->save($permission);
     }
 
     //return role path
     public function path()
     {
         return "/roles/{$this->id}";
-
     }
 
 }
