@@ -55,7 +55,13 @@ class User extends Authenticatable {
     //assign a role to user
     public function assignRole($role)
     {
-        $this->roles()->save($role);
+        $this->roles()->sync($role, false);
+    }
+
+    //get user's permissions
+    public function permissions()
+    {
+        return $this->roles->map->permissions->flatten()->pluck('name')->unique();
     }
 
     //user belongs to one subscription
