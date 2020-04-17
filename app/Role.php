@@ -23,7 +23,7 @@ class Role extends Model
     //assign permission to role
     public function allowTo($permission)
     {
-        $this->permissions()->save($permission);
+        $this->permissions()->sync($permission, false);
     }
 
     //return role path
