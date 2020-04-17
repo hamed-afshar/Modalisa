@@ -18,7 +18,7 @@ Route::get('/users/create', 'UserController@create')->name('users.create');
 
 Route::group(['middleware' => 'auth'], function() {
 
-    Route::get('/users', 'UserController@index')->name('users.index')->middleware('AccessProvider:see-users');
+    Route::get('/users', 'UserController@index')->name('users.index');
     Route::get('/users/{user}', 'UserController@show')->name('users.show')->middleware('AccessProvider:see-users');
     Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit')->middleware('AccessProvider:edit-profile');
     Route::patch('/users/{user}', 'UserController@update')->name('users.update')->middleware('AccessProvider:edit-profile');

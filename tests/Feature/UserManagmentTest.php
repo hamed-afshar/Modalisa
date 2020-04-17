@@ -6,6 +6,7 @@ use App\Permission;
 use App\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use App\User;
@@ -19,8 +20,12 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_users()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
-        $user = User::find(1)->first();
+        $this->withoutExceptionHandling();
+        //$this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
+        $user = factory('App\User')->create();
+        $role = factory('App\Role')->create(['name' => 'Retailer']);
+        $user->assignRole($role);
+        $this->actingAs($user);
         $this->get('/users')->assertSeeText($user->name);
     }
 
