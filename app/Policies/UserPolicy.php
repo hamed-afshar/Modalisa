@@ -12,9 +12,10 @@ class UserPolicy
     //systemAdmin user is authorized for any function in user model
     public function index(User $user)
     {
-        if($user->roles()->pluck('name') === 'SystemAdmin')
+        if($user->roles()->pluck('name')->contains('SystemAdmin'))
         {
             return true;
         }
     }
+
 }
