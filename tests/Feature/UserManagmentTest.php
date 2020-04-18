@@ -20,13 +20,11 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_users()
     {
-        $this->withoutExceptionHandling();
-        //$this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
         $user = factory('App\User')->create();
-        $role = factory('App\Role')->create(['name' => 'Retailer']);
+        $role = factory('App\Role')->create(['name' => 'SystemAdmin']);
         $user->assignRole($role);
-        $this->actingAs($user);
-        $this->get('/users')->assertSeeText($user->name);
+        Auth::login($user);
+        $this->get('/users')->assertSee($user->name);
     }
 
     /** @test */
@@ -38,7 +36,6 @@ class UserManagementTest extends TestCase
     /** @test */
     public function users_can_register_in_system()
     {
-        $this->withoutExceptionHandling();
         $attributes = factory('App\User')->raw();
         $this->post('/users', $attributes)->assertSee('confirmation');
         $this->assertCount(1, User::all());
@@ -96,7 +93,6 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_vew_a_single_user()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-users', 1, 0);
         $user = User::find(1);
         $this->get($user->path())->assertSee($user->name);
         $this->assertInstanceOf(Carbon::class, $user->last_login);
