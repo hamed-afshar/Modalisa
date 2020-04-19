@@ -13,13 +13,16 @@ class RoleController extends Controller
     //index roles
     public function index()
     {
+        $this->authorize('index', auth()->user());
         $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
 
     //create form for role creation
+
     public function create()
     {
+        $this->authorize('create', auth()->user());
         return view('roles.create');
     }
 
