@@ -11,26 +11,26 @@
   |
  */
 
-route::get('/others/pending-for-confirmation', 'UserController@pending')->name('pending');
+route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
 
-Route::post('/users', 'UserController@store')->name('users.store');
-Route::get('/users/create', 'UserController@create')->name('users.create');
+Route::post('/users', 'RegisterController@store')->name('users.store');
+Route::get('/users/create', 'RegisterController@create')->name('users.create');
 
 Route::group(['middleware' => 'auth'], function() {
 
     Route::get('/users', 'UserController@index')->name('users.index');
-    Route::get('/users/{user}', 'UserController@show')->name('users.show')->middleware('AccessProvider:see-users');
-    Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit')->middleware('AccessProvider:edit-profile');
-    Route::patch('/users/{user}', 'UserController@update')->name('users.update')->middleware('AccessProvider:edit-profile');
-    Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy')->middleware('AccessProvider:delete-user');
+    Route::get('/users/{user}', 'UserController@show')->name('users.show');
+    Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit');
+    Route::patch('/users/{user}', 'UserController@update')->name('users.update');
+    Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy');
 
-    Route::get('/roles', 'RoleController@index')->name('roles.index')->middleware('AccessProvider:see-roles');
-    Route::get('/roles/create', 'RoleController@create')->name('roles.create')->middleware('AccessProvider:create-roles');
-    Route::post('/roles', 'RoleController@store')->name('roles.store')->middleware('AccessProvider:create-roles');
-    Route::get('/roles/{role}', 'RoleController@show')->name('roles.show')->middleware('AccessProvider:see-roles');
-    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit')->middleware('AccessProvider:edit-roles');
-    Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update')->middleware('AccessProvider:edit-roles');
-    Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy')->middleware('AccessProvider:delete-roles');
+    Route::get('/roles', 'RoleController@index')->name('roles.index');
+    Route::get('/roles/create', 'RoleController@create')->name('roles.create');
+    Route::post('/roles', 'RoleController@store')->name('roles.store');
+    Route::get('/roles/{role}', 'RoleController@show')->name('roles.show');
+    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
+    Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
+    Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
 
     Route::get('/permissions', 'PermissionController@index')->name('permissions.index')->middleware('AccessProvider:see-permissions');
     Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create')->middleware('AccessProvider:create-permissions');
