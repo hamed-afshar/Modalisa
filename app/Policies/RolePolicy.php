@@ -9,13 +9,20 @@ class RolePolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Create a new policy instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    //to access role management system user must be SystemAdmin, Not Locked and confirmed at first
+//    public function before(User $user)
+//    {
+//        if ($user->isConfirmed() && $user->isLocked() == false) {
+//            return false;
+//        }
+//    }
+
+    public function index(User $user)
     {
-        //
+        if($user->isAdmin())
+        {
+            return true;
+        }
+
     }
 }
