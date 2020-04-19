@@ -10,23 +10,23 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    protected function prepare_SystemAdmin_env($role, $request, $confirmed, $locked)
+    protected function prepAdminEnv($role, $locked, $confirmed)
     {
-        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
-        $role = Role::create(['id' => 1, 'name' => $role]);
-        $permission = Permission::create(['id' => 1, 'name' => $request]);
-        $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
+        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
+        $role = factory('App\Role')->create(['name' => $role]);
+        $user->assignRole($role);
         $this->actingAs($user);
     }
 
-    protected function prepare_other_users_env($role, $request, $confirmed, $locked)
+    protected function prepNormalEnv($role, $permission, $locked, $confirmed)
     {
-        $user = factory('App\User')->create(['id' => '1', 'confirmed' => $confirmed, 'locked' => $locked]);
-        $role = Role::create(['id' => 1, 'name' => $role]);
-        $permission = Permission::create(['id' => 1, 'name' => $request]);
-        $userRole = $user->role()->create(['user_id' => $user->id, 'role_id' => $role->id]);
-        $rolePermission = $role->rolePermissions()->create(['role_id' => $role->id, 'permission_id' => $permission->id]);
-        $this->actingAs($user);
+        {
+            $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
+            $role = factory('App\Role')->create(['name' => $role]);
+            $permission = factory('App\Permission')->create(['name' => $permission]);
+            $user->assignRole($role);
+            $role->allowTo($permission);
+            $this->actingAs($user);
+        }
     }
 }
