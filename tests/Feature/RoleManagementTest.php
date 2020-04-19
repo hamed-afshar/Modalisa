@@ -18,7 +18,7 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_roles()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $roles = Role::find(1);
         $this->get('/roles')->assertSee($roles->id);
     }
