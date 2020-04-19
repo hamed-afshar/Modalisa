@@ -6,7 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable {
+class User extends Authenticatable
+{
 
     use Notifiable;
 
@@ -64,14 +65,44 @@ class User extends Authenticatable {
         return $this->roles->map->permissions->flatten()->pluck('name')->unique();
     }
 
+    //check to see if user is a systemadmin
+    public function isAdmin()
+    {
+        if ($this->roles()->pluck('name')->contains('SystemAdmin')) {
+            return true;
+        }
+    }
+
+    //check to see if user is locked
+    public function isLocked()
+    {
+        if ($this->locked == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //check to see if user is confirmed
+    public function isConfirmed()
+    {
+        if ($this->confirmed == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //user belongs to one subscription
-    public function subscription() {
+    public function subscription()
+    {
         return $this->belongsTo('App\Subscription');
     }
 
     // each user has many order relation
-    public function orders() {
-        return $this->hasMany('App\Order','user_id');
+    public function orders()
+    {
+        return $this->hasMany('App\Order', 'user_id');
     }
 
 
