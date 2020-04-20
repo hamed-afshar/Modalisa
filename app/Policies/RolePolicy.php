@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Role;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -9,20 +10,85 @@ class RolePolicy
 {
     use HandlesAuthorization;
 
-    //to access role management system user must be SystemAdmin, Not Locked and confirmed at first
-//    public function before(User $user)
-//    {
-//        if ($user->isConfirmed() && $user->isLocked() == false) {
-//            return false;
-//        }
-//    }
-
-    public function index(User $user)
+    /**
+     * Determine whether the user can view any roles.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
     {
-        if($user->isAdmin())
-        {
-            return true;
-        }
+        
+    }
 
+    /**
+     * Determine whether the user can view the role.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Role  $role
+     * @return mixed
+     */
+    public function view(User $user, Role $role)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can create roles.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can update the role.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Role  $role
+     * @return mixed
+     */
+    public function update(User $user, Role $role)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can delete the role.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Role  $role
+     * @return mixed
+     */
+    public function delete(User $user, Role $role)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can restore the role.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Role  $role
+     * @return mixed
+     */
+    public function restore(User $user, Role $role)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can permanently delete the role.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Role  $role
+     * @return mixed
+     */
+    public function forceDelete(User $user, Role $role)
+    {
+        //
     }
 }
