@@ -10,21 +10,10 @@ class RolePolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the user is admin before any action
-     * @param \App\User $user
-     * @return mixed
-     */
-
-    public function before(User $user)
+    public function before()
     {
-        if($user->isAdmin() && $user->isLocked() == false && $user->isConfirmed()) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
-
     /**
      * Determine whether the user can view any roles.
      *
@@ -33,7 +22,7 @@ class RolePolicy
      */
     public function viewAny(User $user)
     {
-
+        dd("inside view any");
     }
 
     /**
