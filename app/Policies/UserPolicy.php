@@ -29,6 +29,7 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
+        dd("w");
         if ($user->isAdmin()) {
             return true;
         }
