@@ -36,16 +36,16 @@ class UserManagementTest extends TestCase
     }
 
     /** @test */
-    //members have form to update their profiles
+    //users have form to update their profiles
     public function form_is_available_to_edit_a_user()
     {
-        $this->prepAdminEnv('retailer', 1, 0);
+        $this->prepNormalEnv('retailer', 'edit-profile', 0, 1);
         $user = User::find(1);
         $this->get($user->path() . '/edit')->assertSee($user->name);
     }
 
     /** @test */
-    //members can update their profiles
+    //users can update their profiles
     public function users_can_update_their_profiles()
     {
         $this->prepNormalEnv('retailer', 'edit-profile', 0, 1);
