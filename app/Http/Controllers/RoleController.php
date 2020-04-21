@@ -18,7 +18,7 @@ class RoleController extends Controller
     //index roles
     public function index()
     {
-        $this->authorize('index', auth()->user());
+        $this->authorize('viewAny', auth()->user());
         $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
