@@ -9,7 +9,11 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-    //users must be confirmed and not locked to access users function at first
+    /**
+     * Determine whether user is locked or not confirmed first
+     * @param User $user
+     * @return bool
+     */
     public function before(User $user)
     {
         if ($user->isLocked() || $user->isConfirmed() == false) {
@@ -17,23 +21,51 @@ class UserPolicy
         }
     }
 
-    //systemAdmin user is authorized for any function in user model
-    public function index(User $user)
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
     {
         if ($user->isAdmin()) {
             return true;
         }
     }
 
-    //only systemadmin can view a single user
-    public function show(User $user)
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function view(User $user, User $model)
     {
         if ($user->isAdmin()) {
             return true;
         }
     }
 
-    //only users with edit-profile permissions can update their profile
+    /**
+     * Determine whether the user can create models.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can update their profile.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
     public function update(User $authUser, User $targetUser)
     {
         if ($authUser->id = $targetUser->id) {
@@ -43,10 +75,39 @@ class UserPolicy
         }
     }
 
-    //even SystemAdmin can not delete a user
-    public function destroy(User $user)
+    /**
+     * Determine whether the user can delete the model.
+     * Users can not be deleted
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function delete(User $user, User $model)
     {
         return false;
     }
 
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function restore(User $user, User $model)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function forceDelete(User $user, User $model)
+    {
+        //
+    }
 }
