@@ -11,10 +11,18 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
+    /**
+     * UserController constructor.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(User::class , 'user');
+    }
+
     //index users
     public function index()
     {
-        $this->authorize('index', auth()->user());
+        $this->authorize('viewAny', auth()->user());
         $users = User::all();
         return view('users.index', compact('users'));
     }
@@ -22,17 +30,18 @@ class UserController extends Controller
     //systemadmin can see a single user
     public function show(User $user)
     {
-        $this->authorize('show', auth()->user());
+        $this->authorize('view', auth()->user());
         return view('users.show', compact('user'));
     }
 
     //edit form is available to edit a user
     public function edit(User $user)
     {
+        $this->authorize('update', $user, auth()->user());
         return view('users.edit', compact('user'));
     }
 
-    //update a user information
+    //update user's profile
     public function update(User $user)
     {
         $this->authorize('update', $user, auth()->user());
