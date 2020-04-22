@@ -56,14 +56,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@update')->name('user-subscription.update')->middleware('AccessProvider:edit-subscriptions');
     Route::delete('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@destroy')->name('user-subscription.destroy')->middleware('AccessProvider:edit-subscriptions');
 
-    Route::get ('/user/roles', 'UserRoleController@index')->name('user-roles.index')->middleware('AccessProvider:edit-roles');
-    Route::get('/user/roles/create', 'UserRoleController@create')->name('user-roles.create')->middleware('AccessProvider:edit-roles');
-    Route::post ('/user/roles', 'UserRoleController@store')->name('user-roles.store')->middleware('AccessProvider:edit-roles');
-    Route::get ('/user/roles/{userRole}', 'UserRoleController@show')->name('user-roles.show')->middleware('AccessProvider:edit-roles');
-    Route::get('/user/roles/{userRole}/edit', 'UserRoleController@edit')->name('user-roles.edit')->middleware('AccessProvider:edit-roles');
-    Route::patch('/user/roles/{userRole}', 'UserRoleController@update')->name('user-roles.update')->middleware('AccessProvider:edit-roles');
-    Route::delete('/user/roles/{userRole}', 'UserRoleController@destroy')->name('user-roles.destroy')->middleware('AccessProvider:edit-roles');
-
     Route::get ('/role/permissions', 'RolePermissionController@index')->name('role-permissions.index')->middleware('AccessProvider:edit-permissions');
     Route::get('/role/permissions/create', 'RolePermissionController@create')->name('role-permissions.create')->middleware('AccessProvider:edit-permissions');
     Route::post ('/role/permissions', 'RolePermissionController@store')->name('role-permissions.store')->middleware('AccessProvider:edit-permissions');
