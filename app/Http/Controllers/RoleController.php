@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AccessProvider;
 use App\Role;
 use App\RolePermission;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class RoleController extends Controller
     //index roles
     public function index()
     {
-        $this->authorize('viewAny', auth()->user());
+       $this->authorize('viewAny', auth()->user());
         $roles = Role::all();
         return view('roles.index', compact('roles'));
     }
@@ -27,15 +28,17 @@ class RoleController extends Controller
 
     public function create()
     {
-        $this->authorize('create', auth()->user());
+        $this->authorize('create', Role::class);
         return view('roles.create');
     }
 
     //store role instance in db
     public function store()
     {
+        $this->authorize('create', Role::class );
         Role::create(request()->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'label' => 'required'
         ]));
         return redirect()->route('roles.index');
     }
@@ -43,18 +46,21 @@ class RoleController extends Controller
     //show a single role
     public function show(Role $role)
     {
+        $this->authorize('view', auth()->user(), $role);
         return view('roles.show', compact('role'));
     }
 
     //edit form
     public function edit(Role $role)
     {
+        $this->authorize('view', auth()->user(), $role);
         return view('roles.edit', compact('role'));
     }
 
     //update a role
     public function update(Role $role)
     {
+        $this->authorize('view', auth()->user(), $role);
         $data = request()->validate([
             'name' => 'required',
         ]);
@@ -65,6 +71,7 @@ class RoleController extends Controller
     //delete a role
     public function destroy(Role $role)
     {
+        $this->authorize('view', auth()->user(), $role);
         $role->delete();
         return redirect()->route('roles.index');
     }
