@@ -20,21 +20,22 @@ class RoleManagementTest extends TestCase
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $roles = Role::find(1);
-        $this->get('/roles')->assertSee($roles->id);
+        $this->get('/roles')->assertStatus(200)
+            ->assertSeeText($roles->id);
     }
 
     /** @test */
     public function form_is_available_to_create_roles()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1, 0);
-        $this->get('/roles/create')->assertOk();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $this->get('/roles/create')->assertStatus(200);
     }
 
     /** @test */
     public function only_SystemAdmin_can_create_roles()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1, 0);
-        $attributes = factory('App\Role')->raw();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $attributes = factory('App\Role')->raw(['name' => 'retailer', 'label' => 'test']);
         $this->post('/roles', $attributes)->assertRedirect('/roles');
         $this->assertDatabaseHas('roles', $attributes);
     }
@@ -42,15 +43,23 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function named_is_required()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $attributes = factory('App\Role')->raw(['name' => '']);
         $this->post('/roles', $attributes)->assertSessionHasErrors('name');
     }
 
     /** @test */
+    public function label_is_required()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $attributes = factory('App\Role')->raw(['name' => '']);
+        $this->post('/roles', $attributes)->assertSessionHasErrors('label');
+    }
+
+    /** @test */
     public function only_SystemAdmin_can_vew_a_single_role()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         $this->get($role->path())->assertSee($role->name);
     }
@@ -58,7 +67,7 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function form_is_available_to_edit_a_role()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         $this->get($role->path() . '/edit')->assertSee($role->name);
     }
@@ -66,7 +75,7 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_update_a_role()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         $newAttributes = [
             'name' => 'New Name'
@@ -78,7 +87,7 @@ class RoleManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_delete_a_role()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-roles', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         $this->delete($role->path())->assertRedirect('/roles');
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
