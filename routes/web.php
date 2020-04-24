@@ -32,13 +32,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
     Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
 
-    Route::get('/permissions', 'PermissionController@index')->name('permissions.index')->middleware('AccessProvider:see-permissions');
-    Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create')->middleware('AccessProvider:create-permissions');
-    Route::post('/permissions', 'PermissionController@store')->name('permissions.store')->middleware('AccessProvider:create-permissions');
-    Route::get('/permissions/{permission}', 'PermissionController@show')->name('permissions.show')->middleware('AccessProvider:see-permissions');
-    Route::get('/permissions/{permission}/edit', 'PermissionController@edit')->name('permissions.edit')->middleware('AccessProvider:edit-permissions');
-    Route::patch('/permissions/{permission}', 'PermissionController@update')->name('permissions.update')->middleware('AccessProvider:edit-permissions');
-    Route::delete('/permissions/{permission}', 'PermissionController@destroy')->name('permissions.destroy')->middleware('AccessProvider:delete-permissions');
+    Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
+    Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
+    Route::post('/permissions', 'PermissionController@store')->name('permissions.store');
+    Route::get('/permissions/{permission}', 'PermissionController@show')->name('permissions.show');
+    Route::get('/permissions/{permission}/edit', 'PermissionController@edit')->name('permissions.edit');
+    Route::patch('/permissions/{permission}', 'PermissionController@update')->name('permissions.update');
+    Route::delete('/permissions/{permission}', 'PermissionController@destroy')->name('permissions.destroy');
 
     Route::get('/subscriptions', 'SubscriptionController@index')->name('subscriptions.index')->middleware('AccessProvider:see-subscriptions');
     Route::get('/subscriptions/create', 'SubscriptionController@create')->name('subscriptions.create')->middleware('AccessProvider:create-subscriptions');
