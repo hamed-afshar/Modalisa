@@ -56,13 +56,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@update')->name('user-subscription.update')->middleware('AccessProvider:edit-subscriptions');
     Route::delete('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@destroy')->name('user-subscription.destroy')->middleware('AccessProvider:edit-subscriptions');
 
-    Route::get ('/role/permissions', 'RolePermissionController@index')->name('role-permissions.index')->middleware('AccessProvider:edit-permissions');
-    Route::get('/role/permissions/create', 'RolePermissionController@create')->name('role-permissions.create')->middleware('AccessProvider:edit-permissions');
-    Route::post ('/role/permissions', 'RolePermissionController@store')->name('role-permissions.store')->middleware('AccessProvider:edit-permissions');
-    Route::get ('/role/permissions/{rolePermission}', 'RolePermissionController@show')->name('role-permissions.show')->middleware('AccessProvider:edit-permissions');
-    Route::get('/role/permissions/{rolePermission}/edit', 'RolePermissionController@edit')->name('role-permissions.edit')->middleware('AccessProvider:edit-permissions');
-    Route::patch('/role/permissions/{rolePermission}', 'RolePermissionController@update')->name('role-permissions.update')->middleware('AccessProvider:edit-permissions');
-    Route::delete('/role/permissions/{rolePermission}', 'RolePermissionController@destroy')->name('role-permissions.destroy')->middleware('AccessProvider:edit-permissions');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
