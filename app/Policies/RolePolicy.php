@@ -10,13 +10,13 @@ class RolePolicy
 {
     use HandlesAuthorization;
 
-    public function before(User $user)
-    {
-        if(!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
-//        dd("before role policy");
-            return false;
-        }
-    }
+//    public function before(User $user)
+//    {
+//        if(!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
+////        dd("before role policy");
+//            return false;
+//        }
+//    }
     /**
      * Determine whether the user can view any roles.
      *
@@ -37,6 +37,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role)
     {
+
        return true;
     }
 
@@ -48,6 +49,7 @@ class RolePolicy
      */
     public function create(User $user)
     {
+//
         return true;
     }
 
@@ -60,6 +62,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role)
     {
+
         return true;
     }
 
