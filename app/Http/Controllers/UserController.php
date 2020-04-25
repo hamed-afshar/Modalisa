@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    /**
-     * UserController constructor.
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(User::class , 'user');
-    }
+//    /**
+//     * UserController constructor.
+//     */
+//    public function __construct()
+//    {
+//        $this->authorizeResource(User::class , 'user');
+//    }
 
     //index users
     public function index()
     {
-        $this->authorize('viewAny', auth()->user());
+        $this->authorize('viewAny', User::class);
         $users = User::all();
         return view('users.index', compact('users'));
     }
@@ -30,21 +30,21 @@ class UserController extends Controller
     //systemadmin can see a single user
     public function show(User $user)
     {
-        $this->authorize('view', auth()->user());
+        $this->authorize('view', User::class);
         return view('users.show', compact('user'));
     }
 
     //edit form is available to edit a user
     public function edit(User $user)
     {
-        $this->authorize('update', $user, auth()->user());
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
     //update user's profile
     public function update(User $user)
     {
-        $this->authorize('update', $user, auth()->user());
+        $this->authorize('update', $user);
         $data = request()->validate([
             'email' => 'required',
             'password' => 'required',
@@ -59,7 +59,7 @@ class UserController extends Controller
 // delete a user
     public function destroy(User $user)
     {
-        $this->authorize('destroy', auth()->user());
+        $this->authorize('delete', $user);
         return redirect('access-denied');
     }
 }

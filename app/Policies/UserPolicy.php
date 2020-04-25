@@ -41,7 +41,7 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function view(User $user, User $model)
+    public function view(User $user)
     {
         if ($user->isAdmin()) {
             return true;
@@ -66,9 +66,9 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function update(User $authUser, User $targetUser)
+    public function update(User $user, User $model)
     {
-        if ($authUser->id = $targetUser->id) {
+        if ($user->id = $model->id) {
             if ($authUser->permissions()->contains('edit-profile')) {
                 return true;
             }
