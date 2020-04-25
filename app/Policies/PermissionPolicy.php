@@ -10,13 +10,13 @@ class PermissionPolicy
 {
     use HandlesAuthorization;
 
-    public function before(User $user)
-    {
-        //dd("before permission");
-        if(!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
-            return false;
-        }
-    }
+//    public function before(User $user)
+//    {
+//        //dd("before permission");
+//        if(!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
+//            return false;
+//        }
+//    }
 
     /**
      * Determine whether the user can view any permissions.
@@ -61,7 +61,7 @@ class PermissionPolicy
      */
     public function update(User $user, Permission $permission)
     {
-        dd("$permission");
+        return true;
     }
 
     /**
@@ -73,7 +73,7 @@ class PermissionPolicy
      */
     public function delete(User $user, Permission $permission)
     {
-        //
+        return true;
     }
 
     /**
