@@ -40,22 +40,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/permissions/{permission}', 'PermissionController@update')->name('permissions.update');
     Route::delete('/permissions/{permission}', 'PermissionController@destroy')->name('permissions.destroy');
 
-    Route::get('/subscriptions', 'SubscriptionController@index')->name('subscriptions.index')->middleware('AccessProvider:see-subscriptions');
-    Route::get('/subscriptions/create', 'SubscriptionController@create')->name('subscriptions.create')->middleware('AccessProvider:create-subscriptions');
-    Route::post('/subscriptions', 'SubscriptionController@store')->name('subscriptions.store')->middleware('AccessProvider:create-subscriptions');
-    Route::get('/subscriptions/{subscription}', 'SubscriptionController@show')->name('subscriptions.show')->middleware('AccessProvider:see-subscriptions');
-    Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit')->middleware('AccessProvider:edit-subscriptions');
-    Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update')->middleware('AccessProvider:edit-subscriptions');
-    Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy')->middleware('AccessProvider:delete-subscriptions');
-
-    Route::get ('/user/subscriptions', 'UserSubscriptionController@index')->name('user-subscriptions.index')->middleware('AccessProvider:edit-subscriptions');
-    Route::get('/user/subscriptions/create', 'UserSubscriptionController@create')->name('user-subscription.create')->middleware('AccessProvider:edit-subscriptions');
-    Route::post ('/user/subscriptions', 'UserSubscriptionController@store')->name('user-subscriptions.store')->middleware('AccessProvider:edit-subscriptions');
-    Route::get ('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@show')->name('user-subscriptions.show')->middleware('AccessProvider:edit-subscriptions');
-    Route::get('/user/subscriptions/{userSubscription}/edit', 'UserSubscriptionController@edit')->name('user-subscription.edit')->middleware('AccessProvider:edit-subscriptions');
-    Route::patch('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@update')->name('user-subscription.update')->middleware('AccessProvider:edit-subscriptions');
-    Route::delete('/user/subscriptions/{userSubscription}', 'UserSubscriptionController@destroy')->name('user-subscription.destroy')->middleware('AccessProvider:edit-subscriptions');
-
+    Route::get('/subscriptions', 'SubscriptionController@index')->name('subscriptions.index');
+    Route::get('/subscriptions/create', 'SubscriptionController@create')->name('subscriptions.create');
+    Route::post('/subscriptions', 'SubscriptionController@store')->name('subscriptions.store');
+    Route::get('/subscriptions/{subscription}', 'SubscriptionController@show')->name('subscriptions.show');
+    Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit');
+    Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update');
+    Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
