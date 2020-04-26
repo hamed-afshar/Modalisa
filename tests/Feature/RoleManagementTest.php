@@ -52,7 +52,7 @@ class RoleManagementTest extends TestCase
     public function label_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $attributes = factory('App\Role')->raw(['name' => '']);
+        $attributes = factory('App\Role')->raw(['label' => '']);
         $this->post('/roles', $attributes)->assertSessionHasErrors('label');
     }
 

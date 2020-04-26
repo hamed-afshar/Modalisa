@@ -48,10 +48,12 @@ class UserManagementTest extends TestCase
     //users can update their profiles
     public function users_can_update_their_profiles()
     {
+        $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'edit-profile', 0, 1);
         $newDetails = factory('App\User')->raw();
         $user = User::find(1);
         $this->patch($user->path(), [
+            'name' => $newDetails['name'],
             'email' => $newDetails['email'],
             'password' => $newDetails['password'],
             'language' => $newDetails['language'],
