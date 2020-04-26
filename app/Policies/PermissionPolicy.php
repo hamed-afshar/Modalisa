@@ -12,7 +12,6 @@ class PermissionPolicy
 
     public function before(User $user)
     {
-        dd("before permission policy");
         if(!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
             return false;
         }
