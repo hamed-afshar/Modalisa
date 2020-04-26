@@ -69,7 +69,7 @@ class UserPolicy
     public function update(User $user, User $model)
     {
         if ($user->id = $model->id) {
-            if ($authUser->permissions()->contains('edit-profile')) {
+            if ($user->permissions()->contains('edit-profile')) {
                 return true;
             }
         }
