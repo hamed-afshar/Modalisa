@@ -8,15 +8,6 @@ use Illuminate\Http\Request;
 class PermissionController extends Controller
 {
 
-//    //index permissions
-//    /**
-//     * PermissionController constructor.
-//     */
-//    public function __construct()
-//    {
-//        $this->authorizeResource(Permission::class, 'permission');
-//    }
-
     public function index()
     {
         $this->authorize('viewAny', Permission::class);

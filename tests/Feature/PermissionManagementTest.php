@@ -26,7 +26,7 @@ class PermissionManagementTest extends TestCase
     public function form_is_available_to_create_permission()
     {
         $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $this->prepAdminEnv('SystemAdmin', 0, );
         $this->get('/permissions/create')->assertOk();
     }
 
