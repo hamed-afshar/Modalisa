@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-//    public function __construct()
-//    {
-//        $this->authorizeResource(Role::class, 'role');
-//    }
-
     //index roles
     public function index()
     {
