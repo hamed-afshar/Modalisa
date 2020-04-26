@@ -14,6 +14,8 @@ class SubscriptionController extends Controller
     // index subscriptions
     public function index()
     {
+        dd("subs index policy");
+        $this->authorize('viewAny', Subscription::class);
         $subscriptions = Subscription::all();
         return view('subscriptions.index', compact('subscriptions'));
     }

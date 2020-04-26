@@ -20,8 +20,9 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_subscriptions()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1, 0);
-        $subscription = factory('App\Subscription')->create();
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
+        //$subscription = factory('App\Subscription')->create();
+        //dd($subscription);
         $this->get('/subscriptions')->assertSeeText($subscription->id);
     }
 
