@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    
+
     //index users
     public function index()
     {
@@ -38,6 +38,7 @@ class UserController extends Controller
     {
         $this->authorize('update', $user);
         $data = request()->validate([
+            'name' => 'required',
             'email' => 'required',
             'password' => 'required',
             'language' => 'required',
