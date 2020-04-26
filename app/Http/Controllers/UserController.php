@@ -10,15 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-
-//    /**
-//     * UserController constructor.
-//     */
-//    public function __construct()
-//    {
-//        $this->authorizeResource(User::class , 'user');
-//    }
-
+    
     //index users
     public function index()
     {
