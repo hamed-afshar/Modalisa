@@ -60,7 +60,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_vew_a_single_subscription()
     {
-        $this->prepAdminEnv('SystemAdmin', 0 , 1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
         $this->get($subscription->path())->assertSeeText($subscription->plan);
@@ -106,7 +106,7 @@ class SubscriptionManagmentTest extends TestCase
         $user = factory('App\User')->create();
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $subscription->users);
     }
-    
+
     /** @test */
     public function guests_can_not_access_subscriptions_system()
     {
