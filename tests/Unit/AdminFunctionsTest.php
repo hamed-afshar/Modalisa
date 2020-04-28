@@ -35,6 +35,16 @@ class AdminFunctionsTest extends TestCase
     }
 
     /** @test */
+    public function SystemAdmin_can_assign_subscription_to_user()
+    {
+        $this->withoutExceptionHandling();
+        $user = factory('App\User')->create();
+        $subscription = factory('App\Subscription')->create();
+        $subscription->assignUser($user);
+        $this->assertDatabaseHas('users', ['subscription_id' => $subscription->id]);
+    }
+
+    /** @test */
     public function form_is_available_to_edit_users()
     {
 
