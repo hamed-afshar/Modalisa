@@ -18,7 +18,7 @@ class SubscriptionPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class SubscriptionPolicy
      */
     public function view(User $user, Subscription $subscription)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class SubscriptionPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class SubscriptionPolicy
      */
     public function update(User $user, Subscription $subscription)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class SubscriptionPolicy
      */
     public function delete(User $user, Subscription $subscription)
     {
-        //
+        return true;
     }
 
     /**

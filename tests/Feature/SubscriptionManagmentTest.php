@@ -21,22 +21,21 @@ class SubscriptionManagmentTest extends TestCase
     public function only_SystemAdmin_can_see_subscriptions()
     {
         $this->prepAdminEnv('SystemAdmin', 0 , 1);
-        //$subscription = factory('App\Subscription')->create();
-        //dd($subscription);
-        $this->get('/subscriptions')->assertSeeText($subscription->id);
+        $subscription = factory('App\Subscription')->create();
+        $this->get('/subscriptions')->assertSeeText($subscription->plan);
     }
 
     /** @test */
     public function form_is_available_to_create_roles()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $this->get('/subscriptions/create')->assertOk();
     }
 
     /** @test */
     public function only_SystemAdmin_can_create_subscription()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $attributes = factory('App\Subscription')->raw();
         $this->post('/subscriptions', $attributes)->assertRedirect('/subscriptions');
         $this->assertDatabaseHas('subscriptions', $attributes);
@@ -45,7 +44,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function name_is_required()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $attributes = factory('App\Subscription')->raw(['plan' => '']);
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('plan');
     }
@@ -53,7 +52,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function cost_percentage_is_required()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'create-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $attributes = factory('App\Subscription')->raw(['cost_percentage' => '']);
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('cost_percentage');
     }
@@ -61,7 +60,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_vew_a_single_subscription()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'see-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
         $this->get($subscription->path())->assertSeeText($subscription->plan);
@@ -70,7 +69,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function form_is_available_to_edit_a_subscription()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
         $this->get($subscription->path() . '/edit')->assertSee($subscription->plan);
@@ -79,7 +78,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function SystemAdmin_can_update_subscription_plan()
     {
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'edit-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $subscription = factory('App\Subscription')->create();
         $this->patch($subscription->path(), [
             'plan' => 'Gold',
@@ -92,8 +91,7 @@ class SubscriptionManagmentTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_delete_a_subscription()
     {
-        $this->withoutExceptionHandling();
-        $this->prepare_SystemAdmin_env('SystemAdmin', 'delete-subscriptions', 1, 0);
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
         $this->delete($subscription->path())->assertRedirect('subscriptions');
