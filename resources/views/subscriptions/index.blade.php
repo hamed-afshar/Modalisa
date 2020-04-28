@@ -11,6 +11,7 @@
             @forelse($subscriptions as $subscription)
             <li>
                 <h2> {{ $subscription->id }}</h2>
+                <h2> {{ $subscription->plan }}</h2>
             </li>
             @empty
             <li>Not subscription yet</li>
