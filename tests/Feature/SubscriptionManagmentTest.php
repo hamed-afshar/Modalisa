@@ -99,12 +99,14 @@ class SubscriptionManagmentTest extends TestCase
     }
 
     /** @test */
-    public function UserSubscription_belongs_to_subscription()
+    public function subscription_may_belong_to_many_users()
+        //one to many relation
     {
-        $userSubscription = factory('App\UserSubscription')->create();
-        $this->assertInstanceOf('App\Subscription', $userSubscription->owner);
+        $subscription = factory('App\Subscription')->create();
+        $user = factory('App\User')->create();
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $subscription->users);
     }
-
+    
     /** @test */
     public function guests_can_not_access_subscriptions_system()
     {
