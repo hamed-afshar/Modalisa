@@ -9,10 +9,16 @@ class Subscription extends Model
 {
     protected $guarded = [];
 
-    // subscription has one user
-    public function user()
+    // subscription may belongs to many users
+    public function users()
     {
-        return $this->hasone('App\User');
+        return $this->hasMany('App\User');
+    }
+
+    //assing user to subscription
+    public function assignUser($user)
+    {
+        return $this->users()->save($user);
     }
 
     //return permissions path
