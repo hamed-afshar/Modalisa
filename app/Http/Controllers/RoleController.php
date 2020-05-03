@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AccessProvider;
+use App\Permission;
 use App\Role;
 use App\RolePermission;
 use App\User;
@@ -16,7 +17,8 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
         $roles = Role::all();
-        return view('roles.index', compact('roles'));
+        $permissions = Permission::all();
+        return view('roles.index', compact('roles', 'permissions'));
     }
 
     //create form for role creation
