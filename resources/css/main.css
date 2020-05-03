@@ -33,7 +33,7 @@
 }
 
 .btn {
-    @apply .text-white .font-medium .py-3 .px-4 .rounded-lg;
+    @apply .text-white .font-medium .rounded-lg;
 }
 
 .btn-pink {
@@ -86,6 +86,26 @@
 
 .box-item:hover {
     @apply .text-pink-800;
+}
+
+.box-header {
+    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full
+}
+
+.table-header-row {
+    @apply .bg-purple-700 .text-white
+}
+
+.table-header-cell {
+    @apply .border .px-4 .py-2 .text-center
+}
+
+.table-body-row {
+    @apply .bg-white
+}
+
+.table-body-cell {
+    @apply .border .px-4 .py-2 .text-center .text-gray-800
 }
 
 
