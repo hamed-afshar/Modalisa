@@ -14076,20 +14076,12 @@ video {
 .btn {
   color: #fff;
   font-weight: 500;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
   border-radius: 0.5rem;
 }
 
 .btn-pink {
   color: #fff;
   font-weight: 500;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
   border-radius: 0.5rem;
   background-color: #d53f8c;
 }
@@ -14101,10 +14093,6 @@ video {
 .btn-green {
   color: #fff;
   font-weight: 500;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
   border-radius: 0.5rem;
   background-color: #48bb78;
 }
@@ -14207,6 +14195,47 @@ video {
 
 .box-item:hover {
   color: #97266d;
+}
+
+.box-header {
+  display: inline-block;
+  border-width: 1px;
+  border-radius: 0.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background-color: #6b46c1;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%
+}
+
+.table-header-row {
+  background-color: #6b46c1;
+  color: #fff
+}
+
+.table-header-cell {
+  border-width: 1px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center
+}
+
+.table-body-row {
+  background-color: #fff
+}
+
+.table-body-cell {
+  border-width: 1px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  color: #2d3748
 }
 
 @media (min-width: 640px) {
