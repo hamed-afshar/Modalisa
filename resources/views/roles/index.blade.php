@@ -9,10 +9,13 @@
                             <h1 class="text-white font-bold"> {{ $role->name }}</h1>
                         </div>
                         <div class="grid grid-rows-3 grid-cols-5">
-
-                            <h2 class="text-indigo-400">
-                                {{ $role->permissions()->name }}
-                            </h2>
+                            @forelse( $role->permissions as $item)
+                                <h2 class="text-indigo-400 mt-4">
+                                    {{ $item->name }}
+                                </h2>
+                            @empty
+                                <p> Nothing to show</p>
+                            @endforelse
                             <div class="row-start-3 col-start-5">
                                 <div class="flex justify-end">
                                     <div class="btn-circle-pink transform translate-y-4 translate-x-1">
