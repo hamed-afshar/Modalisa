@@ -8,9 +8,17 @@
                         <div class="box-header">
                             <h1 class="text-white font-bold"> {{ $role->name }}</h1>
                         </div>
-                        <div class="grid grid-rows-3">
-                            <div class="grid row-start-3 w-full">
-                                <button class="btn-green px-1 py-1.5"> Add Permission</button>
+                        <div class="grid grid-rows-3 grid-cols-5">
+
+                            <h2 class="text-indigo-400">
+                                {{ $role->permissions()->name }}
+                            </h2>
+                            <div class="row-start-3 col-start-5">
+                                <div class="flex justify-end">
+                                    <div class="btn-circle-pink transform translate-y-4 translate-x-1">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
