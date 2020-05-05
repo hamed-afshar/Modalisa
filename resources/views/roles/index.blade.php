@@ -1,37 +1,43 @@
 @extends('dashboards._admin_header')
 @section('index-content')
-    <div class="grid grid-rows-1">
-        <div class="grid grid-cols-6">
-            <div class="grid col-span-2">
-                @forelse( $roles as $role)
-                    <div class="box mt-1">
-                        <div class="box-header">
-                            <h1 class="text-white font-bold"> {{ $role->name }}</h1>
-                        </div>
-                        <div class="grid grid-rows-3 grid-cols-5">
+    <div class="grid grid-cols-6">
+        <!-- left side -->
+        <div class="grid col-span-2">
+            @forelse( $roles as $role)
+                <div class="box mt-1 overflow-auto">
+                    <div class="grid">
+                        <table class="pb-2">
+                            <thead>
+                            <tr class="table-header-row">
+                                <th class="table-header-cell"> {{ $role->name }} </th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             @forelse( $role->permissions as $item)
-                                <h2 class="text-indigo-400 mt-4">
-                                    {{ $item->name }}
-                                </h2>
+                                <tr class="table-body-row">
+                                    <td class="table-body-cell"> {{ $item->name }} </td>
+                                </tr>
                             @empty
-                                <p> Nothing to show</p>
                             @endforelse
-                            <div class="row-start-3 col-start-5">
-                                <div class="flex justify-end">
-                                    <div class="btn-circle-pink transform translate-y-4 translate-x-1">
-                                        <i class="fas fa-plus"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
+
                     </div>
-                @empty
-                @endforelse
-            </div>
-            <div class="grid col-span-3 mb-3">
-                <div class="grid box w-full ml-4 mt-1">
-                    <table class="table-auto">
-                        <thead>
+                </div>
+                <div class="flex justify-end">
+                    <div class="btn-circle-pink transform translate-x-5 -translate-y-5">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+            @empty
+            @endforelse
+        </div>
+        <!-- right side -->
+        <div class="grid col-span-3 mt-2 ml-10">
+            <div class="grid grid-rows-2 grid-flow-col">
+                <div class="flex flex-col">
+                    <table class="table-auto mb-2">
+                        <thead class="sticky top-0">
                         <tr class="table-header-row">
                             <th class="table-header-cell"> {{ __("translate.id") }}</th>
                             <th class="table-header-cell"> {{ __("translate.permission") }}</th>
@@ -50,6 +56,11 @@
                         @endforelse
                         </tbody>
                     </table>
+                </div>
+                <div class="flex justify-end transform -translate-y-6 translate-x-5">
+                    <div class="btn-circle-pink">
+                        <i class="fas fa-plus"></i>
+                    </div>
                 </div>
             </div>
         </div>
