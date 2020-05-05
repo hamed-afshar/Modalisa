@@ -11,6 +11,18 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        //create SystemAdmin user first
+        factory(App\User::class)->create([
+            'name' => 'Hamed Afshar',
+            'email' => 'abtin_bep@yahoo.com',
+            'password' => Hash::make('13651362'),
+            'confirmed' => 1,
+            'locked' => 0,
+            'language' => 'Persian',
+            'tel' => '09123463474',
+            'country' => 'Iran',
+            'communication_media' => 'telegram'
+        ]);
         factory(App\Subscription::class, 3)->create()->each(function ($subscription) {
             for($i=0; $i<=3; $i++) {
                 $subscription->users()->save(factory(App\User::class)->make());
