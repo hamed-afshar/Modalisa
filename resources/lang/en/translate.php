@@ -17,5 +17,6 @@ return [
     "financial_center" => "Financial Center",
     "report_center" => "Report Center",
     "alias" => "Alias",
-    "permission" => "Permission"
+    "permission" => "Permission",
+    "role" => "Role"
 ];
