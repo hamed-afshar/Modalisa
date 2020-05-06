@@ -7,7 +7,7 @@
     <div class="container mx-auto">
         <div class="grid grid-rows-1">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="box flex items-center justify-center shadow-2xl">
+                <div class="box h-48 flex items-center justify-center shadow-2xl">
                     <div class="flex flex-wrap">
                         <a href="{{ route('users.index') }}">
                             <i class="box-item fa fa-user fa-3x flex justify-center w-full"></i>
