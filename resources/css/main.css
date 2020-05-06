@@ -33,7 +33,7 @@
 }
 
 .btn {
-    @apply .text-white .font-medium .rounded-lg;
+    @apply .text-white .font-medium .border .rounded-lg;
 }
 
 .btn-pink {
@@ -41,7 +41,7 @@
 }
 
 .btn-circle {
-    @apply .inline-block .flex .text-white .h-10 .w-10 .border .rounded-full .justify-center .items-center
+    @apply .inline-block .flex .text-white .h-12 .w-12 .border .rounded-full .justify-center .items-center
 }
 
 .btn-circle-pink {
@@ -89,7 +89,7 @@
 }
 
 .box {
-    @apply .bg-white .text-gray-500 .border .rounded-lg .h-48 .p-2 .cursor-pointer;
+    @apply .bg-white .text-gray-500 .border .rounded-lg .p-2 .cursor-pointer;
 }
 
 .box-item {
@@ -101,7 +101,7 @@
 }
 
 .box-header {
-    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full
+    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold
 }
 
 .table-header-row {
@@ -118,6 +118,14 @@
 
 .table-body-cell {
     @apply .border .px-4 .py-2 .text-center .text-gray-800
+}
+
+.link {
+    @apply .text-blue-500
+}
+
+.link:hover {
+    @apply .text-blue-700
 }
 
 
