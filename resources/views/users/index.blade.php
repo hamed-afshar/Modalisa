@@ -21,7 +21,7 @@
                     <td class="table-body-cell"> {{$user->email}} </td>
                     <td class="table-body-cell">
                         <select class="input-option w-full" id="subscription" name="subscription">
-                            <option selected disabled> {{$user->subscription->plan}} </option>
+                            <option selected disabled> {{ $user->subscription == null ? "null" : $user->subscription->plan }} </option>
                             <option value="Gold"> Gold</option>
                             <option value="Silver"> Silver</option>
                             <option value="Bronze"> Bronze</option>
