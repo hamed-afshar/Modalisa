@@ -1,6 +1,7 @@
 <?php
 
 return [
+    "site_name" => "Modalisa",
     "home" => "Home",
     "about" => "About Us",
     "contact" => "Contact Us",
@@ -17,11 +18,14 @@ return [
     "whatsapp" => "WhatsApp",
     "Telegram" => "Telegram",
     "password" => "Password",
-    "password_confirm" => "Password Confirm",
+    "password_confirm" => "Confirm Password",
     "communication_media" => "Communication Media",
     "signup" => "Signup",
+    "signin" => "Sigin",
     "login" => "Login",
+    "remember" => "Remember Me",
     "already_have_an_account?" => "Already have an account?",
+    "forget_password" => "Forgot Your Password?",
     "id" => "ID",
     "name" => "Name",
     "email" => "Email",
