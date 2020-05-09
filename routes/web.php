@@ -72,3 +72,8 @@ Route::get('/system-admin', function () {
     return view('dashboards.system-admin');
 });
 
+Route::get('/login2', function () {
+    return view('users.login');
+});
+
+
