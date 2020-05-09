@@ -19,10 +19,10 @@ class RegisterController extends Controller
     {
         $data = request()->validate([
             'name' => 'required|min:5|max:50',
-            'email' => 'required',
-            'password' => 'required',
+            'email' => 'required|email:rfc,dns',
+            'password' => 'required|confirmed|min:8',
             'language' => 'required',
-            'tel' => 'required',
+            'tel' => 'required|digits:12',
             'country' => 'required',
             'communication_media' => 'required'
         ]);
