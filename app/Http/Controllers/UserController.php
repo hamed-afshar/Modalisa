@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AccessProvider;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -49,10 +50,19 @@ class UserController extends Controller
         $user->update($data);
     }
 
-// delete a user
+    // delete a user
     public function destroy(User $user)
     {
         $this->authorize('delete', $user);
         return redirect('access-denied');
+    }
+
+    //choose dashboard based n user's role
+    public function chooseDashboard()
+    {
+        if(Auth::user()->isAdmin())
+        {
+            return view("dashboards.system-admin");
+        }
     }
 }
