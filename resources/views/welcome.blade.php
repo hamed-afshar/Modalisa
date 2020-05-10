@@ -10,12 +10,12 @@
                 <hr class="border-pink-600">
             </div>
             <div class="flex md:justify-end justify-center logo-small md:pr-5 py-2 md:py-0 w-full md:w-1/2">
-                <a href=""
+                <a href="{{ route('login') }}"
                    class="border-b-2 border-solid border-pink-600 md:border-transparent hover:text-pink-600 hover:border-pink-600">
                     {{ __("translate.login") }} </a>
             </div>
             <div class="flex md:justify-start justify-center logo-small  md:pl-3 py-2 md:py-0 w-full md:w-1/2">
-                <a href="{{ route('users.create') }}"
+                <a href="{{ route('register') }}"
                    class="border-b-2 border-solid border-pink-600 md:border-transparent hover:text-pink-600 hover:border-pink-600">
                     {{ __("translate.signup") }} </a>
             </div>
