@@ -14,6 +14,12 @@ class AdminFunctionsTest extends TestCase
 {
     use WithFaker,
         RefreshDatabase;
+    /** @test */
+    public function SystemAdmin_can_access_to_admin_dashboard()
+    {
+        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->get('/system-admin')->assertOk();
+    }
 
     /** @test */
     public function SystemAdmin_can_assign_a_role_to_user()
