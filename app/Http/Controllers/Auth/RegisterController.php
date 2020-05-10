@@ -1,27 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
     use RegistersUsers;
 
     /**
@@ -41,33 +29,40 @@ class RegisterController extends Controller
         $this->middleware('guest');
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    //form to create a user
+    public function create()
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        return view('users.create');
     }
 
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
-    protected function create(array $data)
+    // store users
+    public function store()
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+        $data = request()->validate([
+            'name' => 'required|string|min:5|max:50',
+            'email' => 'required|unique:users|email:rfc,dns',
+            'password' => 'required|confirmed|min:8',
+            'language' => 'required',
+            'tel' => 'required|digits:12',
+            'country' => 'required',
+            'communication_media' => 'required'
         ]);
+        User::create([
+            'name' => request('name'),
+            'email' => request('email'),
+            'password' => Hash::make($data['password']),
+            'last_ip' => request()->ip(),
+            'language' => request('language'),
+            'tel' => request('tel'),
+            'country' => request('country'),
+            'communication_media' => request('communication_media')
+        ]);
+        return redirect()->route('pending');
+    }
+
+    //show pending for confirmation page
+    public function pending()
+    {
+        return view('/others/pending-for-confirmation');
     }
 }
