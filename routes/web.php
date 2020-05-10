@@ -11,7 +11,16 @@
   |
  */
 
-route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
+Auth::routes();
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/system-admin', 'UserController@chooseDashboard');
+
+
+Route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
 
 Route::post('/users', 'RegisterController@store')->name('users.store');
 Route::get('/users/create', 'RegisterController@create')->name('users.create');
@@ -58,22 +67,7 @@ Route::group(['middleware' => 'auth'], function() {
 
 Route::delete('/orders', 'OrdersController@destroy');
 
-Auth::routes();
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
 
-Route::get('/retailer', function () {
-    return view('dashboards.retailer');
-});
-
-Route::get('/system-admin', function () {
-    return view('dashboards.system-admin');
-});
-
-Route::get('/login2', function () {
-    return view('users.login');
-});
 
 
