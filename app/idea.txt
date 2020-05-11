@@ -1,1 +1,7 @@
-1. Two registerController exist, the defualt one must be deleted
+1.Two registerController exist, the defualt one must be deleted [Done]
+2. web file needs refactor to use resource for full REST models
+3.For order status or any other possible model it might be a good idea to use a model observer and polymorphic relation ship.
+4.Polymorphic views are also another solution to show different views
+5. ivestigate follows:
+    -Tap
+    -Touch
