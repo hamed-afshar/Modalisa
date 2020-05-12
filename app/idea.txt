@@ -1,7 +1,12 @@
 1.Two registerController exist, the defualt one must be deleted [Done]
 2. web file needs refactor to use resource for full REST models
-3.For order status or any other possible model it might be a good idea to use a model observer and polymorphic relation ship.
+3.For order status or any other possible model it might be a good idea to use a model observer and polymorphic relation ship.(E20-E30)
 4.Polymorphic views are also another solution to show different views
 5. ivestigate follows:
     -Tap
     -Touch
+6. using Request for validation E 33
+7. Custom validation rules and messeage in E33
+8. Errorbag in E 34 might be usefull for our project. Specially if there are multiple form on the page
+   and we want to show specific error for each of these forms/
+9. Different themes might be interesting for this project
