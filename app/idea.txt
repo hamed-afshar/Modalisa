@@ -10,3 +10,4 @@
 8. Errorbag in E 34 might be usefull for our project. Specially if there are multiple form on the page
    and we want to show specific error for each of these forms/
 9. Different themes might be interesting for this project
+10. better approach for comments and more clear commenting.
