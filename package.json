@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "npm-watch": "^0.6.0",
-        "tailwindcss": "^1.2.0"
+        "tailwindcss": "^1.2.0",
+        "vue-js-modal": "^2.0.0-rc.3"
     }
 }
