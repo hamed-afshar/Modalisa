@@ -12,3 +12,7 @@ npm-debug.log
 yarn-error.log
 /nbproject/private
 .idea
+public/css/main.css
+public/js/app.js
+public/js/app.js
+public/mix-manifest.json
