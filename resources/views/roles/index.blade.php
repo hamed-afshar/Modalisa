@@ -78,5 +78,11 @@
                 </div>
             </div>
         </div>
+        <div id="app">
+            <add-role-modal></add-role-modal>
+            <a href="" @click.prevent="$modal.show('add-role-modal')"> Show modal</a>
+        </div>
+
     </div>
+
 @endsection
