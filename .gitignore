@@ -16,3 +16,6 @@ public/css/main.css
 public/js/app.js
 public/js/app.js
 public/mix-manifest.json
+*.css
+public/js/app.js
+public/mix-manifest.json
