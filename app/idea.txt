@@ -11,3 +11,5 @@
    and we want to show specific error for each of these forms/
 9. Different themes might be interesting for this project
 10. better approach for comments and more clear commenting.
+11. modal translation postponed to the future so it must be considered
+12. add title to all buttons
