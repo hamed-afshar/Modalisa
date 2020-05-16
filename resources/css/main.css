@@ -33,7 +33,7 @@
 }
 
 .btn {
-    @apply .text-white .font-medium .border .rounded-lg;
+    @apply .text-white .font-medium .border .rounded-lg .px-2 .py-2;
 }
 
 .btn-pink {
