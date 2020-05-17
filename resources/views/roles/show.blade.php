@@ -1,48 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>
-
-    </title>
-</head>
-<body>
+@extends('dashboards._admin_header')
+@section('index-content')
 <h1> Modalisa </h1>
 <ul>
     {{--    {{ $role->name }}--}}
 </ul>
 
-<div id="app" v-model="name">
-    <ul>
-        <li>
-            <task> Go to School</task>
-            <task> Go to Work</task>
-            <task> Go Home</task>
-        </li>
-    </ul>
+<div id="app">
+    <modalisa-msg title="title" body="body"></modalisa-msg>
+    <modalisa-msg title="hamed" body="is free"></modalisa-msg>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script>
-    vue.component('task-list', {
-        'template: <div> <task v-for="student in students"> @{{student.name}} </task> </div>',
-        data() {
-            return {
-                students: [
-                    {name: "hamed", graduated: true}
-                    {name: "amin", graduated: true}
-                    {name: "ghazal", graduated: true}
-                    {name: "shadi", graduated: true}
-                ]
-            }
-        }
-    })
-    Vue.component('task', {
-        template: '<li><slot></slot></li>'
-    })
-
-    new Vue({
-        el: '#app'
-    });
-</script>
-</body>
-</html>
-
+{{--<script src="https://cdn.jsdelivr.net/npm/vue"></script>--}}
+{{--<script>--}}
+{{--    // vue.component('modalisa-msg', {--}}
+{{--    //     props: ['title', 'body'],--}}
+{{--    //     template:--}}
+{{--    //         `--}}
+{{--    //        <div class="text-red-500">--}}
+{{--    //                 <h1> This is title</h1>--}}
+{{--    //                 @{{title}}--}}
+{{--    //             </div>--}}
+{{--    //             <div class="text-green-600">--}}
+{{--    //                 <h3> this is body</h3>--}}
+{{--    //                 @{{ body }}--}}
+{{--    //             </div>--}}
+{{--    //       `--}}
+{{--    // })--}}
+{{--    //--}}
+{{--    // new Vue({--}}
+{{--    //     el: '#app'--}}
+{{--    // });--}}
+{{--</script>--}}
+@endsection
