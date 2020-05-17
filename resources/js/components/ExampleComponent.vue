@@ -1,23 +1,24 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Example Component</div>
-
-                    <div class="card-body">
-                        I'm an example component.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div name="modalisa-msg">
+		<div class="text-red-600" v-show="isVisible"><h1> {{ title }}</h1></div>
+		<div class="text-green-600"><h1> {{ body }} </h1></div>
+		<button class="btn-pink" v-on:click="hideTitle"> Hide</button>
+	</div>
 </template>
 
 <script>
     export default {
-        mounted() {
-            console.log('Component mounted.')
+        name: "ExampleComponent",
+        props: ["title", "body"],
+        methods: {
+            hideTitle() {
+				this.isVisible=false
+            },
+        },
+        data() {
+            return {
+                isVisible: true
+            }
         }
     }
 </script>
