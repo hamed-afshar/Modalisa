@@ -1,8 +1,15 @@
 <template>
 	<modal name="add-role-modal" id="add-role-modal" height="auto">
 		<div class="box h-48">
-			<div class="flex flex-1">
-				<h1 class="font-bold box-header py-2"> Add a new role </h1>
+			<div class="box-header">
+				<div class="flex flex-row">
+					<div class="w-1/2">
+						<h1 class="font-bold"> Add New Role </h1>
+					</div>
+					<div class="w-1/2 flex pt-1 justify-end">
+						<i class="fas fa-times"></i>
+					</div>
+				</div>
 			</div>
 			<div class="grid grid-cols-6 mt-6">
 				<div class="col-start-3 col-end-5">
@@ -11,7 +18,7 @@
 						       placeholder="New Role Name" autofocus>
 					</div>
 					<div class="flex w-full mt-2">
-						<button class="btn-pink w-full"> Save </button>
+						<button class="btn-pink w-full"> Save</button>
 					</div>
 
 				</div>
