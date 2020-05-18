@@ -6,8 +6,8 @@
 </ul>
 
 <div id="app">
-    <modalisa-msg title="title" body="body"></modalisa-msg>
-    <modalisa-msg title="hamed" body="is free"></modalisa-msg>
+    <modalisa-modal v-show="showModal" @close="showModal = false"></modalisa-modal>
+    <button class="btn-green py-2" v-on:click="showModal = true"> Show Modal</button>
 </div>
 {{--<script src="https://cdn.jsdelivr.net/npm/vue"></script>--}}
 {{--<script>--}}
