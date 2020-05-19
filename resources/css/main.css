@@ -33,7 +33,7 @@
 }
 
 .btn {
-    @apply .text-white .font-medium .border .rounded-lg .px-2 .py-2;
+    @apply .text-white .font-medium .border .rounded-lg .px-2 .py-2 .cursor-pointer;
 }
 
 .btn-pink {
@@ -41,7 +41,7 @@
 }
 
 .btn-circle {
-    @apply .inline-block .flex .text-white .h-12 .w-12 .border .rounded-full .justify-center .items-center
+    @apply .inline-block .flex .text-white .h-12 .w-12 .border .rounded-full .justify-center .items-center .cursor-pointer;
 }
 
 .btn-circle-pink {
@@ -89,7 +89,7 @@
 }
 
 .box {
-    @apply .bg-white .text-gray-500 .border .rounded-lg .p-2 .cursor-pointer;
+    @apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
 }
 
 .box-item {
