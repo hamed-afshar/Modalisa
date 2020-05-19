@@ -1,6 +1,6 @@
 @extends('dashboards._admin_header')
 @section('index-content')
-    <div class="grid grid-cols-6">
+    <div id="app" class="grid grid-cols-6">
         <!-- left side -->
         <div class="grid col-span-2 mt-2">
             <div class="flex flex-col">
@@ -28,8 +28,10 @@
                 @empty
                 @endforelse
                 <div class="flex justify-end">
-                    <div class="btn-circle-pink transform -translate-y-6 translate-x-5">
+                    <div class="btn-circle-pink transform -translate-y-6 translate-x-5"
+                         v-on:click.prevent="$modal.show('add-role-modal')">
                         <i class="fas fa-plus"></i>
+                        {{--                        <a href="" @click.prevent="$modal.show('add-role-modal')"> Show modal</a>--}}
                     </div>
                 </div>
             </div>
@@ -78,11 +80,8 @@
                 </div>
             </div>
         </div>
-        <div id="app">
-            <add-role-modal></add-role-modal>
-            <a href="" @click.prevent="$modal.show('add-role-modal')"> Show modal</a>
-        </div>
 
+        <add-role-modal></add-role-modal>
     </div>
-
 @endsection
+<add-role-modal></add-role-modal>
