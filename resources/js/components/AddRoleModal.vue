@@ -7,7 +7,7 @@
 						<h1 class="font-bold"> Add New Role </h1>
 					</div>
 					<div class="w-1/2 flex pt-1 justify-end">
-						<i class="fas fa-times"></i>
+						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-role-modal')"></i>
 					</div>
 				</div>
 			</div>
