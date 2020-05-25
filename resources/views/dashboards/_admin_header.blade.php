@@ -9,7 +9,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div class="box h-48 flex items-center justify-center shadow-2xl">
                     <div class="flex flex-wrap">
-                        <a href="{{ route('users.index') }}">
+                        <a href="{{ route('user-center') }}">
                             <i class="box-item fa fa-user fa-3x flex justify-center w-full"></i>
                             <div class="flex text-sm font-bold justify-center mt-2 w-full">{{ __('translate.user_center') }}</div>
                         </a>
@@ -17,7 +17,7 @@
                 </div>
                 <div class="box flex items-center justify-center shadow-2xl">
                     <div class="flex flex-wrap">
-                        <a href="{{ route('roles.index') }}">
+                        <a href="{{ route('security-center') }}">
                             <i class="box-item fa fa-shield-alt fa-3x flex justify-center w-full"></i>
                             <div class="flex text-sm font-bold justify-center mt-2 w-full">{{ __('translate.security_center') }}</div>
                         </a>
