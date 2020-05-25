@@ -17,15 +17,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/system-admin', 'UserController@chooseDashboard');
-
-
 Route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
 
 Route::post('/users', 'RegisterController@store')->name('users.store');
 Route::get('/users/create', 'RegisterController@create')->name('users.create');
 
 Route::group(['middleware' => 'auth'], function() {
+
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/security-center', 'HomeController@security_center')->name('security-center');
+    Route::get('/user-center', 'HomeController@user_center')->name('user-center');
+
 
     Route::get('/users', 'UserController@index')->name('users.index');
     Route::get('/users/{user}', 'UserController@show')->name('users.show');
@@ -61,11 +63,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
 
-    Route::get('/home', 'HomeController@index')->name('home');
 });
 
 
 Route::delete('/orders', 'OrdersController@destroy');
+
 
 
 
