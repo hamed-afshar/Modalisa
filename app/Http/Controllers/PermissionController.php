@@ -11,8 +11,7 @@ class PermissionController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Permission::class);
-        $permissions = Permission::all();
-        return view('permissions.index', compact('permissions'));
+        return $permissions = Permission::all();
     }
 
     //form to create permissions

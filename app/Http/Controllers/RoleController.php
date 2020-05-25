@@ -16,9 +16,7 @@ class RoleController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Role::class);
-        $roles = Role::all();
-        $permissions = Permission::all();
-        return view('roles.index', compact('roles', 'permissions'));
+        return Role::all();
     }
 
     //create form for role creation
@@ -32,7 +30,6 @@ class RoleController extends Controller
     //store role instance in db
     public function store()
     {
-
         $this->authorize('create', Role::class);
         Role::create(request()->validate([
             'name' => 'required',

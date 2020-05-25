@@ -57,12 +57,4 @@ class UserController extends Controller
         return redirect('access-denied');
     }
 
-    //choose dashboard based n user's role
-    public function chooseDashboard()
-    {
-        if(Auth::user()->isAdmin())
-        {
-            return view("dashboards.system-admin");
-        }
-    }
 }
