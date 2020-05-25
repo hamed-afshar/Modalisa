@@ -30,6 +30,11 @@
 <script>
     export default {
         name: "AddRoleModal",
+        methods: {
+            add() {
+                
+            }
+        }
     }
 </script>
 
