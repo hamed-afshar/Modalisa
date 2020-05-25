@@ -22,6 +22,21 @@ class AdminFunctionsTest extends TestCase
     }
 
     /** @test */
+    public function SystemAdmin_can_access_to_security_center()
+    {
+        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->get('/security-center')->assertStatus(200);
+    }
+
+    /** @test */
+    public function SystemAdmin_can_access_user_center()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->get('user-center')->assertStatus(200);
+    }
+
+    /** @test */
     public function SystemAdmin_can_assign_a_role_to_user()
     {
         $user = factory('App\User')->create();
