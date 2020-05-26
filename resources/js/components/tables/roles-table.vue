@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col" id="app">
         <table class="table-auto mb-2">
             <thead class="sticky top-0">
             <tr class="table-header-row">
@@ -11,16 +11,17 @@
             <tbody>
             <tr class="table-body-row" v-for="role in roles" v-bind:key="role.id">
                 <td class="table-body-cell">
-                    {{ role.name }}
+                    <a  class="link" v-bind:href="path + role.id"> {{ role.name }} </a>
                 </td>
             </tr>
             </tbody>
         </table>
         <div class="flex justify-end transform -translate-y-6 translate-x-5">
-            <div class="btn-circle-pink">
-                <i class="fas fa-plus"></i>
-            </div>
+           <button v-on:click="$modal.show('add-role-modal')">
+               <circle-plus-button></circle-plus-button>
+           </button>
         </div>
+        <add-modal title="Add a New Role"></add-modal>
     </div>
 </template>
 
@@ -32,7 +33,8 @@
         },
         data() {
             return {
-                roles: []
+                roles: [],
+                path: '/roles/'
             }
         },
         mounted() {

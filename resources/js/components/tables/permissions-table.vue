@@ -11,7 +11,7 @@
             <tbody>
             <tr class="table-body-row" v-for="permission in permissions" v-bind:key="permission.id">
                 <td class="table-body-cell">
-                    {{ permission.name }}
+                    <a class="link" v-bind:href="path + permission.id"> {{ permission.name }} </a>
                 </td>
             </tr>
             </tbody>
@@ -32,7 +32,8 @@
         },
         data() {
             return {
-                permissions: []
+                permissions: [],
+                path: '/permissions/'
             }
         },
         mounted() {
