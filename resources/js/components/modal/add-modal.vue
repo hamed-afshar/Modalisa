@@ -27,6 +27,10 @@
 	</modal>
 </template>
 
+
+
+
+
 <script>
     export default {
         name: "add-modal",

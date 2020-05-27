@@ -16,3 +16,15 @@ mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/main.css', 'public/css', [
         require('tailwindcss'),
     ])
+
+mix.webpackConfig({
+    module: {
+        rules: [
+            {
+                // Matches all PHP or JSON files in `resources/lang` directory.
+                test: /resources[\\\/]lang.+\.(php|json)$/,
+                loader: 'laravel-localization-loader',
+            }
+        ]
+    }
+});

@@ -14078,6 +14078,11 @@ video {
   font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
 }
 
 .btn-pink {
@@ -14085,54 +14090,12 @@ video {
   font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
   background-color: #d53f8c;
-}
-
-.btn-circle {
-  display: inline-block;
-  display: -webkit-box;
-  display: flex;
-  color: #fff;
-  height: 3rem;
-  width: 3rem;
-  border-width: 1px;
-  border-radius: 9999px;
-  -webkit-box-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-          align-items: center
-}
-
-.btn-circle-pink {
-  display: inline-block;
-  display: -webkit-box;
-  display: flex;
-  color: #fff;
-  height: 3rem;
-  width: 3rem;
-  border-width: 1px;
-  border-radius: 9999px;
-  -webkit-box-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-          align-items: center;
-  background-color: #d53f8c
-}
-
-.btn-circle-pink:hover {
-  display: inline-block;
-  display: -webkit-box;
-  display: flex;
-  color: #fff;
-  height: 3rem;
-  width: 3rem;
-  border-width: 1px;
-  border-radius: 9999px;
-  -webkit-box-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-          align-items: center;
-  background-color: #97266d
 }
 
 .btn-pink:hover {
@@ -14144,6 +14107,11 @@ video {
   font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
   background-color: #48bb78;
 }
 
@@ -14235,7 +14203,6 @@ video {
   border-width: 1px;
   border-radius: 0.5rem;
   padding: 0.5rem;
-  cursor: pointer;
 }
 
 .box-item {
@@ -14259,34 +14226,6 @@ video {
   width: 100%;
   color: #fff;
   font-weight: 700
-}
-
-.table-header-row {
-  background-color: #6b46c1;
-  color: #fff
-}
-
-.table-header-cell {
-  border-width: 1px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  text-align: center
-}
-
-.table-body-row {
-  background-color: #fff
-}
-
-.table-body-cell {
-  border-width: 1px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  text-align: center;
-  color: #2d3748
 }
 
 .link {
