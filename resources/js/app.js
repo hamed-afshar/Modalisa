@@ -23,8 +23,6 @@ Vue.use(VModal);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('roles-table', require('./components/tables/roles-table').default);
 Vue.component('permission-table', require('./components/tables/permissions-table').default);
