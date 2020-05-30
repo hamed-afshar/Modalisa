@@ -17,9 +17,7 @@
             </tbody>
         </table>
         <div class="flex justify-end transform -translate-y-6 translate-x-5">
-            <div class="btn-circle-pink">
-                <i class="fas fa-plus"></i>
-            </div>
+
         </div>
     </div>
 </template>
