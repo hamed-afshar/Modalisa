@@ -39,5 +39,6 @@ return [
     "report_center" => "Report Center",
     "alias" => "Alias",
     "permission" => "Permission",
-    "role" => "Role"
+    "role" => "Role",
+    "save" => "Save",
 ];
