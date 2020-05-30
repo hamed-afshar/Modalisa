@@ -40384,7 +40384,7 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "flex w-full mt-2" }, [
               _c("button", { staticClass: "btn-pink w-full" }, [
-                _vm._v(" " + _vm._s(_vm.$t("translate.remember")))
+                _vm._v(" " + _vm._s(_vm.$t("translate.save")))
               ])
             ])
           ])
@@ -52795,8 +52795,6 @@ Vue.use(vue_js_modal__WEBPACK_IMPORTED_MODULE_0___default.a);
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('roles-table', __webpack_require__(/*! ./components/tables/roles-table */ "./resources/js/components/tables/roles-table.vue")["default"]);
 Vue.component('permission-table', __webpack_require__(/*! ./components/tables/permissions-table */ "./resources/js/components/tables/permissions-table.vue")["default"]);
@@ -53242,7 +53240,8 @@ __webpack_require__.r(__webpack_exports__);
       "report_center": "Report Center",
       "alias": "Alias",
       "permission": "Permission",
-      "role": "Role"
+      "role": "Role",
+      "save": "Save"
     },
     "validation": {
       "accepted": "The {attribute} must be accepted.",
