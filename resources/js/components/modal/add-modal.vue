@@ -18,7 +18,7 @@
 						       placeholder="New Role Name" autofocus>
 					</div>
 					<div class="flex w-full mt-2">
-						<button class="btn-pink w-full"> L</button>
+						<button class="btn-pink w-full"> {{ $t('translate.remember')}}</button>
 					</div>
 
 				</div>

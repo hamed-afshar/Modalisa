@@ -162,6 +162,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        MartinLindhe\VueInternationalizationGenerator\GeneratorProvider::class,
 
         /*
          * Package Service Providers...

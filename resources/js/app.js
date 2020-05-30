@@ -9,8 +9,10 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import VModal from 'vue-js-modal';
-import Lang from 'lang.js'
+import VueInternationalization from 'vue-i18n';
+import Locale from './vue-i18n-locales.generated'
 
+Vue.use(VueInternationalization);
 Vue.use(VModal);
 
 /**
@@ -35,6 +37,13 @@ Vue.component('add-modal', require('./components/modal/add-modal').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+const lang= document.documentElement.lang.substr(0,2);
+const i18n = new VueInternationalization({
+    locale:lang,
+    messages:Locale
+})
+
 const app = new Vue({
     el: '#app',
+    i18n,
 });
