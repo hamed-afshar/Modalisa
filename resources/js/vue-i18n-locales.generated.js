@@ -54,7 +54,8 @@ export default {
             "report_center": "Report Center",
             "alias": "Alias",
             "permission": "Permission",
-            "role": "Role"
+            "role": "Role",
+            "save": "Save"
         },
         "validation": {
             "accepted": "The {attribute} must be accepted.",
