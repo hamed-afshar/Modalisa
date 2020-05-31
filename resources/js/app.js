@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+window.Event = new Vue();
 
 import VModal from 'vue-js-modal';
 import VueInternationalization from 'vue-i18n';
@@ -27,7 +28,7 @@ Vue.use(VModal);
 Vue.component('roles-table', require('./components/tables/roles-table').default);
 Vue.component('permission-table', require('./components/tables/permissions-table').default);
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
-Vue.component('add-modal', require('./components/modal/add-modal').default);
+Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
