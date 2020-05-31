@@ -35,7 +35,6 @@ class RoleController extends Controller
             'name' => 'required',
             'label' => 'required'
         ]));
-        return redirect()->route('roles.index');
     }
 
     //show a single role
