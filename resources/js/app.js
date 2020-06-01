@@ -30,6 +30,12 @@ Vue.component('permission-table', require('./components/tables/permissions-table
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
 Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
 
+Vue.component('general-modal', require('./components/modals/general-modal').default);
+Vue.component('modal-header', require('./components/modals/modal-header').default);
+Vue.component('modal-body', require('./components/modals/modal-body').default);
+Vue.component('modal-content', require('./components/modals/modal-content').default);
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
