@@ -17,8 +17,11 @@
             </tbody>
         </table>
         <div class="flex justify-end transform -translate-y-6 translate-x-5">
-
+            <button v-on:click="$modal.show('general-modal')">
+                <circle-plus-button></circle-plus-button>
+            </button>
         </div>
+        <general-modal title="Add a Permission" v-bind:fields = "{ name: 'name', label: 'label'}"></general-modal>
     </div>
 </template>
 
