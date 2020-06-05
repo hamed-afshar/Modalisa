@@ -1,12 +1,14 @@
 <template>
-	<div name="modal-content" id="modal-content">
-		<p> test </p>
-	</div>
+    <div name="modal-content" id="modal-content">
+    </div>
 </template>
 
 <script>
     export default {
-        name: "modal-content"
+        name: "modal-content",
+        props: {
+            fields: Object,
+        }
     }
 </script>
 

@@ -1,31 +1,34 @@
 <template>
-	<div>
-		<modal name="general-modal" id="general-modal" height="auto">
-			<modal-header>
-				{{ title }}
-			</modal-header>
-			<modal-body>
-				<modal-content>
-				</modal-content>
-			</modal-body>
-			<div v-for="field in fields" :key="field">
-				{{ field }}
-			</div>
-		</modal>
-
-	</div>
+    <div class="modal"  v-show="value">
+        <modal-header v-on:closeModal="closeModal">
+            {{ fields.title }}
+        </modal-header>
+        <slot name="modal-body"> </slot>
+    </div>
 </template>
 
 <script>
     export default {
         name: "general-modal",
-	    props: {
-			title: null,
-		    fields: Array,
-	    }
+        props: {
+            value: {
+                required:true
+            },
+            fields: Object
+        },
+        data: {
+
+        },
+        methods: {
+            closeModal() {
+                this.value =! this.value;
+            }
+        }
     }
 </script>
 
 <style scoped>
-
+    .modal-box {
+        @apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
+    }
 </style>

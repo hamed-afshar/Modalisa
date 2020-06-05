@@ -17,11 +17,21 @@
             </tbody>
         </table>
         <div class="flex justify-end transform -translate-y-6 translate-x-5">
-            <button v-on:click="$modal.show('general-modal')">
+            <button v-on:click="openModal">
                 <circle-plus-button></circle-plus-button>
             </button>
         </div>
-        <general-modal title="Add a Permission" v-bind:fields = "{ name: 'name', label: 'label'}"></general-modal>
+        <general-modal
+            v-bind:fields="{
+            title: 'Add a Permission',
+            attr: {
+                fields:['name', 'label'],
+                buttons:['Save'],
+            }
+        }"
+            v-model="modalOpen">
+            <modal-header> </modal-header>
+        </general-modal>
     </div>
 </template>
 
@@ -34,7 +44,13 @@
         data() {
             return {
                 permissions: [],
-                path: '/permissions/'
+                path: '/permissions/',
+                modalOpen: false
+            }
+        },
+        methods: {
+            openModal() {
+                this.modalOpen =! this.modalOpen;
             }
         },
         mounted() {
