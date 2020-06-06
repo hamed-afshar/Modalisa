@@ -1,34 +1,41 @@
 <template>
-    <div class="modal"  v-show="value">
-        <modal-header v-on:closeModal="closeModal">
-            {{ fields.title }}
-        </modal-header>
-        <slot name="modal-body"> </slot>
-    </div>
+	<div class="modal" v-show="modalValue">
+		<modal-header>
+			{{ fields.title }}
+		</modal-header>
+		<slot name="modal-body">
+			<modal-body>
+
+			</modal-body>
+		</slot>
+	</div>
 </template>
 
 <script>
     export default {
         name: "general-modal",
         props: {
-            value: {
-                required:true
-            },
+            title: null,
             fields: Object
         },
-        data: {
-
-        },
-        methods: {
-            closeModal() {
-                this.value =! this.value;
+        data() {
+            return {
+                modalValue: false
             }
+        },
+	    mounted() {
+            this.$root.$on('open-modal', () => {
+              this.modalValue = true
+            });
+            this.$root.$on('close-modal', () => {
+                this.modalValue = false
+            });
         }
     }
 </script>
 
 <style scoped>
-    .modal-box {
-        @apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
-    }
+	.modal-box {
+		@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
+	}
 </style>

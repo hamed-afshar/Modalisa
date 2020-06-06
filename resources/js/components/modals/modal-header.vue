@@ -8,7 +8,7 @@
                     </h1>
                 </div>
                 <div class="w-1/2 flex pt-1 justify-end">
-                    <i class="fas fa-times cursor-pointer" v-on:click="$emit('closeModal')"></i>
+                    <i class="fas fa-times cursor-pointer" v-on:click="closeModal"></i>
                 </div>
             </div>
         </div>
@@ -18,6 +18,11 @@
 <script>
     export default {
         name: "modal-header",
+        methods: {
+            closeModal() {
+                this.$root.$emit('close-modal')
+            }
+        }
     }
 </script>
 
