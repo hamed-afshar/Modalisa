@@ -28,9 +28,12 @@
                 fields:['name', 'label'],
                 buttons:['Save'],
             }
-        }"
-            v-model="modalOpen">
-            <modal-header> </modal-header>
+        }">
+            <template v-slot:modal-body>
+                <div class="grid grid-cols-6 mt-6">
+                    hamed afshar nejat
+                </div>
+            </template>
         </general-modal>
     </div>
 </template>
@@ -50,7 +53,7 @@
         },
         methods: {
             openModal() {
-                this.modalOpen =! this.modalOpen;
+                this.$root.$emit('open-modal');
             }
         },
         mounted() {
