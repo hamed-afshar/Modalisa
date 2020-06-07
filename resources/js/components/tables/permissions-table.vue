@@ -25,15 +25,13 @@
             v-bind:fields="{
             title: 'Add a Permission',
             attr: {
-                fields:['name', 'label'],
+                inputs:[
+                        { name: 'name', label: 'name'},
+                        { name: 'label', label: 'label'}
+                ],
                 buttons:['Save'],
             }
         }">
-            <template v-slot:modal-body>
-                <div class="grid grid-cols-6 mt-6">
-                    hamed afshar nejat
-                </div>
-            </template>
         </general-modal>
     </div>
 </template>
