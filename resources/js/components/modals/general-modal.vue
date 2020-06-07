@@ -3,11 +3,7 @@
 		<modal-header>
 			{{ fields.title }}
 		</modal-header>
-		<slot name="modal-body">
-			<modal-body>
-
-			</modal-body>
-		</slot>
+		<modal-content v-bind:fields="fields" />
 	</div>
 </template>
 
