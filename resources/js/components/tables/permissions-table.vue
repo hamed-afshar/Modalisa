@@ -30,7 +30,8 @@
                         { name: 'label', label: 'label'}
                 ],
                 buttons:['Save'],
-            }
+            },
+            route: this.route
         }">
         </general-modal>
     </div>
@@ -40,7 +41,11 @@
     export default {
         name: "permission-table",
         props: {
-            columns: Array
+            columns: Array,
+            route: {
+                type: String,
+                required: true
+            }
         },
         data() {
             return {
@@ -52,7 +57,7 @@
         methods: {
             openModal() {
                 this.$root.$emit('open-modal');
-            }
+            },
         },
         mounted() {
             axios.get('./permissions')
