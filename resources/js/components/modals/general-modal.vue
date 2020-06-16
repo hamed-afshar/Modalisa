@@ -1,18 +1,9 @@
 <template>
 	<div class="modal" v-show="modalValue">
-		<div class="modal-header">
-			<div class="flex flex-row">
-				<div class="w-1/2">
-					<h1 class="font-bold">
-						{{ fields.title }}
-					</h1>
-				</div>
-				<div class="w-1/2 flex pt-1 justify-end">
-					<i class="fas fa-times cursor-pointer"></i>
-				</div>
-			</div>
-		</div>
 		<div class="modal-box">
+			<modal-header>
+				{{fields.title}}
+			</modal-header>
 			<div class="grid grid-cols-6 mt-3">
 				<div class="col-start-3 col-end-5">
 					<div v-for="item in fields.attr.inputs">
@@ -34,7 +25,6 @@
     export default {
         name: "general-modal",
         props: {
-            title: null,
             fields: Object
         },
         data() {
@@ -58,7 +48,25 @@
 		@apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold;
 	}
 
+	/*.modal-box {*/
+	/*	@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;*/
+	/*}*/
+
+	.modal {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 	.modal-box {
-		@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
+		background: #FFFFFF;
+		box-shadow: 2px 2px 20px 1px;
+		overflow-x: auto;
+		display: flex;
+		flex-direction: column;
 	}
 </style>
