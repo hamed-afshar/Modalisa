@@ -16,3 +16,7 @@
 13. using hash and version for js files enables us to have multiple version of js in clients computer
 and if we have newer version then it will be replaaced with the new one. This way will increase the
 loading time.
+
+14. (Self Study) javascript classes
+15. avoid repeating error class in all modules.
+16. cleaning up code by using nested components specially for modals in the future.
