@@ -21,7 +21,13 @@
 				<circle-plus-button></circle-plus-button>
 			</button>
 		</div>
-		<add-role-modal title="Add a New Role"></add-role-modal>
+		<add-role-modal v-bind:fields="{
+            title: 'Add a Role',
+            attr: {
+                buttons:['Save'],
+            },
+        }"
+		></add-role-modal>
 	</div>
 </template>
 
@@ -38,13 +44,16 @@
             }
         },
         methods: {
+            //function to execute after saving saving a role in db
             save() {
                 axios.get('./roles')
                     .then(response => this.roles = response.data);
+                //close modal
                 this.$modal.hide('add-role-modal');
             }
         },
-        created() {
+
+        mounted() {
             axios.get('./roles')
                 .then(response => this.roles = response.data);
             Event.$on('save', () => {

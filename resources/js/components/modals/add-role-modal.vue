@@ -4,7 +4,7 @@
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
-						<h1 class="font-bold"> {{ title }} </h1>
+						<h1 class="font-bold"> {{ fields.title }} </h1>
 					</div>
 					<div class="w-1/2 flex pt-1 justify-end">
 						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-role-modal')"></i>
@@ -54,7 +54,7 @@
     export default {
         name: "add-role-modal",
         props: {
-            title: ''
+            fields: Object
         },
         data() {
             return {
@@ -71,10 +71,8 @@
                 }).then(function () {
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data));
-
             }
         }
-
     }
 </script>
 
