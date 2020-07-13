@@ -13,7 +13,7 @@
             <div class="grid grid-rows-2 grid-flow-col">
                 <div class="flex flex-col">
                     <div class="box-header"> {{ __("translate.permission") }}</div>
-                    <permission-table route="{{ route('permissions.store') }}"></permission-table>
+                    <permission-table></permission-table>
                 </div>
             </div>
         </div>
