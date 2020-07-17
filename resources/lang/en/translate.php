@@ -41,4 +41,5 @@ return [
     "permission" => "Permission",
     "role" => "Role",
     "save" => "Save",
+    "delete" => "Delete"
 ];
