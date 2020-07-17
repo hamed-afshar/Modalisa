@@ -30,6 +30,7 @@ Vue.component('permission-table', require('./components/tables/permissions-table
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
 Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
 Vue.component('add-permission-modal', require('./components/modals/add-permission-modal').default);
+Vue.component('delete-permission-modal', require('./components/modals/delete-permission-modal').default);
 
 
 
