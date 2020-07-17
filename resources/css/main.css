@@ -106,8 +106,8 @@
     @apply .text-red-600 .font-bold .my-2 .mx-2
 }
 
-.modal {
-
+.x-button {
+    @apply .text-pink-600
 }
 
 
