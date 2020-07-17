@@ -19,10 +19,10 @@
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
-						       placeholder="Lable" autofocus>
+						       placeholder="Label" autofocus>
 					</div>
 					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
+						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.delete')}}</button>
 					</div>
 					<div>
 						{{ errors.get('name')}}
