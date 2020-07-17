@@ -55,7 +55,8 @@ export default {
             "alias": "Alias",
             "permission": "Permission",
             "role": "Role",
-            "save": "Save"
+            "save": "Save",
+            "delete": "Delete"
         },
         "validation": {
             "accepted": "The {attribute} must be accepted.",
