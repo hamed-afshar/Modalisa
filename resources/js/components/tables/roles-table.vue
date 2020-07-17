@@ -23,9 +23,6 @@
 		</div>
 		<add-role-modal v-bind:fields="{
             title: 'Add a Role',
-            attr: {
-                buttons:['Save'],
-            },
         }"
 		></add-role-modal>
 	</div>
