@@ -31,12 +31,12 @@
 			</button>
 		</div>
 		<add-permission-modal v-bind:fields="{
-            title: 'Add a Permission',
+            title: $t('translate.add_permission'),
         }">
 		</add-permission-modal>
 
         <delete-permission-modal v-bind:fields="{
-            title: 'Delete Permission',
+            title: $t('translate.delete_permission'),
         }">
         </delete-permission-modal>
 	</div>
@@ -61,13 +61,26 @@
                     .then(response => this.permissions = response.data);
                 // close modal
                 this.$modal.hide('add-permission-modal')
-            }
+            },
+	        //function to execute after deleting a permission from db
+            delete() {
+                axios.get('./permissions')
+                    .then(response => this.permissions = response.data);
+                // close modal
+                this.$modal.hide('delete-permission-modal')
+            },
         },
         mounted() {
+            //fetch all permissions immediately after loading
             axios.get('./permissions')
                 .then(response => this.permissions = response.data);
+            //listening for permission saving signal
             Event.$on('save', () => {
                 this.save();
+            })
+	        //listening for permission deleting signal
+            Event.$on('delete', () => {
+                this.delete();
             })
         }
     }
