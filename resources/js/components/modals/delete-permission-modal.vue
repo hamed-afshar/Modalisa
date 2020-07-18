@@ -1,7 +1,7 @@
 <template>
 	<modal name="delete-permission-modal" id="delete-permission-modal" height="auto"
             @before-open="beforeOpen">
-		<div class="modal-box h-64">
+		<div class="modal-box h-48">
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
@@ -21,7 +21,7 @@
 						</div>
 					</div>
 					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full mb-2" v-on:click="save"> {{ $t('translate.delete') }} </button>
+						<button class="btn-pink w-full mb-2" v-on:click="del"> {{ $t('translate.delete') }} </button>
 					</div>
 					<div>
 						{{ errors.get('name')}}
@@ -64,16 +64,15 @@
             }
         },
 	    methods: {
-            save() {
-				axios.delete('/permissions').then(function() {
-	                Event.$emit('save');
+            //delete function
+            del() {
+				axios.delete('/permissions/' + this.id).then(function() {
+	                Event.$emit('delete');
 				}).catch(error => this.errors.record(error.response.data))
             },
             beforeOpen(event) {
                 this.id = event.params.id;
                 this.name = event.params.name;
-                console.log(this.id);
-
             }
 	    },
     }
