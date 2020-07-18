@@ -11,7 +11,16 @@
 			<tbody>
 			<tr class="table-body-row" v-for="role in roles" v-bind:key="role.id">
 				<td class="table-body-cell">
-					<a class="link" v-bind:href="path + role.id"> {{ role.name }} </a>
+					<div class="flex flex-row">
+						<div class="w-5/6">
+							<a class="link" v-bind:href="path + role.id"> {{ role.name }} </a>
+						</div>
+						<div class="w-1/6 flex justify-end x-button">
+							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
+                            {id:role.id, name:role.name},{},
+                            {'before-close':event => {event.params.id, event.params.name}})"></i>
+						</div>
+					</div>
 				</td>
 			</tr>
 			</tbody>
@@ -22,9 +31,15 @@
 			</button>
 		</div>
 		<add-role-modal v-bind:fields="{
-            title: 'Add a Role',
-        }"
-		></add-role-modal>
+            title: $t('translate.add_role')
+        }">
+		</add-role-modal>
+
+		<delete-role-modal v-bind:fields="{
+		    title: $t('translate.delete_role'),
+		}">
+		</delete-role-modal>
+
 	</div>
 </template>
 
@@ -41,21 +56,35 @@
             }
         },
         methods: {
-            //function to execute after saving saving a role in db
+            //function to execute after saving a role in db
             save() {
                 axios.get('./roles')
                     .then(response => this.roles = response.data);
                 //close modal
                 this.$modal.hide('add-role-modal');
-            }
+            },
+            //function to execute after deleting a role from db
+            delete() {
+                axios.get('./roles')
+                    .then(response => this.permissions = response.data);
+                // close modal
+                this.$modal.hide('delete-role-modal')
+            },
         },
 
         mounted() {
+            //fetch all roles immediately after loading
             axios.get('./roles')
                 .then(response => this.roles = response.data);
+            //listening for role adding signal
             Event.$on('save', () => {
                 this.save();
             });
+            //listening for role deleting signal
+            Event.$on('delete', () => {
+                this.delete();
+            })
+
         }
     }
 </script>
