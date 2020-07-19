@@ -1,6 +1,6 @@
 <template>
 	<modal name="add-role-modal" id="add-role-modal" height="auto">
-		<div class="modal-box h-64">
+		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
@@ -22,9 +22,9 @@
 						       placeholder="Label" autofocus>
 					</div>
 					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.delete')}}</button>
+						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
 					</div>
-					<div>
+					<div class="error">
 						{{ errors.get('name')}}
 						{{ errors.get('label')}}
 					</div>
@@ -64,6 +64,7 @@
             }
         },
         methods: {
+            //save function
             save() {
                 axios.post('/roles', {
                     name: this.roleName,

@@ -1,7 +1,7 @@
 <template>
 	<modal name="delete-permission-modal" id="delete-permission-modal" height="auto"
-            @before-open="beforeOpen">
-		<div class="modal-box h-48">
+	       @before-open="beforeOpen">
+		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
@@ -21,11 +21,7 @@
 						</div>
 					</div>
 					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full mb-2" v-on:click="del"> {{ $t('translate.delete') }} </button>
-					</div>
-					<div>
-						{{ errors.get('name')}}
-						{{ errors.get('label')}}
+						<button class="btn-pink w-full mb-2" v-on:click="del"> {{ $t('translate.delete') }}</button>
 					</div>
 				</div>
 			</div>
@@ -34,21 +30,6 @@
 </template>
 
 <script>
-	class Errors {
-		constructor() {
-		    this.errors = {}
-        }
-
-        get(field) {
-		    if(this.errors[field] ) {
-		        return this.errors[field][0];
-		    }
-        }
-
-        record(errors) {
-		    this.errors = errors.errors
-        }
-	}
     export default {
         name: "delete-permission-modal",
         props: {
@@ -56,25 +37,22 @@
         },
         data() {
             return {
-	            permissionName: null,
-	            permissionLabel: null,
-	            errors: new Errors(),
                 id: null,
                 name: null
             }
         },
-	    methods: {
+        methods: {
             //delete function
             del() {
-				axios.delete('/permissions/' + this.id).then(function() {
-	                Event.$emit('delete');
-				}).catch(error => this.errors.record(error.response.data))
+                axios.delete('/permissions/' + this.id).then(function () {
+                    Event.$emit('delete');
+                })
             },
             beforeOpen(event) {
                 this.id = event.params.id;
                 this.name = event.params.name;
             }
-	    },
+        },
     }
 </script>
 

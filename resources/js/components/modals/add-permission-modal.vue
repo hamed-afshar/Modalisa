@@ -1,6 +1,6 @@
 <template>
 	<modal name="add-permission-modal" id="add-permission-modal" height="auto">
-		<div class="modal-box h-64">
+		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
@@ -20,7 +20,7 @@
 						</div>
 						<div class="flex mt-2">
 							<input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel" name="permissionLabel"
-							       placeholder="Label1" autofocus>
+							       placeholder="Label" autofocus>
 						</div>
 					</div>
 					<div class="flex w-full mt-4">
