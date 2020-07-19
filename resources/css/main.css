@@ -99,11 +99,11 @@
 }
 
 .link:hover {
-    @apply .text-blue-700
+    @apply .text-blue-700 .cursor-pointer
 }
 
 .error {
-    @apply .text-red-600 .font-bold .my-2 .mx-2
+    @apply .text-red-600 .font-thin .mx-2
 }
 
 .x-button {
