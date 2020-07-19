@@ -13,12 +13,16 @@
 				<td class="table-body-cell">
                     <div class="flex flex-row">
                         <div class="w-5/6">
-                            <a class="link" v-bind:href="path + permission.id"> {{ permission.name }} </a>
+                            <a class="link" v-on:click="$modal.show('edit-permission-modal',
+                            {id:permission.id, name:permission.name},{},
+                            {'before-open':event => {event.params.id, event.params.name}})">
+	                            {{ permission.name }}
+                            </a>
                         </div>
                         <div class="w-1/6 flex justify-end x-button">
                             <i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-permission-modal',
                             {id:permission.id, name:permission.name},{},
-                            {'before-close':event => {event.params.id, event.params.name}})"></i>
+                            {'before-open':event => {event.params.id, event.params.name}})"></i>
                         </div>
                     </div>
 				</td>
@@ -39,6 +43,10 @@
             title: $t('translate.delete_permission'),
         }">
         </delete-permission-modal>
+
+		<edit-permission-modal v-bind:fields="{
+		   title : $t('translate.edit_permission')
+		}"></edit-permission-modal>
 	</div>
 </template>
 
@@ -57,14 +65,15 @@
         methods: {
 	        //function to execute after saving permission in db
             save() {
-                axios.get('./permissions')
+                axios.get('/permissions')
                     .then(response => this.permissions = response.data);
                 // close modal
                 this.$modal.hide('add-permission-modal')
             },
 	        //function to execute after deleting a permission from db
             delete() {
-                axios.get('./permissions')
+                // list permissions
+                axios.get('/permissions')
                     .then(response => this.permissions = response.data);
                 // close modal
                 this.$modal.hide('delete-permission-modal')

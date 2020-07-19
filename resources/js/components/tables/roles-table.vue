@@ -18,7 +18,7 @@
 						<div class="w-1/6 flex justify-end x-button">
 							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
                             {id:role.id, name:role.name},{},
-                            {'before-close':event => {event.params.id, event.params.name}})"></i>
+                            {'before-open':event => {event.params.id, event.params.name}})"></i>
 						</div>
 					</div>
 				</td>
@@ -58,15 +58,16 @@
         methods: {
             //function to execute after saving a role in db
             save() {
-                axios.get('./roles')
+                axios.get('/roles')
                     .then(response => this.roles = response.data);
                 //close modal
                 this.$modal.hide('add-role-modal');
             },
             //function to execute after deleting a role from db
             delete() {
-                axios.get('./roles')
-                    .then(response => this.permissions = response.data);
+                // list roles
+                axios.get('/roles')
+                    .then(response => this.roles = response.data);
                 // close modal
                 this.$modal.hide('delete-role-modal')
             },
