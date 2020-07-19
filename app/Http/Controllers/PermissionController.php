@@ -35,7 +35,6 @@ class PermissionController extends Controller
     public function show(Permission $permission)
     {
         $this->authorize('view', $permission);
-        return view('permissions.show', compact('permission'));
     }
 
     //edit form
