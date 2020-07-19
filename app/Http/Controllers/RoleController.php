@@ -67,7 +67,6 @@ class RoleController extends Controller
     {
         $this->authorize('delete', $role);
         $role->delete();
-        return redirect()->route('roles.index');
     }
 
 
