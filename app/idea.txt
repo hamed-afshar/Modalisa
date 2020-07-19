@@ -20,3 +20,5 @@ loading time.
 14. (Self Study) javascript classes
 15. avoid repeating error class in all modules.
 16. cleaning up code by using nested components specially for modals in the future.
+17. modal must be cleared before open
+18. create and edit should be removed from controller because this is a modals job
