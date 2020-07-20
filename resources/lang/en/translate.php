@@ -48,5 +48,6 @@ return [
     "delete_permission" => "Delete a Permission",
     "add_role" => "Add a Role",
     "delete_role" => "Delete a Role",
-    "edit_permission" => "Edit Permission"
+    "edit_permission" => "Edit Permission",
+    "edit_role" => "Edit Role"
 ];
