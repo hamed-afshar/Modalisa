@@ -12,22 +12,27 @@ use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    //index roles
+    /*
+     * index roles
+     */
     public function index()
     {
         $this->authorize('viewAny', Role::class);
         return Role::all();
     }
 
-    //create form for role creation
-
+    /*
+     * form to create roles
+     * vue-js modal generates this form
+     */
     public function create()
     {
         $this->authorize('create', Role::class);
-        return view('roles.create');
     }
 
-    //store role instance in db
+    /*
+     * store roles
+     */
     public function store()
     {
         $this->authorize('create', Role::class);
@@ -37,21 +42,27 @@ class RoleController extends Controller
         ]));
     }
 
-    //show a single role
+    /*
+     * show a single role
+     * vue-js shows single role
+     */
     public function show(Role $role)
     {
         $this->authorize('view', $role);
-        return view('roles.show', compact('role'));
     }
 
-    //edit form
+    /*
+     * edit form
+     * vue-js generates this form
+     */
     public function edit(Role $role)
     {
         $this->authorize('update', $role);
-        return view('roles.edit', compact('role'));
     }
 
-    //update a role
+    /*
+     * update roles
+     */
     public function update(Role $role)
     {
         $this->authorize('update', $role);
@@ -62,7 +73,9 @@ class RoleController extends Controller
         return redirect()->route('roles.show', $role);
     }
 
-    //delete a role
+    /*
+     * delete roles
+     */
     public function destroy(Role $role)
     {
         $this->authorize('delete', $role);

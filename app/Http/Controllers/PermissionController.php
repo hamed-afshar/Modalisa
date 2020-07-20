@@ -8,20 +8,27 @@ use Illuminate\Http\Request;
 class PermissionController extends Controller
 {
 
+    /*
+     * index permissions
+     */
     public function index()
     {
         $this->authorize('viewAny', Permission::class);
         return $permissions = Permission::all();
     }
 
-    //form to create permissions
+    /*
+     * form to create permissions
+     * vue-js modal generates this form
+    */
     public function create()
     {
         $this->authorize('create', Permission::class);
-        return view('permissions.create');
     }
 
-    //store permissions
+    /*
+     * store permission
+     */
     public function store()
     {
         $this->authorize('create', Permission::class);
@@ -31,20 +38,27 @@ class PermissionController extends Controller
         ]));
     }
 
-    //show a single permission
+    /*
+     * show a single permission
+     * vue-js shows this single permission
+     */
     public function show(Permission $permission)
     {
         $this->authorize('view', $permission);
     }
 
-    //edit form
+    /*
+     * edit form
+     * vue-js generates this form
+     */
     public function edit(Permission $permission)
     {
         $this->authorize('update', $permission);
-        return view('permissions.edit', compact('permission'));
     }
 
-    //update permission
+    /*
+     * update permissions
+     */
     public function update(Permission $permission)
     {
         $this->authorize('update', $permission);
@@ -54,7 +68,9 @@ class PermissionController extends Controller
         $permission->update($data);
     }
 
-    //delete a permission
+    /*
+     * delete permissions
+     */
     public function destroy(Permission $permission)
     {
         $this->authorize('delete', $permission);
