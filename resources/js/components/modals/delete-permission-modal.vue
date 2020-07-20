@@ -49,9 +49,10 @@
                 })
             },
             beforeOpen(event) {
+                console.log("testing event");
                 this.id = event.params.id;
                 this.name = event.params.name;
-            }
+             }
         },
     }
 </script>

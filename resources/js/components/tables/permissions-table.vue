@@ -14,16 +14,15 @@
                     <div class="flex flex-row">
                         <div class="w-5/6">
                             <a class="link" v-on:click="$modal.show('edit-permission-modal',
-                            {id:permission.id, name:permission.name},{},
-                            {'before-open':event => {event.params.id, event.params.name}})">
+                            {id:permission.id, name:permission.name, label:permission.label}, {}, {'before-open':event=>{}})">
 	                            {{ permission.name }}
                             </a>
                         </div>
-                        <div class="w-1/6 flex justify-end x-button">
-                            <i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-permission-modal',
+	                    <div class="w-1/6 flex justify-end x-button">
+		                    <i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-permission-modal',
                             {id:permission.id, name:permission.name},{},
                             {'before-open':event => {event.params.id, event.params.name}})"></i>
-                        </div>
+	                    </div>
                     </div>
 				</td>
 			</tr>
@@ -46,7 +45,8 @@
 
 		<edit-permission-modal v-bind:fields="{
 		   title : $t('translate.edit_permission')
-		}"></edit-permission-modal>
+		}">
+		</edit-permission-modal>
 	</div>
 </template>
 
@@ -67,8 +67,9 @@
             save() {
                 axios.get('/permissions')
                     .then(response => this.permissions = response.data);
-                // close modal
-                this.$modal.hide('add-permission-modal')
+                // close any modal causes this event
+                this.$modal.hide('add-permission-modal');
+	            this.$modal.hide('edit-permission-modal');
             },
 	        //function to execute after deleting a permission from db
             delete() {

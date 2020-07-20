@@ -13,7 +13,10 @@
 				<td class="table-body-cell">
 					<div class="flex flex-row">
 						<div class="w-5/6">
-							<a class="link" v-bind:href="path + role.id"> {{ role.name }} </a>
+							<a class="link" v-on:click="$modal.show('edit-role-modal',
+							{id:role.id, name:role.name, label:role.label} ,{},
+								  {'before-open':event=>{event.params.id, event.params.name, event.params.label}})">
+								{{ role.name }} </a>
 						</div>
 						<div class="w-1/6 flex justify-end x-button">
 							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
@@ -40,6 +43,11 @@
 		}">
 		</delete-role-modal>
 
+		<edit-role-modal v-bind:fields="{
+		    title: $t('translate.edit_role'),
+		}">
+		</edit-role-modal>
+
 	</div>
 </template>
 
@@ -62,6 +70,7 @@
                     .then(response => this.roles = response.data);
                 //close modal
                 this.$modal.hide('add-role-modal');
+                this.$modal.hide('edit-role-modal');
             },
             //function to execute after deleting a role from db
             delete() {

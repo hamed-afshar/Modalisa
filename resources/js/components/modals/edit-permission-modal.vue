@@ -1,5 +1,6 @@
 <template>
-	<modal name="edit-permission-modal" id="edit-permission-modal" height="auto">
+	<modal name="edit-permission-modal" id="edit-permission-modal" height="auto"
+			@before-open="beforeOpen">
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
@@ -14,13 +15,13 @@
 			<div class="grid grid-cols-6 mt-6">
 				<div class="col-start-3 col-end-5">
 					<div class="flex">
-						<input class="input-text w-full" type="text" v-model="permissionName" id="roleName"
-						       name="roleName"
+						<input class="input-text w-full" type="text" v-model="permissionName" id="permissionName"
+						       name="permissionName"
 						       placeholder="Name" autofocus>
 					</div>
 					<div class="flex mt-2">
-						<input class="input-text w-full" type="text" v-model="permissionsLabel" id="roleLabel"
-						       name="roleLabel"
+						<input class="input-text w-full" type="text" v-model="permissionsLabel" id="permissionLabel"
+						       name="permissionLabel"
 						       placeholder="Label" autofocus>
 					</div>
 					<div class="flex w-full mt-4">
@@ -68,7 +69,7 @@
         },
         methods: {
             save() {
-                axios.post('/permissions', {
+                axios.patch('/permissions/' + this.id, {
                     name: this.permissionName,
                     label: this.permissionLabel
                 }).then(function () {
@@ -76,7 +77,9 @@
                 }).catch(error => this.errors.record(error.response.data))
             },
             beforeOpen(event) {
-                console.log("test");
+                this.id = event.params.id;
+                this.permissionName = event.params.name;
+                this.permissionsLabel = event.params.label;
             }
         },
     }
@@ -90,5 +93,4 @@
 	.modal-header {
 		@apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold;
 	}
-
 </style>
