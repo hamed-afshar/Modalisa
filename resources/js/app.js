@@ -28,8 +28,10 @@ Vue.use(VModal);
 Vue.component('roles-table', require('./components/tables/roles-table').default);
 Vue.component('permission-table', require('./components/tables/permissions-table').default);
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
+
 Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
 Vue.component('delete-role-modal', require('./components/modals/delete-role-modal').default);
+Vue.component('edit-role-modal', require('./components/modals/edit-role-modal').default);
 
 Vue.component('add-permission-modal', require('./components/modals/add-permission-modal').default);
 Vue.component('delete-permission-modal', require('./components/modals/delete-permission-modal').default);
