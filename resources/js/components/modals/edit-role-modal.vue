@@ -17,12 +17,15 @@
 					<div class="flex">
 						<input class="input-text w-full" type="text" v-model="roleName" id="roleName"
 						       name="roleName"
-						       placeholder="Name" autofocus>
+						       placeholder="Name"
+						       v-bind:maxlength="fields.maxLabel"
+						       autofocus>
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel"
 						       name="roleLabel"
-						       placeholder="Label" autofocus>
+						       placeholder="Label"
+						       v-bind:maxlength="fields.maxName">
 					</div>
 					<div class="flex w-full mt-4">
 						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
@@ -63,15 +66,16 @@
             return {
                 id: null,
                 roleName: null,
-	            roleLabel: null,
+                roleLabel: null,
                 errors: new Errors()
             }
         },
         methods: {
+	        //method to save role in db
             save() {
                 axios.patch('/roles/' + this.id, {
                     name: this.roleName,
-                    label: this.rolelabel,
+                    label: this.roleLabel,
                 }).then(function () {
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
@@ -79,9 +83,7 @@
             beforeOpen(event) {
                 this.id = event.params.id;
                 this.roleName = event.params.name;
-                this.rolelabel = event.params.label;
-                console.log(this.rolelabel);
-
+                this.roleLabel = event.params.label;
             }
         },
     }

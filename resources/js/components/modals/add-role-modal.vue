@@ -15,11 +15,14 @@
 				<div class="col-start-3 col-end-5">
 					<div class="flex">
 						<input class="input-text w-full" type="text" v-model="roleName" id="roleName" name="roleName"
-						       placeholder="Name" autofocus>
+						       placeholder="Name"
+						       v-bind:maxlength="fields.maxName"
+						       autofocus>
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
-						       placeholder="Label" autofocus>
+						       placeholder="Label"
+						       v-bind:maxlength="fields.maxLabel">
 					</div>
 					<div class="flex w-full mt-4">
 						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
@@ -60,7 +63,7 @@
             return {
                 roleName: null,
                 roleLabel: null,
-                errors: new Errors()
+                errors: new Errors(),
             }
         },
         methods: {
