@@ -17,12 +17,15 @@
 					<div class="flex">
 						<input class="input-text w-full" type="text" v-model="permissionName" id="permissionName"
 						       name="permissionName"
-						       placeholder="Name" autofocus>
+						       placeholder="Name"
+						       v-bind:maxlength="fields.maxName"
+						       autofocus>
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="permissionsLabel" id="permissionLabel"
 						       name="permissionLabel"
-						       placeholder="Label" autofocus>
+						       placeholder="Label"
+						       v-bind:maxlength="fields.maxLabel">
 					</div>
 					<div class="flex w-full mt-4">
 						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
@@ -63,11 +66,12 @@
             return {
                 id: null,
                 permissionName: null,
-                permissionsLabel: null,
+                permissionLabel: null,
                 errors: new Errors()
             }
         },
         methods: {
+	        //method to save permission in db
             save() {
                 axios.patch('/permissions/' + this.id, {
                     name: this.permissionName,
@@ -79,7 +83,7 @@
             beforeOpen(event) {
                 this.id = event.params.id;
                 this.permissionName = event.params.name;
-                this.permissionsLabel = event.params.label;
+                this.permissionLabel = event.params.label;
             }
         },
     }

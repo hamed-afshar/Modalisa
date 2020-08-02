@@ -16,11 +16,14 @@
 					<div>
 						<div class="flex mt-2">
 							<input class="input-text w-full" type="text" v-model="permissionName" id="permissionName" name="permissionName"
-							       placeholder="Name" autofocus>
+							       placeholder="Name"
+							       v-bind:maxlength="fields.maxName"
+							       autofocus>
 						</div>
 						<div class="flex mt-2">
 							<input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel" name="permissionLabel"
-							       placeholder="Label" autofocus>
+							       v-bind:maxlength="fields.maxLabel"
+							       placeholder="Label">
 						</div>
 					</div>
 					<div class="flex w-full mt-4">
