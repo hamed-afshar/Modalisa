@@ -12,11 +12,17 @@
 			<tr class="table-body-row" v-for="role in roles" v-bind:key="role.id">
 				<td class="table-body-cell">
 					<div class="flex flex-row">
-						<div class="w-5/6">
+						<div class="w-2/6 flex justify-start">
 							<a class="link" v-on:click="$modal.show('edit-role-modal',
 							{id:role.id, name:role.name, label:role.label} ,{},
-								  {'before-open':event=>{event.params.id, event.params.name, event.params.label}})">
-								{{ role.name }} </a>
+								  {'before-open':event=>{}})">
+								{{ role.name }}  </a>
+						</div>
+						<div class="w-3/6">
+							<a class="link" v-on:click="$modal.show('edit-role-modal',
+							{id:role.id, name:role.name, label:role.label} ,{},
+								  {'before-open':event=>{}})">
+								{{ role.label }} </a>
 						</div>
 						<div class="w-1/6 flex justify-end x-button">
 							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
@@ -34,7 +40,9 @@
 			</button>
 		</div>
 		<add-role-modal v-bind:fields="{
-            title: $t('translate.add_role')
+            title: $t('translate.add_role'),
+            maxName: 15,
+            maxLabel: 20
         }">
 		</add-role-modal>
 
@@ -45,6 +53,8 @@
 
 		<edit-role-modal v-bind:fields="{
 		    title: $t('translate.edit_role'),
+		    maxName: 15,
+            maxLabel: 20
 		}">
 		</edit-role-modal>
 
