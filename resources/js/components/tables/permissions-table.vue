@@ -12,12 +12,20 @@
 			<tr class="table-body-row" v-for="permission in permissions" v-bind:key="permission.id">
 				<td class="table-body-cell">
                     <div class="flex flex-row">
-                        <div class="w-5/6">
+                        <div class="w-2/6 flex justify-start">
                             <a class="link" v-on:click="$modal.show('edit-permission-modal',
-                            {id:permission.id, name:permission.name, label:permission.label}, {}, {'before-open':event=>{}})">
+                            {id:permission.id, name:permission.name, label:permission.label}, {},
+                                  {'before-open':event=>{}})">
 	                            {{ permission.name }}
                             </a>
                         </div>
+	                    <div class="w-3/6">
+		                    <a class="link" v-on:click="$modal.show('edit-permission-modal',
+                            {id:permission.id, name:permission.name, label:permission.label}, {},
+                                  {'before-open':event=>{}})">
+			                    {{ permission.label }}
+		                    </a>
+	                    </div>
 	                    <div class="w-1/6 flex justify-end x-button">
 		                    <i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-permission-modal',
                             {id:permission.id, name:permission.name},{},
@@ -35,6 +43,8 @@
 		</div>
 		<add-permission-modal v-bind:fields="{
             title: $t('translate.add_permission'),
+            maxName: 15,
+            maxLabel: 20
         }">
 		</add-permission-modal>
 
@@ -44,7 +54,9 @@
         </delete-permission-modal>
 
 		<edit-permission-modal v-bind:fields="{
-		   title : $t('translate.edit_permission')
+		   title : $t('translate.edit_permission'),
+		   maxName: 15,
+           maxLabel: 20
 		}">
 		</edit-permission-modal>
 	</div>
