@@ -68,9 +68,9 @@ class RoleController extends Controller
         $this->authorize('update', $role);
         $data = request()->validate([
             'name' => 'required',
+            'label' => 'required'
         ]);
         $role->update($data);
-        return redirect()->route('roles.show', $role);
     }
 
     /*

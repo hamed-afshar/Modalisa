@@ -63,7 +63,8 @@ class PermissionController extends Controller
     {
         $this->authorize('update', $permission);
         $data = request()->validate([
-           'name' => 'required'
+           'name' => 'required',
+            'label' => 'required'
         ]);
         $permission->update($data);
     }
