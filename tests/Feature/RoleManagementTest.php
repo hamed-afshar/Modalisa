@@ -111,6 +111,16 @@ class RoleManagementTest extends TestCase
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $role->users);
     }
 
+    /** @test */
+    //Systemadmin can view all permissions associated to a role
+    public function Systemadmin_can_view_permissions_associated_to_a_role()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $role = Role::find(1);
+        $this->get($role->path())->assertOk();
+    }
+
 
     /** @test */
     public function guests_can_not_access_role_management()
