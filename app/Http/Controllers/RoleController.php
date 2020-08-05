@@ -82,5 +82,13 @@ class RoleController extends Controller
         $role->delete();
     }
 
+    /*
+     * get all permission associated to a role
+     */
+    public function permissions(Role $role)
+    {
+        $this->authorize('view', $role );
+        return $role->permissions;
+    }
 
 }
