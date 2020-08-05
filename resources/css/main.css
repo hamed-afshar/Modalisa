@@ -110,6 +110,18 @@
     @apply .text-pink-600
 }
 
+.link-button {
+    @apply .text-pink-600
+}
+
+.plus-button {
+    @apply .text-pink-600
+}
+
+.minus-button {
+    @apply .text-pink-600
+}
+
 
 
 
