@@ -22,7 +22,7 @@
 						       autofocus>
 					</div>
 					<div class="flex mt-2">
-						<input class="input-text w-full" type="text" v-model="permissionsLabel" id="permissionLabel"
+						<input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel"
 						       name="permissionLabel"
 						       placeholder="Label"
 						       v-bind:maxlength="fields.maxLabel">
@@ -80,7 +80,9 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
             },
+            //function to be executed before opening modal
             beforeOpen(event) {
+                //get parameters from permission-table modal
                 this.id = event.params.id;
                 this.permissionName = event.params.name;
                 this.permissionLabel = event.params.label;

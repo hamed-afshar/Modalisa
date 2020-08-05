@@ -1,5 +1,6 @@
 <template>
-	<modal name="add-role-modal" id="add-role-modal" height="auto">
+	<modal name="add-role-modal" id="add-role-modal" height="auto"
+			@before-open="beforeOpen">
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
@@ -75,7 +76,13 @@
                 }).then(function () {
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data));
-            }
+            },
+	        //function to be executed before opening modal
+	        beforeOpen() {
+                //clear name and label fields
+                this.roleLabel = null;
+                this.roleName = null;
+	        }
         }
     }
 </script>

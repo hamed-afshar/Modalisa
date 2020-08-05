@@ -1,5 +1,6 @@
 <template>
-	<modal name="add-permission-modal" id="add-permission-modal" height="auto">
+	<modal name="add-permission-modal" id="add-permission-modal" height="auto"
+			@before-open="beforeOpen">
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
@@ -75,7 +76,13 @@
 	            }).then(function() {
 	                Event.$emit('save');
 				}).catch(error => this.errors.record(error.response.data))
-            }
+            },
+            //function to be executed before opening modal
+		    beforeOpen() {
+                //clear name and label fields
+			    this.permissionLabel = null;
+			    this.permissionName = null;
+		    }
 	    },
     }
 </script>

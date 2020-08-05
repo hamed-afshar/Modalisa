@@ -80,7 +80,9 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
             },
+            //function to be executed before opening modal
             beforeOpen(event) {
+                //get parameters from roles-table modal
                 this.id = event.params.id;
                 this.roleName = event.params.name;
                 this.roleLabel = event.params.label;

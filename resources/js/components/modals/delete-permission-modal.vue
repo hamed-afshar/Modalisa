@@ -48,8 +48,9 @@
                     Event.$emit('delete');
                 })
             },
+            //function to be executed before opening modal
             beforeOpen(event) {
-                console.log("testing event");
+                //get parameters from permission-table modal
                 this.id = event.params.id;
                 this.name = event.params.name;
              }
