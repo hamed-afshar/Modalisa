@@ -22,3 +22,4 @@ loading time.
 16. cleaning up code by using nested components specially for modals in the future.
 17. modal must be cleared before open
 18. create and edit should be removed from controller because this is a modals job
+19. repeated style in all component must be collected in a one single location.
