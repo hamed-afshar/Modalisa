@@ -94,7 +94,7 @@
         },
         mounted() {
             //fetch all permissions immediately after loading
-            axios.get('./permissions')
+            axios.get('/permissions')
                 .then(response => this.permissions = response.data);
             //listening for permission saving signal
             Event.$on('save', () => {

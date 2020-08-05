@@ -12,23 +12,30 @@
 			<tr class="table-body-row" v-for="role in roles" v-bind:key="role.id">
 				<td class="table-body-cell">
 					<div class="flex flex-row">
-						<div class="w-2/6 flex justify-start">
+						<div class="w-5/12 flex justify-start">
 							<a class="link" v-on:click="$modal.show('edit-role-modal',
 							{id:role.id, name:role.name, label:role.label} ,{},
 								  {'before-open':event=>{}})">
-								{{ role.name }}  </a>
+								{{ role.name }} </a>
 						</div>
-						<div class="w-3/6">
+						<div class="w-6/12">
 							<a class="link" v-on:click="$modal.show('edit-role-modal',
 							{id:role.id, name:role.name, label:role.label} ,{},
 								  {'before-open':event=>{}})">
 								{{ role.label }} </a>
 						</div>
-						<div class="w-1/6 flex justify-end x-button">
-							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
+						<div class="w-1/12 flex flex-row">
+							<div class="w-1/2 flex justify-start link-button">
+								<i class="fas fa-link cursor-pointer" v-on:click="$modal.show('grant-permission-modal',
+								{id:role.id})"> </i>
+							</div>
+							<div class="w-1/2 flex justify-end x-button">
+								<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
                             {id:role.id, name:role.name},{},
                             {'before-open':event => {event.params.id, event.params.name}})"></i>
+							</div>
 						</div>
+
 					</div>
 				</td>
 			</tr>
@@ -57,6 +64,11 @@
             maxLabel: 20
 		}">
 		</edit-role-modal>
+
+		<grant-permission-modal v-bind:fields="{
+		    title: $t('translate.grant_permission')
+		}">
+		</grant-permission-modal>
 
 	</div>
 </template>
@@ -94,7 +106,7 @@
 
         mounted() {
             //fetch all roles immediately after loading
-            axios.get('./roles')
+            axios.get('/roles')
                 .then(response => this.roles = response.data);
             //listening for role adding signal
             Event.$on('save', () => {
