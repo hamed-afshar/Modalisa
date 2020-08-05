@@ -44,10 +44,13 @@ return [
     "delete" => "Delete",
 
     //sentences
-    "add_permission" => "Add a Permission",
-    "delete_permission" => "Delete a Permission",
-    "add_role" => "Add a Role",
-    "delete_role" => "Delete a Role",
+    "add_permission" => "Add Permission",
+    "delete_permission" => "Delete Permission",
+    "add_role" => "Add Role",
+    "delete_role" => "Delete Role",
     "edit_permission" => "Edit Permission",
-    "edit_role" => "Edit Role"
+    "edit_role" => "Edit Role",
+    "grant_permission" => "Granted Permissions",
+    "all_permissions" =>"All Permissions"
+
 ];
