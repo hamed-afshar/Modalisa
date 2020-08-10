@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
     Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
     Route::get('/associated-permissions/{role}', 'RoleController@permissions')->name('roles.permissions');
+    Route::get('/assign-permission/{role}', 'RoleController@assignPermission')->name('roles.assign');
 
     Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
     Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
