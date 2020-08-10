@@ -23,3 +23,4 @@ loading time.
 17. modal must be cleared before open
 18. create and edit should be removed from controller because this is a modals job
 19. repeated style in all component must be collected in a one single location.
+20. all tables must be striped.
