@@ -83,11 +83,20 @@ class RoleController extends Controller
     }
 
     /*
-     * get all permission associated to a role
+     * get all permission associated to the role
      */
     public function permissions(Role $role)
     {
         $this->authorize('view', $role );
+        return $role->permissions;
+    }
+
+    /*
+     * assign permission to role
+     */
+    public function assignPermission(Role $role)
+    {
+        $this->authorize('update', $role);
         return $role->permissions;
     }
 
