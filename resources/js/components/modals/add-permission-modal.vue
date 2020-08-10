@@ -87,7 +87,7 @@
     }
 </script>
 
-<style scoped>
+<style>
 	.modal-box {
 		@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
 	}

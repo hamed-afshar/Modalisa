@@ -2,7 +2,7 @@
 @section('index-content')
     <div id="app" class="grid grid-cols-6">
         <!-- left side -->
-        <div class="grid col-span-2 mt-2">
+        <div class="grid col-span-3 mt-2">
             <div class="flex flex-col">
                 <div class="box-header"> {{ __("translate.role") }}</div>
                 <roles-table></roles-table>

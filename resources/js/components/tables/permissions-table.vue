@@ -9,31 +9,30 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr class="table-body-row" v-for="permission in permissions" v-bind:key="permission.id">
-				<td class="table-body-cell">
-                    <div class="flex flex-row">
-                        <div class="w-2/6 flex justify-start">
-                            <a class="link" v-on:click="$modal.show('edit-permission-modal',
+			<div class="overflow-y-auto">
+				<tr class="table-body-row flex flex-rowe" v-for="permission in permissions" v-bind:key="permission.id">
+					<td class="w-2/6">
+						<a class="link" v-on:click="$modal.show('edit-permission-modal',
                             {id:permission.id, name:permission.name, label:permission.label}, {},
                                   {'before-open':event=>{}})">
-	                            {{ permission.name }}
-                            </a>
-                        </div>
-	                    <div class="w-3/6">
-		                    <a class="link" v-on:click="$modal.show('edit-permission-modal',
+							{{ permission.name }}
+						</a>
+					</td>
+					<td class="w-3/6">
+						<a class="link" v-on:click="$modal.show('edit-permission-modal',
                             {id:permission.id, name:permission.name, label:permission.label}, {},
                                   {'before-open':event=>{}})">
-			                    {{ permission.label }}
-		                    </a>
-	                    </div>
-	                    <div class="w-1/6 flex justify-end x-button">
-		                    <i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-permission-modal',
+							{{ permission.label }}
+						</a>
+					</td>
+					<td class="w-1/6">
+						<i class="fas fa-times cursor-pointer x-button" v-on:click="$modal.show('delete-permission-modal',
                             {id:permission.id, name:permission.name},{},
-                            {'before-open':event => {event.params.id, event.params.name}})"></i>
-	                    </div>
-                    </div>
-				</td>
-			</tr>
+                            {'before-open':event => {event.params.id, event.params.name}})">
+						</i>
+					</td>
+				</tr>
+			</div>
 			</tbody>
 		</table>
 		<div class="flex justify-end transform -translate-y-6 translate-x-5">

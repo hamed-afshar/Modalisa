@@ -9,7 +9,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<div class="overflow-y-auto h-48" >
+			<div class="overflow-y-auto">
 				<tr class="table-body-row flex flex-row" v-for="role in roles" v-bind:key="role.id">
 					<td class="w-5/12">
 						<a class="link" v-on:click="$modal.show('edit-role-modal',
@@ -27,12 +27,12 @@
 					</td>
 					<td class="w-1/12 flex flex-row">
 						<div class="w-1/2 flex justify-start">
-							<i class="fas fa-link cursor-pointer" v-on:click="$modal.show('grant-permission-modal',
+							<i class="fas fa-link cursor-pointer link-button" v-on:click="$modal.show('grant-permission-modal',
 								{id:role.id})">
 							</i>
 						</div>
-						<div class="w-1/2">
-							<i class="fas fa-times cursor-pointer" v-on:click="$modal.show('delete-role-modal',
+						<div class="w-1/2 flex justify-end">
+							<i class="fas fa-times cursor-pointer x-button" v-on:click="$modal.show('delete-role-modal',
                             {id:role.id, name:role.name},{},
                             {'before-open':event => {event.params.id, event.params.name}})"></i>
 						</div>
@@ -123,6 +123,5 @@
 </script>
 
 <style>
-
 
 </style>

@@ -32,7 +32,7 @@
 								{{ permission.label }}
 							</td>
 							<td class="w-1/12">
-								<i class="fas fa-minus minus-button cursor-pointer" v-on:click=""></i>
+								<i class="fas fa-minus minus-button cursor-pointer" v-on:click="remove()"></i>
 							</td>
 						</tr>
 					</div>
@@ -59,7 +59,7 @@
 								{{ permission.label }}
 							</td>
 							<td class="w-1/12">
-								<i class="fas fa-plus plus-button cursor-pointer" v-on:click=""></i>
+								<i class="fas fa-plus plus-button cursor-pointer" v-on:click="add()"></i>
 							</td>
 						</tr>
 					</div>
@@ -78,13 +78,21 @@
         },
         data() {
             return {
-                id: 1,
+                id: null,
                 associatedPermissions: [],
                 allPermissions: []
             }
         },
 
         methods: {
+            //remove permission from granted permissions list
+            remove() {
+                axios.delete('')
+            },
+	        //assign new permission to the role
+	        add() {
+
+	        },
             //function to be executed before opening modal
             beforeOpen(event) {
                 this.id = event.params.id
@@ -103,15 +111,7 @@
 
 </script>
 
-<style scoped>
-	.modal-box {
-		@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
-	}
-
-	.modal-header {
-		@apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold;
-	}
-
+<style>
 	.table-header-row {
 		@apply .bg-white .text-gray-600 .px-4 .py-2
 	}
