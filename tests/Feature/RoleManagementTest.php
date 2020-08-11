@@ -112,13 +112,36 @@ class RoleManagementTest extends TestCase
     }
 
     /** @test */
-    //Systemadmin can view all permissions associated to a role
-    public function Systemadmin_can_view_permissions_associated_to_a_role()
+    //SystemAdmin can view all permissions associated to a role
+    public function SystemAdmin_can_view_permissions_associated_to_a_role()
     {
         $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
-        $this->get($role->path())->assertOk();
+        $this->get('/granted-permissions/' . $role->id)->assertOk();
+    }
+
+    /** @test */
+    public function SystemAdmin_can_allow_role_to_permission()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $role = Role::find(1);
+        $permission = factory('App\Permission')->create();
+        $permission = Permission::find(1);
+        $this->post('/allow-to/' . $role->id . '/' . $permission->id)->assertOk();
+        $this->assertDatabaseHas('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
+    }
+
+    /** @test */
+    public function SystemAdmin_can_disallow_role_to_permission()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $role = Role::find(1);
+        factory('App\Permission')->create();
+        $permission = Permission::find(1);
+        $role->allowTo($permission);
+        $this->delete('/disallow-to/' . $role->id . '/' . $permission->id)->assertOk();
+        $this->assertDatabaseMissing('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
     }
 
 
