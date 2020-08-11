@@ -48,11 +48,20 @@ class AdminFunctionsTest extends TestCase
     /** @test */
     public function SystemAdmin_can_assign_permission_to_role()
     {
-        $this->withoutExceptionHandling();
         $role = factory('App\Role')->create();
         $permission = factory('App\Permission')->create();
         $role->allowTo($permission);
         $this->assertDatabaseHas('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
+    }
+
+    /** @test */
+    public function SystemAdmin_can_unassign_permission_to_role()
+    {
+        $this->withoutExceptionHandling();
+        $role = factory('App\Role')->create();
+        $permission = factory('App\Permission')->create();
+        $role->disAllowTo($permission);
+        $this->assertDatabaseMissing('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
     }
 
     /** @test */
