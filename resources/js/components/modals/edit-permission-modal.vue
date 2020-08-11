@@ -15,14 +15,17 @@
 			<div class="grid grid-cols-6 mt-6">
 				<div class="col-start-3 col-end-5">
 					<div class="flex">
-						<input class="input-text w-full" type="text" v-model="permissionName" id="permissionName"
+						<input class="input-text w-full" type="text" v-model="permissionName"
+                               id="permissionName"
 						       name="permissionName"
+                               autofocus
 						       placeholder="Name"
 						       v-bind:maxlength="fields.maxName"
-						       autofocus>
+                               autofocus>
 					</div>
 					<div class="flex mt-2">
-						<input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel"
+						<input class="input-text w-full" type="text" v-model="permissionLabel"
+                               id="permissionLabel"
 						       name="permissionLabel"
 						       placeholder="Label"
 						       v-bind:maxlength="fields.maxLabel">

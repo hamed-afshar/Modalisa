@@ -5,7 +5,7 @@
 			<div class="modal-header">
 				<div class="flex flex-row">
 					<div class="w-1/2">
-						<h1 class="font-bold">{{ fields.title }} {{ fields.roleID}} </h1>
+						<h1 class="font-bold">{{ fields.title }}</h1>
 					</div>
 					<div class="w-1/2 flex pt-1 justify-end">
 						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('grant-permission-modal')"></i>
@@ -23,17 +23,17 @@
 					</thead>
 					<tbody>
 					<div class="overflow-y-auto h-48">
-						<tr class="table-body-row flex w-full" v-for="permission in grantedPermissions"
+						<tr class="table-body-row-granted flex w-full" v-for="permission in grantedPermissions"
 						    v-bind:key="permission.id">
-							<td class="w-4/12">
-								{{ permission.name }}
-							</td>
-							<td class="w-7/12">
-								{{ permission.label }}
-							</td>
-							<td class="w-1/12">
-								<i class="fas fa-minus minus-button cursor-pointer" v-on:click="remove(permission.id)"></i>
-							</td>
+                                <td class="w-4/12">
+                                    {{ permission.name }}
+                                </td>
+                                <td class="w-7/12">
+                                    {{ permission.label }}
+                                </td>
+                                <td class="w-1/12">
+                                    <i class="fas fa-minus text-white cursor-pointer" v-on:click="remove(permission.id)"></i>
+                                </td>
 						</tr>
 					</div>
 					</tbody>
@@ -50,7 +50,7 @@
 					</thead>
 					<tbody>
 					<div class="overflow-y-auto h-48">
-						<tr class="table-body-row flex w-full" v-for="permission in allPermissions"
+						<tr class="table-body-row-all flex w-full" v-for="permission in allPermissions"
 						    v-bind:key="permission.id">
 							<td class="w-4/12">
 								{{ permission.name }}
@@ -59,7 +59,7 @@
 								{{ permission.label }}
 							</td>
 							<td class="w-1/12">
-								<i class="fas fa-plus plus-button cursor-pointer" v-on:click="add(permission.id)"></i>
+								<i class="fas fa-plus text-white cursor-pointer" v-on:click="add(permission.id)"></i>
 							</td>
 						</tr>
 					</div>
@@ -101,7 +101,7 @@
                 axios.post('/allow-to/' + this.roleID + '/' + permissionID)
 				.then(response => this.grantedPermissions = response.data)
 	        },
-	        
+
             //function to be executed before opening modal
             beforeOpen(event) {
                 this.roleID = event.params.id
@@ -115,17 +115,17 @@
 
 </script>
 
-<style>
-	.table-header-row {
-		@apply .bg-white .text-gray-600 .px-4 .py-2
-	}
+<style scoped>
+    .table-body-row-granted {
+        @apply .bg-green-500 .border .px-4 .py-2 .text-center .text-white
+    }
 
-	.table-body-row {
-		@apply .bg-white .border .px-4 .py-2 .text-center .text-gray-800
-	}
+    .table-body-row-all {
+        @apply .bg-red-500 .border .px-4 .py-2 .text-center .text-white
+    }
 
-	.table-body-row:hover {
-		@apply .bg-gray-200
-	}
+    .table-body-row:hover {
+        @apply .bg-gray-100
+    }
 
 </style>
