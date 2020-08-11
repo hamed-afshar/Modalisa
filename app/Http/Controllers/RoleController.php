@@ -83,7 +83,7 @@ class RoleController extends Controller
     }
 
     /*
-     * get all permission associated to the role
+     * get all permission associated roles
      */
     public function permissions(Role $role)
     {
@@ -92,12 +92,24 @@ class RoleController extends Controller
     }
 
     /*
-     * assign permission to role
+     * allow roles for permissions
      */
-    public function assignPermission(Role $role)
+    public function allowToPermission(Role $role, Permission $permission)
     {
         $this->authorize('update', $role);
+        $role->allowTo($permission);
         return $role->permissions;
     }
+
+    /*
+     * disallow roles for permissions
+     */
+    public function disallowToPermission(Role $role , Permission $permission)
+    {
+        $this->authorize('update', $role);
+        $role->disAllowTo($permission);
+        return $role->permissions;
+    }
+
 
 }
