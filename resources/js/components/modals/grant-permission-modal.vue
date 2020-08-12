@@ -1,5 +1,5 @@
 <template>
-	<modal name="grant-permission-modal" id="grant-permission-modal" height="auto"
+	<modal name="grant-permission-modal" id="grant-permission-modal" height="auto" :adaptive="true"
 	       @before-open="beforeOpen">
 		<div class="modal-box">
 			<div class="modal-header">

@@ -1,43 +1,41 @@
 <template>
-	<modal name="add-permission-modal" id="add-permission-modal" height="auto"
-			@before-open="beforeOpen">
-		<div class="modal-box">
-			<div class="modal-header">
-				<div class="flex flex-row">
-					<div class="w-1/2">
-						<h1 class="font-bold"> {{ fields.title }} </h1>
-					</div>
-					<div class="w-1/2 flex pt-1 justify-end">
-						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-permission-modal')"></i>
-					</div>
-				</div>
-			</div>
-			<div class="grid grid-cols-6 mt-3">
-				<div class="col-start-3 col-end-5">
-					<div>
-						<div class="flex mt-2">
-							<input class="input-text w-full" type="text" v-model="permissionName" id="permissionName" name="permissionName"
-							       placeholder="Name"
-							       v-bind:maxlength="fields.maxName"
-							       autofocus>
-						</div>
-						<div class="flex mt-2">
-							<input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel" name="permissionLabel"
-							       v-bind:maxlength="fields.maxLabel"
-							       placeholder="Label">
-						</div>
-					</div>
-					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full mb-2" v-on:click="save"> {{ $t('translate.save') }} </button>
-					</div>
-					<div>
-						{{ errors.get('name')}}
-						{{ errors.get('label')}}
-					</div>
-				</div>
-			</div>
-		</div>
-	</modal>
+    <modal name="add-permission-modal" id="add-permission-modal" height="auto" :adaptive="true"
+           @before-open="beforeOpen">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="flex flex-row">
+                    <div class="w-1/2">
+                        <h1 class="font-bold"> {{ fields.title }} </h1>
+                    </div>
+                    <div class="w-1/2 flex pt-1 justify-end">
+                        <i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-permission-modal')"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col mt-6">
+                <div>
+                    <input class="input-text w-full" type="text" v-model="permissionName" id="permissionName"
+                           name="permissionName"
+                           placeholder="Name"
+                           v-bind:maxlength="fields.maxName"
+                           autofocus>
+                </div>
+                <div class="mt-2">
+                    <input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel"
+                           name="permissionLabel"
+                           v-bind:maxlength="fields.maxLabel"
+                           placeholder="Label">
+                </div>
+                <div class="mt-4">
+                    <button class="btn-pink w-full mb-2" v-on:click="save"> {{ $t('translate.save') }}</button>
+                </div>
+                <div>
+                    {{ errors.get('name')}}
+                    {{ errors.get('label')}}
+                </div>
+            </div>
+        </div>
+    </modal>
 </template>
 
 <script>

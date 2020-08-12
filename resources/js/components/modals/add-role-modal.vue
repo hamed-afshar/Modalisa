@@ -1,43 +1,39 @@
 <template>
-	<modal name="add-role-modal" id="add-role-modal" height="auto"
-			@before-open="beforeOpen">
-		<div class="modal-box">
-			<div class="modal-header">
-				<div class="flex flex-row">
-					<div class="w-1/2">
-						<h1 class="font-bold"> {{ fields.title }} </h1>
-					</div>
-					<div class="w-1/2 flex pt-1 justify-end">
-						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-role-modal')"></i>
-					</div>
-				</div>
-			</div>
-			<div class="flex flex-col md:flex-row mt-6">
-				<div class="md:w-1/3"></div>
-				<div class="flex flex-col">
-					<div>
-						<input class="input-text w-full" type="text" v-model="roleName" id="roleName" name="roleName"
-						       placeholder="Name"
-						       v-bind:maxlength="fields.maxName"
-						       autofocus>
-					</div>
-					<div class="mt-2">
-						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
-						       placeholder="Label"
-						       v-bind:maxlength="fields.maxLabel">
-					</div>
-					<div class="mt-4">
-						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
-					</div>
-					<div class="error">
-						{{ errors.get('name')}}
-						{{ errors.get('label')}}
-					</div>
-				</div>
-				<div class="md:w-1/3"></div>
-			</div>
-		</div>
-	</modal>
+    <modal name="add-role-modal" id="add-role-modal" height="auto" :adaptive="true"
+           @before-open="beforeOpen">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="flex flex-row">
+                    <div class="w-1/2">
+                        <h1 class="font-bold"> {{ fields.title }} </h1>
+                    </div>
+                    <div class="w-1/2 flex pt-1 justify-end">
+                        <i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('add-role-modal')"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col mt-6">
+                <div>
+                    <input class="input-text w-full" type="text" v-model="roleName" id="roleName" name="roleName"
+                           placeholder="Name"
+                           v-bind:maxlength="fields.maxName"
+                           autofocus>
+                </div>
+                <div class="mt-2">
+                    <input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
+                           placeholder="Label"
+                           v-bind:maxlength="fields.maxLabel">
+                </div>
+                <div class="mt-4">
+                    <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
+                </div>
+                <div class="error">
+                    {{ errors.get('name')}}
+                    {{ errors.get('label')}}
+                </div>
+            </div>
+        </div>
+    </modal>
 </template>
 
 <script>
