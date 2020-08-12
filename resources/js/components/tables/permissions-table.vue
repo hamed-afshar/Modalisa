@@ -1,6 +1,6 @@
 <template>
-	<div class="flex flex-col">
-		<table class="table-auto mb-2">
+	<div>
+		<table class="table-auto mb-2 w-full">
 			<thead class="sticky top-0">
 			<tr class="table-header-row">
 				<th class="table-header-cell" v-show="columns.length" v-for="column in columns" :key="column">
@@ -35,7 +35,7 @@
 			</div>
 			</tbody>
 		</table>
-		<div class="flex justify-end transform -translate-y-6 translate-x-5">
+		<div class="flex justify-end transform -translate-y-4 translate-x-1 md:-translate-y-6 md:translate-x-5">
 			<button v-on:click="$modal.show('add-permission-modal')">
 				<circle-plus-button></circle-plus-button>
 			</button>

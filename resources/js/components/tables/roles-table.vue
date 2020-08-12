@@ -1,6 +1,6 @@
 <template>
-	<div class="flex flex-col" id="app">
-		<table class="table-auto mb-2">
+	<div>
+		<table class="table-auto mb-2 w-full">
 			<thead>
 			<tr>
 				<th class="table-header-row" v-show="columns.length" v-for="column in columns" :key="column">
@@ -18,14 +18,14 @@
 							{{ role.name }}
 						</a>
 					</td>
-					<td class="w-6/12">
+					<td class="w-5/12 md:w-6/12">
 						<a class="link" v-on:click="$modal.show('edit-role-modal',
 							{id:role.id, name:role.name, label:role.label} ,{},
 								  {'before-open':event=>{}})">
 							{{ role.label }}
 						</a>
 					</td>
-					<td class="w-1/12 flex flex-row">
+					<td class="w-2/12 md:w-1/12 flex flex-row">
 						<div class="w-1/2 flex justify-start">
 							<i class="fas fa-link cursor-pointer link-button" v-on:click="$modal.show('grant-permission-modal',
 								{id:role.id})">
@@ -42,7 +42,7 @@
 
 			</tbody>
 		</table>
-		<div class="flex justify-end transform -translate-y-6 translate-x-5">
+		<div class="flex justify-end transform  -translate-y-4 translate-x-1 md:-translate-y-6 md:translate-x-5">
 			<button v-on:click="$modal.show('add-role-modal')">
 				<circle-plus-button></circle-plus-button>
 			</button>
