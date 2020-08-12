@@ -24,3 +24,6 @@ loading time.
 18. create and edit should be removed from controller because this is a modals job
 19. repeated style in all component must be collected in a one single location.
 20. all tables must be striped.
+21. delete column props in role and permission table components.
+22. style in user-table component is repeated.
+23. header in _admin_header section is not fully responsive
