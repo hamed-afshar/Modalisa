@@ -89,7 +89,7 @@
 }
 
 .box-header {
-    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold
+    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .text-white .font-bold
 }
 
 
