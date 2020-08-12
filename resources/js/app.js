@@ -27,6 +27,7 @@ Vue.use(VModal);
 
 Vue.component('roles-table', require('./components/tables/roles-table').default);
 Vue.component('permission-table', require('./components/tables/permissions-table').default);
+Vue.component('users-table', require('./components/tables/users-table').default);
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
 
 Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
