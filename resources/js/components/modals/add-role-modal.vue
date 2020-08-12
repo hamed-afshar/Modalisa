@@ -12,20 +12,21 @@
 					</div>
 				</div>
 			</div>
-			<div class="grid grid-cols-6 mt-6">
-				<div class="col-start-3 col-end-5">
-					<div class="flex">
+			<div class="flex flex-col md:flex-row mt-6">
+				<div class="md:w-1/3"></div>
+				<div class="flex flex-col">
+					<div>
 						<input class="input-text w-full" type="text" v-model="roleName" id="roleName" name="roleName"
 						       placeholder="Name"
 						       v-bind:maxlength="fields.maxName"
 						       autofocus>
 					</div>
-					<div class="flex mt-2">
+					<div class="mt-2">
 						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
 						       placeholder="Label"
 						       v-bind:maxlength="fields.maxLabel">
 					</div>
-					<div class="flex w-full mt-4">
+					<div class="mt-4">
 						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
 					</div>
 					<div class="error">
@@ -33,6 +34,7 @@
 						{{ errors.get('label')}}
 					</div>
 				</div>
+				<div class="md:w-1/3"></div>
 			</div>
 		</div>
 	</modal>
