@@ -2,11 +2,7 @@
 	<div>
 		<table class="table-auto mb-2 w-full">
 			<thead>
-			<tr>
-				<th class="table-header-row" v-show="columns.length" v-for="column in columns" :key="column">
-					{{ column }}
-				</th>
-			</tr>
+			<tr></tr>
 			</thead>
 			<tbody>
 			<div class="overflow-y-auto">
@@ -78,16 +74,16 @@
     export default {
         name: "roles-table",
         props: {
-            columns: Array
         },
         data() {
             return {
                 roles: [],
-                path: '/roles/'
             }
         },
         methods: {
-            //function to execute after saving a role in db
+            /*
+             *function to execute after saving a role in db
+             */
             save() {
                 axios.get('/roles')
                     .then(response => this.roles = response.data);
@@ -95,7 +91,9 @@
                 this.$modal.hide('add-role-modal');
                 this.$modal.hide('edit-role-modal');
             },
-            //function to execute after deleting a role from db
+            /*
+             *function to execute after deleting a role from db
+             */
             delete() {
                 // list roles
                 axios.get('/roles')
@@ -106,14 +104,20 @@
         },
 
         mounted() {
-            //fetch all roles immediately after loading
+            /*
+             *fetch all roles immediately after loading
+             */
             axios.get('/roles')
                 .then(response => this.roles = response.data);
-            //listening for role adding signal
+            /*
+             *listening for role adding signal
+             */
             Event.$on('save', () => {
                 this.save();
             });
-            //listening for role deleting signal
+            /*
+             *listening for role deleting signal
+             */
             Event.$on('delete', () => {
                 this.delete();
             })

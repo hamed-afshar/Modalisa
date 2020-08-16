@@ -1,30 +1,46 @@
 <template>
-    <div>
-        <table class="auto w-full">
-            <thead>
-            <tr class="table-header-row">
-                <th class="table-header-cell"> {{ $t("translate.id") }}</th>
-                <th class="table-header-cell"> {{ $t("translate.name") }} </th>
-                <th class="table-header-cell"> {{ $t("translate.email") }} </th>
-                <th class="table-header-cell"> {{ $t("translate.subscription") }} </th>
-                <th class="table-header-cell"> {{ $t("translate.confirmed") }} </th>
-                <th class="table-header-cell"> {{ $t("translate.locked") }} </th>
-            </tr>
-            </thead>
-            <tbody>
-                <div class="overflow-y-auto">
-                    <tr class="table-body-row flex flex-row" v-for="user in users" v-bind:key="user.id">
-                        <td> {{user.id}}</td>
-                        <td> {{user.name}}</td>
-                        <td> {{user.email}}</td>
-                        <td> {{user.subscription}}</td>
-                        <td> {{user.confirmed}}</td>
-                        <td> {{user.locked}}</td>
-                    </tr>
-                </div>
-            </tbody>
-        </table>
-    </div>
+  <div>
+    <table class="table-auto w-full">
+      <thead>
+      <tr class="table-header-row">
+        <th> {{ $t("translate.id") }}</th>
+        <th> {{ $t("translate.name") }}</th>
+        <th> {{ $t("translate.email") }}</th>
+        <th> {{ $t("translate.subscription") }}</th>
+        <th> {{ $t("translate.confirmed") }}</th>
+        <th> {{ $t("translate.locked") }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr class="table-body-row" v-for="user in users" v-bind:key="user.id">
+        <td> {{ user.id }}</td>
+        <td> {{ user.name }}</td>
+        <td> {{ user.email }}</td>
+        <td>
+          <select class="input-option w-full" id="subscription" name="subscription">
+            <option selected disabled></option>
+
+          </select>
+        </td>
+        <!-- show icons based on user confirmation -->
+        <td v-if="user.confirmed == 1">
+          <i class="fas fa-check text-green-600"></i>
+        </td>
+        <td v-else>
+          <i class="fas fa-ban text-red-600"></i>
+        </td>
+        <!-- show icons based on user lock -->
+        <td v-if="user.locked == 1">
+          <i class="fas fa-lock text-red-600"></i>
+        </td>
+        <td v-else>
+          <i class="fas fa-lock-open text-green-600"></i>
+        </td>
+
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -50,7 +66,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .modal-box {
         @apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
     }
@@ -60,7 +76,7 @@
     }
 
     .table-header-row {
-        @apply .bg-white .text-gray-600 .px-4 .py-2
+        @apply .bg-purple-700 .text-white .px-4 .py-2
     }
 
     .table-body-row {
