@@ -38,8 +38,9 @@ return [
     "financial_center" => "Financial Center",
     "report_center" => "Report Center",
     "alias" => "Alias",
-    "permission" => "Permission",
-    "role" => "Role",
+    "permission" => "Permission | Permissions",
+    "role" => "Role | Roles",
+    "subscription" => "Subscription | Subscriptions",
     "save" => "Save",
     "delete" => "Delete",
 
@@ -51,6 +52,10 @@ return [
     "edit_permission" => "Edit Permission",
     "edit_role" => "Edit Role",
     "grant_permission" => "Granted Permissions",
-    "all_permissions" =>"All Permissions"
+    "all_permissions" =>"All Permissions",
+    "add_subscription" => "Add Subscription",
+    "delete_subscription" => "Delete Subscription",
+    "edit_subscription" => "Edit Subscription"
+
 
 ];
