@@ -10,50 +10,59 @@ use Illuminate\Support\Facades\DB;
 
 class SubscriptionController extends Controller
 {
-
-    // index subscriptions
+    /*
+     * index subscriptions
+     */
     public function index()
     {
         $this->authorize('viewAny', Subscription::class);
-        $subscriptions = Subscription::all();
-        return view('subscriptions.index', compact('subscriptions'));
+        return $subscriptions = Subscription::all();
     }
 
-
-    //show subscriptions create form
+    /*
+     * vue-js modal generates this form
+     * show subscriptions create form
+     */
     public function create()
     {
         $this->authorize('create', Subscription::class);
-        return view('subscriptions.create');
     }
 
-    // store subscriptions
+    /*
+     * store subscriptions
+     */
     public function store()
     {
         $this->authorize('create', Subscription::class);
         Subscription::create(request()->validate([
             'plan' => 'required',
-            'cost_percentage' => 'required'
+            'cost_percentage' => 'required | numeric'
         ]));
         return redirect()->route('subscriptions.index');
     }
 
 
-    // show a single subscription
+    /*
+     * vue-js modal generates this form
+     * show a single subscription
+     */
     public function show(Subscription $subscription)
     {
         $this->authorize('view', $subscription);
-        return view('subscriptions.show', compact('subscription'));
     }
 
-    //edit form is available
+    /*
+     * vue-js modal generates this form
+     * edit form is available
+     */
     public function edit(Subscription $subscription)
     {
         $this->authorize('update', $subscription);
-        return view('subscriptions.edit', compact('subscription'));
     }
 
-    // update a subscription
+    /*
+     * update a subscription
+     */
     public function update(Subscription $subscription)
     {
         $this->authorize('update', $subscription);
@@ -62,14 +71,14 @@ class SubscriptionController extends Controller
             'cost_percentage' => 'required|integer'
         ]);
         $subscription->update($data);
-        return redirect()->route('subscriptions.show', $subscription);
     }
 
-    //delete a subscription
+    /*
+     * delete a subscription
+     */
     public function destroy(Subscription $subscription)
     {
         $this->authorize('delete', $subscription);
         $subscription->delete();
-        return redirect()->route('subscriptions.index');
     }
 }
