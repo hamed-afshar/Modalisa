@@ -2,15 +2,11 @@
 	<div>
 		<table class="table-auto mb-2 w-full">
 			<thead class="sticky top-0">
-			<tr class="table-header-row">
-				<th class="table-header-cell" v-show="columns.length" v-for="column in columns" :key="column">
-					{{ column }}
-				</th>
-			</tr>
+			<tr class="table-header-row"> </tr>
 			</thead>
 			<tbody>
 			<div class="overflow-y-auto">
-				<tr class="table-body-row flex flex-rowe" v-for="permission in permissions" v-bind:key="permission.id">
+				<tr class="table-body-row flex flex-row" v-for="permission in permissions" v-bind:key="permission.id">
 					<td class="w-2/6">
 						<a class="link" v-on:click="$modal.show('edit-permission-modal',
                             {id:permission.id, name:permission.name, label:permission.label}, {},
@@ -65,12 +61,10 @@
     export default {
         name: "permission-table",
         props: {
-            columns: Array,
         },
         data() {
             return {
                 permissions: [],
-                path: '/permissions/',
             }
         },
         methods: {
