@@ -57,7 +57,6 @@ class AdminFunctionsTest extends TestCase
     /** @test */
     public function SystemAdmin_can_unassign_permission_to_role()
     {
-        $this->withoutExceptionHandling();
         $role = factory('App\Role')->create();
         $permission = factory('App\Permission')->create();
         $role->disAllowTo($permission);
@@ -67,7 +66,6 @@ class AdminFunctionsTest extends TestCase
     /** @test */
     public function SystemAdmin_can_assign_subscription_to_user()
     {
-        $this->withoutExceptionHandling();
         $user = factory('App\User')->create();
         $subscription = factory('App\Subscription')->create();
         $subscription->assignUser($user);
