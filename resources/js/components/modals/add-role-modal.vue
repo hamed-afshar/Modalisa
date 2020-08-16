@@ -66,7 +66,9 @@
             }
         },
         methods: {
-            //save function
+            /*
+             *save function
+             */
             save() {
                 axios.post('/roles', {
                     name: this.roleName,
@@ -75,7 +77,9 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data));
             },
-	        //function to be executed before opening modal
+	        /*
+	         *function to be executed before opening modal
+	         */
 	        beforeOpen() {
                 //clear name and label fields
                 this.roleLabel = null;
