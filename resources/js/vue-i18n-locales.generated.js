@@ -44,7 +44,7 @@ export default {
             "id": "ID",
             "name": "Name",
             "email": "Email",
-            "subscription": "Subscription",
+            "subscription": "Subscription | Subscriptions",
             "confirmed": "Confirmed",
             "locked": "Locked",
             "system_admin_dashboard": "System Admin Dashboard",
@@ -53,8 +53,8 @@ export default {
             "financial_center": "Financial Center",
             "report_center": "Report Center",
             "alias": "Alias",
-            "permission": "Permission",
-            "role": "Role",
+            "permission": "Permission | Permissions",
+            "role": "Role | Roles",
             "save": "Save",
             "delete": "Delete",
             "add_permission": "Add Permission",
@@ -64,7 +64,10 @@ export default {
             "edit_permission": "Edit Permission",
             "edit_role": "Edit Role",
             "grant_permission": "Granted Permissions",
-            "all_permissions": "All Permissions"
+            "all_permissions": "All Permissions",
+            "add_subscription": "Add Subscription",
+            "delete_subscription": "Delete Subscription",
+            "edit_subscription": "Edit Subscription"
         },
         "validation": {
             "accepted": "The {attribute} must be accepted.",
