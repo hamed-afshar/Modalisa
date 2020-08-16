@@ -1,4 +1,4 @@
-1.Two registerController exist, the defualt one must be deleted [Done]
+1.Two registerController exist, the default one must be deleted [Done]
 2. web file needs refactor to use resource for full REST models
 3.For order status or any other possible model it might be a good idea to use a model observer and polymorphic relation ship.(E20-E30)
 4.Polymorphic views are also another solution to show different views
@@ -27,3 +27,4 @@ loading time.
 21. delete column props in role and permission table components.
 22. style in user-table component is repeated.
 23. header in _admin_header section is not fully responsive
+24. is it possible to aggrigate all errors?
