@@ -10,14 +10,14 @@
 				    v-bind:key="subscription.id">
 					<td class="w-2/5">
 						<a class="link" v-on:click="$modal.show('edit-subscription-modal',
-						{id:subscription.id, plan: subscription.plan, cost: subscription.cost}, {},
+						{id:subscription.id, plan: subscription.plan, cost: subscription.cost_percentage}, {},
 							  {'before-open': event=>{}})">
 							{{ subscription.plan }}
 						</a>
 					</td>
 					<td class="w-2/5">
 						<a class="link" v-on:click="$modal.show('edit-subscription-modal',
-						{id:subscription.id, plan: subscription.plan, cost: subscription.cost}, {},
+						{id:subscription.id, plan: subscription.plan, cost: subscription.cost_percentage}, {},
 							  {'before-open': event=>{}})">
 							{{ subscription.cost_percentage }}
 						</a>
@@ -33,7 +33,7 @@
 			</div>
 			</tbody>
 		</table>
-		<div class="flex justify-end transform  -translate-y-4 translate-x-1 md:-translate-y-6 md:translate-x-5">
+		<div class="flex justify-end transform  -translate-y-4 translate-x-1 md:-translate-y-7 md:translate-x-5">
 			<button v-on:click="$modal.show('add-subscription-modal')">
 				<circle-plus-button></circle-plus-button>
 			</button>
