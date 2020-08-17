@@ -20,7 +20,9 @@
 					       autofocus>
 				</div>
 				<div class="mt-2">
-					<input class="input-text w-full" type="number" v-model="cost" id="cost" name="cost"
+					<input class="input-text w-full" type="number" v-model="cost"
+                           id="cost"
+                           name="cost"
 					       placeholder="Cost Percentage"
 					       v-on:input="checkInput">
 				</div>
@@ -35,7 +37,7 @@
 		</div>
 
 	</modal>
-	
+
 </template>
 
 <script>
@@ -76,6 +78,7 @@
                   this.cost = this.cost.slice(0, this.fields.maxCost);
               }
             },
+
 		    /*
              * save function
              */

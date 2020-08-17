@@ -1,46 +1,44 @@
 <template>
-	<modal name="edit-subscription-modal" id="edit-subscription-modal" height="auto" :adaptive="true"
-			@before-open="beforeOpen">
-		<div class="modal-box">
-			<div class="modal-header">
-				<div class="flex flex-row">
-					<div class="w-1/2">
-						<h1 class="font-bold"> {{ fields.title }} </h1>
-					</div>
-					<div class="w-1/2 flex pt-1 justify-end">
-						<i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('edit-subscription-modal')"></i>
-					</div>
-				</div>
-			</div>
-			<div class="grid grid-cols-6 mt-6">
-				<div class="col-start-3 col-end-5">
-					<div class="flex">
-						<input class="input-text w-full" type="text" v-model="subscriptionPlan" id="subscriptionPlan"
-						       name="subscriptionPlan"
-						       placeholder="Plan Name"
-						       v-bind:maxlength="fields.maxPlan"
-						       autofocus>
-					</div>
-					<div class="flex mt-2">
-						<input class="input-text w-full" type="text" v-model="cost" id="cost"
-						       name="cost"
-						       placeholder="Cost Percentage"
-						       v-bind:maxlength="fields.maxCost">
-					</div>
-					<div class="flex w-full mt-4">
-						<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
-					</div>
-					<div class="error">
-						{{ errors.get('name')}}
-						{{ errors.get('label')}}
-					</div>
-				</div>
-			</div>
-		</div>
+    <modal name="edit-subscription-modal" id="edit-subscription-modal" height="auto" :adaptive="true"
+           @before-open="beforeOpen">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="flex flex-row">
+                    <div class="w-1/2">
+                        <h1 class="font-bold"> {{ fields.title }} </h1>
+                    </div>
+                    <div class="w-1/2 flex pt-1 justify-end">
+                        <i class="fas fa-times cursor-pointer" v-on:click="$modal.hide('edit-subscription-modal')"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col mt-6">
+                <div>
+                    <input class="input-text w-full" type="text" v-model="subscriptionPlan"
+                           id="subscriptionPlan"
+                           name="subscriptionPlan"
+                           placeholder="Plan Name"
+                           v-bind:maxlength="fields.maxPlan"
+                           autofocus>
+                    <div class="mt-2">
+                        <input class="input-text w-full" type="number" v-model="cost"
+                               id="cost"
+                               name="cost"
+                               placeholder="Cost Percentage"
+                               v-on:input="checkInput">
+                    </div>
+                    <div class="mt-4">
+                        <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
+                    </div>
+                    <div class="error">
+                        {{ errors.get('name')}}
+                        {{ errors.get('label')}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </modal>
 
-
-	</modal>
-	
 </template>
 
 <script>
@@ -73,6 +71,15 @@
             }
 	    },
 	    methods: {
+            /*
+            * function to check input for cost value
+            */
+            checkInput() {
+                if(this.cost.length > 2) {
+                    this.cost = this.cost.slice(0, this.fields.maxCost);
+                }
+            },
+            
             /*
              *method to save subscription in db
              */
