@@ -19,15 +19,13 @@
                                id="permissionName"
 						       name="permissionName"
                                autofocus
-						       placeholder="Name"
 						       v-bind:maxlength="fields.maxName"
-                               autofocus>
+                               >
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="permissionLabel"
                                id="permissionLabel"
 						       name="permissionLabel"
-						       placeholder="Label"
 						       v-bind:maxlength="fields.maxLabel">
 					</div>
 					<div class="flex w-full mt-4">
@@ -74,7 +72,9 @@
             }
         },
         methods: {
-	        //method to save permission in db
+	        /*
+	         *method to save permission in db
+	         */
             save() {
                 axios.patch('/permissions/' + this.id, {
                     name: this.permissionName,
@@ -83,7 +83,9 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
             },
-            //function to be executed before opening modal
+            /*
+             *function to be executed before opening modal
+             */
             beforeOpen(event) {
                 //get parameters from permission-table modal
                 this.id = event.params.id;

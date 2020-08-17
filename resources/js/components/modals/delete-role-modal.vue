@@ -38,13 +38,17 @@
             }
         },
         methods: {
-            //delete function
+            /*
+             *delete function
+             */
             del() {
                 axios.delete('/roles/' + this.id).then(function () {
                     Event.$emit('delete');
                 })
             },
-            //function to be executed before opening modal
+            /*
+              *function to be executed before opening modal
+             */
             beforeOpen(event) {
                 //get parameters from roles-table modal
                 this.id = event.params.id;

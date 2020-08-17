@@ -17,14 +17,12 @@
 					<div class="flex">
 						<input class="input-text w-full" type="text" v-model="roleName" id="roleName"
 						       name="roleName"
-						       placeholder="Name"
 						       v-bind:maxlength="fields.maxLabel"
 						       autofocus>
 					</div>
 					<div class="flex mt-2">
 						<input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel"
 						       name="roleLabel"
-						       placeholder="Label"
 						       v-bind:maxlength="fields.maxName">
 					</div>
 					<div class="flex w-full mt-4">
@@ -71,7 +69,9 @@
             }
         },
         methods: {
-	        //method to save role in db
+	        /*
+	         *method to save role in db
+	         */
             save() {
                 axios.patch('/roles/' + this.id, {
                     name: this.roleName,
@@ -80,7 +80,9 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
             },
-            //function to be executed before opening modal
+            /*
+             *function to be executed before opening modal
+             */
             beforeOpen(event) {
                 //get parameters from roles-table modal
                 this.id = event.params.id;
