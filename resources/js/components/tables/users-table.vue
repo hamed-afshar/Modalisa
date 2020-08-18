@@ -6,7 +6,7 @@
         <th> {{ $t("translate.id") }}</th>
         <th> {{ $t("translate.name") }}</th>
         <th> {{ $t("translate.email") }}</th>
-        <th> {{ $t("translate.subscription") }}</th>
+        <th> {{ $tc("translate.subscription" , 1) }}</th>
         <th> {{ $t("translate.confirmed") }}</th>
         <th> {{ $t("translate.locked") }}</th>
       </tr>
@@ -18,7 +18,7 @@
         <td> {{ user.email }}</td>
         <td>
           <select class="input-option w-full" id="subscription" name="subscription">
-            <option selected disabled></option>
+            <option selected disabled> {{ user.subscription.plan }}</option>
 
           </select>
         </td>
