@@ -1,6 +1,7 @@
 <template>
     <modal name="edit-subscription-modal" id="edit-subscription-modal" height="auto" :adaptive="true"
-           @before-open="beforeOpen">
+           @before-open="beforeOpen"
+           @before-close="beforeClose">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="flex flex-row">
@@ -20,6 +21,10 @@
                            placeholder="Plan Name"
                            v-bind:maxlength="fields.maxPlan"
                            autofocus>
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('plan')}}
+                    </div>
                     <div class="mt-2">
                         <input class="input-text w-full" type="number" v-model="cost"
                                id="cost"
@@ -27,12 +32,12 @@
                                placeholder="Cost Percentage"
                                v-on:input="checkInput">
                     </div>
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('cost_percentage')}}
+                    </div>
                     <div class="mt-4">
                         <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
-                    </div>
-                    <div class="error">
-                        {{ errors.get('name')}}
-                        {{ errors.get('label')}}
                     </div>
                 </div>
             </div>
@@ -55,6 +60,10 @@
 
         record(errors) {
             this.errors = errors.errors
+        }
+
+        clear() {
+            this.errors ={}
         }
     }
     export default {
@@ -91,15 +100,23 @@
 					Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
 		    },
+
             /*
-			*function to be executed before opening modal
+			 * function to be executed before opening modal
 			*/
 		    beforeOpen(event) {
 		        //get parameters from subscription-table
 			    this.id = event.params.id;
 			    this.subscriptionPlan = event.params.plan;
 			    this.cost = event.params.cost;
-		    }
+		    },
+
+            /*
+             *function to be executed before closing modal
+            */
+            beforeClose() {
+                this.errors.clear();
+            }
 
 	    }
     }

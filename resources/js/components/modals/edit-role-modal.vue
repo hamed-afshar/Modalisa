@@ -1,6 +1,7 @@
 <template>
     <modal name="edit-role-modal" id="edit-role-modal" height="auto"
-           @before-open="beforeOpen">
+           @before-open="beforeOpen"
+           @before-close="beforeClose">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="flex flex-row">
@@ -18,18 +19,23 @@
                            name="roleName"
                            v-bind:maxlength="fields.maxLabel"
                            autofocus>
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('name')}}
+                    </div>
                     <div class="mt-2">
                         <input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel"
                                name="roleLabel"
                                v-bind:maxlength="fields.maxName">
                     </div>
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('label')}}
+                    </div>
                     <div class="mt-4">
                         <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
                     </div>
-                    <div class="error">
-                        {{ errors.get('name')}}
-                        {{ errors.get('label')}}
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -50,6 +56,10 @@
 
         record(errors) {
             this.errors = errors.errors
+        }
+
+        clear() {
+            this.errors ={}
         }
     }
 
@@ -78,6 +88,7 @@
                     Event.$emit('save');
                 }).catch(error => this.errors.record(error.response.data))
             },
+
             /*
              *function to be executed before opening modal
              */
@@ -86,6 +97,13 @@
                 this.id = event.params.id;
                 this.roleName = event.params.name;
                 this.roleLabel = event.params.label;
+            },
+
+            /*
+             *function to be executed before closing modal
+             */
+            beforeClose() {
+                this.errors.clear();
             }
         },
     }

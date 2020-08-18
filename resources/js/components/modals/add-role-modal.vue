@@ -1,6 +1,7 @@
 <template>
     <modal name="add-role-modal" id="add-role-modal" height="auto" :adaptive="true"
-           @before-open="beforeOpen">
+           @before-open="beforeOpen"
+           @before-close="beforeClose">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="flex flex-row">
@@ -19,17 +20,21 @@
                            v-bind:maxlength="fields.maxName"
                            autofocus>
                 </div>
+                <!-- error section -->
+                <div class="error">
+                    {{ errors.get('name')}}
+                </div>
                 <div class="mt-2">
                     <input class="input-text w-full" type="text" v-model="roleLabel" id="roleLabel" name="roleLabel"
                            placeholder="Label"
                            v-bind:maxlength="fields.maxLabel">
                 </div>
+                <!-- error section -->
+                <div class="error">
+                    {{ errors.get('label')}}
+                </div>
                 <div class="mt-4">
                     <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
-                </div>
-                <div class="error">
-                    {{ errors.get('name')}}
-                    {{ errors.get('label')}}
                 </div>
             </div>
         </div>
@@ -50,6 +55,10 @@
 
         record(errors) {
             this.errors = errors.errors
+        }
+
+        clear() {
+            this.errors ={}
         }
     }
 
@@ -84,7 +93,13 @@
                 //clear name and label fields
                 this.roleLabel = null;
                 this.roleName = null;
-	        }
+	        },
+            /*
+             *function to be executed before closing modal
+             */
+	        beforeClose() {
+	            this.errors.clear();
+            }
         }
     }
 </script>

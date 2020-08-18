@@ -1,6 +1,7 @@
 <template>
 	<modal name="add-subscription-modal" id="add-subscription-modal" height="auto" :adaptive="true"
-	       @before-open="beforeOpen">
+	       @before-open="beforeOpen"
+	       @before-close="beforeClose">
 		<div class="modal-box">
 			<div class="modal-header">
 				<div class="flex flex-row">
@@ -19,6 +20,10 @@
 					       v-bind:maxlength="fields.maxPlan"
 					       autofocus>
 				</div>
+				<!-- error section -->
+				<div class="error">
+					{{ errors.get('plan')}}
+				</div>
 				<div class="mt-2">
 					<input class="input-text w-full" type="number" v-model="cost"
                            id="cost"
@@ -26,16 +31,16 @@
 					       placeholder="Cost Percentage"
 					       v-on:input="checkInput">
 				</div>
+				<!-- error section -->
+				<div class="error">
+					{{ errors.get('cost_percentage')}}
+				</div>
 				<div class="mt-4">
 					<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
 				</div>
-				<div class="error">
-					{{ errors.get('name')}}
-					{{ errors.get('label')}}
-				</div>
+
 			</div>
 		</div>
-
 	</modal>
 
 </template>
@@ -54,6 +59,10 @@
 
         record(errors) {
             this.errors = errors.errors
+        }
+
+        clear() {
+            this.errors ={}
         }
     }
 
@@ -97,6 +106,13 @@
                 //clear plan and percentage fields
 	            this.subscriptionPlan = null;
 	            this.cost = null;
+            },
+
+            /*
+		     * function to be executed before closing modal
+		     */
+            beforeClose() {
+                this.errors.clear();
             }
 
 	    }

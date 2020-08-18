@@ -1,6 +1,7 @@
 <template>
     <modal name="add-permission-modal" id="add-permission-modal" height="auto" :adaptive="true"
-           @before-open="beforeOpen">
+           @before-open="beforeOpen"
+           @before-close="beforeClose">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="flex flex-row">
@@ -20,18 +21,22 @@
                            v-bind:maxlength="fields.maxName"
                            autofocus>
                 </div>
+                <!-- error section -->
+                <div class="error">
+                    {{ errors.get('name')}}
+                </div>
                 <div class="mt-2">
                     <input class="input-text w-full" type="text" v-model="permissionLabel" id="permissionLabel"
                            name="permissionLabel"
                            v-bind:maxlength="fields.maxLabel"
                            placeholder="Label">
                 </div>
+                <!-- error section -->
+                <div class="error">
+                    {{ errors.get('label')}}
+                </div>
                 <div class="mt-4">
                     <button class="btn-pink w-full mb-2" v-on:click="save"> {{ $t('translate.save') }}</button>
-                </div>
-                <div>
-                    {{ errors.get('name')}}
-                    {{ errors.get('label')}}
                 </div>
             </div>
         </div>
@@ -53,6 +58,11 @@
         record(errors) {
 		    this.errors = errors.errors
         }
+
+        clear() {
+            this.errors ={}
+        }
+
 	}
     export default {
         name: "add-permission-modal",
@@ -75,12 +85,21 @@
 	                Event.$emit('save');
 				}).catch(error => this.errors.record(error.response.data))
             },
-            //function to be executed before opening modal
+            /*
+             *function to be executed before opening modal
+            */
 		    beforeOpen() {
                 //clear name and label fields
 			    this.permissionLabel = null;
 			    this.permissionName = null;
-		    }
+		    },
+
+            /*
+             *function to be executed before closing modal
+            */
+            beforeClose() {
+                this.errors.clear();
+            }
 	    },
     }
 </script>

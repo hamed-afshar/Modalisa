@@ -1,6 +1,7 @@
 <template>
     <modal name="edit-permission-modal" id="edit-permission-modal" height="auto"
-           @before-open="beforeOpen">
+           @before-open="beforeOpen"
+           @before-close="beforeClose">
         <div class="modal-box">
             <div class="modal-header">
                 <div class="flex flex-row">
@@ -18,20 +19,23 @@
                            id="permissionName"
                            name="permissionName"
                            autofocus
-                           v-bind:maxlength="fields.maxName"
-                    >
+                           v-bind:maxlength="fields.maxName">
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('name')}}
+                    </div>
                     <div class="mt-2">
                         <input class="input-text w-full" type="text" v-model="permissionLabel"
                                id="permissionLabel"
                                name="permissionLabel"
                                v-bind:maxlength="fields.maxLabel">
                     </div>
+                    <!-- error section -->
+                    <div class="error">
+                        {{ errors.get('label')}}
+                    </div>
                     <div class="mt-4">
                         <button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
-                    </div>
-                    <div class="error">
-                        {{ errors.get('name')}}
-                        {{ errors.get('label')}}
                     </div>
                 </div>
             </div>
@@ -53,6 +57,10 @@
 
         record(errors) {
             this.errors = errors.errors
+        }
+
+        clear() {
+            this.errors ={}
         }
     }
 
@@ -89,6 +97,13 @@
                 this.id = event.params.id;
                 this.permissionName = event.params.name;
                 this.permissionLabel = event.params.label;
+            },
+
+            /*
+             *function to be executed before closing modal
+            */
+            beforeClose() {
+                this.errors.clear();
             }
         },
     }
