@@ -28,3 +28,4 @@ loading time.
 22. style in user-table component is repeated.
 23. header in _admin_header section is not fully responsive
 24. is it possible to aggrigate all errors?
+25 . how to translate errors sentences
