@@ -16,8 +16,6 @@
             <div class="box-header w-full"> {{ trans_choice("translate.subscription" , 2) }}</div>
             <subscriptions-table> </subscriptions-table>
         </div>
-
-
     </div>
 @endsection
 
