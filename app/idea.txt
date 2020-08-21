@@ -29,3 +29,7 @@ loading time.
 23. header in _admin_header section is not fully responsive
 24. is it possible to aggrigate all errors?
 25 . how to translate errors sentences
+
+26. use (with) to get all permissions related to the role.(eager loading)
+27. change sync() to attach() in allowto function for Role model
+
