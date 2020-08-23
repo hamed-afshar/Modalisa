@@ -29,7 +29,7 @@ class Role extends Model
      */
     public function allowTo($permission)
     {
-        $this->permissions()->sync($permission, false);
+        $this->permissions()->attach($permission);
     }
 
     /*
