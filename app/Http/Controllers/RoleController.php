@@ -49,6 +49,7 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         $this->authorize('view', $role);
+        return $role->permissions;
     }
 
     /*
@@ -81,16 +82,7 @@ class RoleController extends Controller
         $this->authorize('delete', $role);
         $role->delete();
     }
-
-    /*
-     * get all permission associated roles
-     */
-    public function permissions(Role $role)
-    {
-        $this->authorize('view', $role );
-        return $role->permissions;
-    }
-
+    
     /*
      * allow roles for permissions
      */
