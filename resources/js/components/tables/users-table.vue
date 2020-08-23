@@ -16,9 +16,10 @@
         <td> {{ user.id }}</td>
         <td> {{ user.name }}</td>
         <td> {{ user.email }}</td>
+        <td> {{ user.subscription.plan}}   </td>
         <td>
           <select class="input-option w-full" id="subscription" name="subscription">
-            <option selected disabled> {{ user.subscription.plan }}</option>
+            <option selected disabled></option>
 
           </select>
         </td>
@@ -62,6 +63,10 @@
            */
             axios.get('/users')
                 .then(response => this.users = response.data);
+          axios.get('/users') .then(response => {
+            console.log(response);
+            console.log(this.users)
+          });
         }
     }
 </script>
