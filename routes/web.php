@@ -42,7 +42,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
     Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
     Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
-    Route::get('/granted-permissions/{role}', 'RoleController@permissions')->name('roles.permissions');
     Route::post('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
     Route::delete('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
 
