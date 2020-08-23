@@ -16,7 +16,8 @@ class UserController extends Controller
     public function index()
     {
         $this->authorize('viewAny', User::class);
-        return User::all();
+        $users =  User::with('subscription')->get();
+        return json_decode($users);
     }
 
     //systemadmin can see a single user
