@@ -19,6 +19,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
+
+    <!--include ziggy for using routes inside JS -->
+    @routes
 </head>
 <body class="bg-gray-200">
 @yield('content')
