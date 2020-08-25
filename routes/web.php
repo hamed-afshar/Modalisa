@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 /*
   |--------------------------------------------------------------------------
   | Web Routes
@@ -11,16 +12,14 @@
   |
  */
 
-Auth::routes();
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
+Auth::routes();
 
-Route::post('/users', 'RegisterController@store')->name('users.store');
-Route::get('/users/create', 'RegisterController@create')->name('users.create');
+Route::get('/others/pending-for-confirmation', 'RegisterController@pending')->name('pending');
 
 Route::group(['middleware' => 'auth'], function() {
 
