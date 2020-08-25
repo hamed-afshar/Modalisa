@@ -1,4 +1,4 @@
-@include('_site_header')
+@extends('layouts.app')
 <div class="container max-w-xs md:max-w-full mx-auto mt-2 mb-6">
     <div class="grid grid-cols-1 md:grid-cols-6">
         <div class="col-start-3 col-span-2">
