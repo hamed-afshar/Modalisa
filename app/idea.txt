@@ -29,6 +29,7 @@ loading time.
 23. header in _admin_header section is not fully responsive
 24. is it possible to aggrigate all errors?
 25 . how to translate errors sentences
-
+26. logout should be a global method in vue for all components
+27. all laravel routes should be added to vuejs by ziggy
 
 
