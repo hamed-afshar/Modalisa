@@ -13,6 +13,7 @@ import VModal from 'vue-js-modal';
 import VueInternationalization from 'vue-i18n';
 import Locale from './vue-i18n-locales.generated'
 
+
 Vue.use(VueInternationalization);
 Vue.use(VModal);
 
@@ -24,6 +25,10 @@ Vue.use(VModal);
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
+Vue.component('guest-navbar', require('./components/navigation/guest-navbar').default);
+Vue.component('auth-navbar', require('./components/navigation/auth-navbar').default);
+
+Vue.component('admin-header', require('./components/headers/admin-header').default);
 
 Vue.component('roles-table', require('./components/tables/roles-table').default);
 Vue.component('permission-table', require('./components/tables/permissions-table').default);
