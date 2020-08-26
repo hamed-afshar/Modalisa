@@ -29,7 +29,7 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         if ($user->isAdmin()) {
-            return view('dashboards.system-admin');
+            return view('admin');
         }
         return view('home');
     }
@@ -39,16 +39,12 @@ class HomeController extends Controller
      */
     public function security_center()
     {
-        $this->authorize('viewAny', Role::class);
-        $roles = Role::all();
-        $permissions = Permission::all();
-        return view('dashboards.security-center', compact('roles', 'permissions'));
+        //$this->authorize('viewAny', Role::class);
+        return view('dashboards.security-center');
     }
 
     public function user_center()
     {
-        $this->authorize('viewAny', User::class);
-        $users = User::all();
-        return view('dashboards.user-center', compact('users'));
+        return view('dashboards.user-center');
     }
 }
