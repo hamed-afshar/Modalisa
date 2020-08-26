@@ -16,13 +16,7 @@
         <td> {{ user.id }}</td>
         <td> {{ user.name }}</td>
         <td> {{ user.email }}</td>
-        <td> {{ user.subscription.plan}}   </td>
-        <td>
-          <select class="input-option w-full" id="subscription" name="subscription">
-            <option selected disabled></option>
-
-          </select>
-        </td>
+        <td> {{user.subscription.plan }}</td>
         <!-- show icons based on user confirmation -->
         <td v-if="user.confirmed == 1">
           <i class="fas fa-check text-green-600"></i>
@@ -52,21 +46,23 @@
         data() {
             return {
                 users: [],
+                subscriptions: []
             }
         },
         methods: {
 
         },
         mounted() {
-          /*
-           * fetch all users details from db
-           */
+           /*
+            * fetch all users details from db
+            */
             axios.get('/users')
-                .then(response => this.users = response.data);
-          axios.get('/users') .then(response => {
-            console.log(response);
-            console.log(this.users)
-          });
+                    .then(response => this.users = response.data);
+            /*
+             * fetch all subscriptions from db
+             */
+            axios.get('/subscriptions')
+                    .then(response => this.subscriptions = response.data);
         }
     }
 </script>
