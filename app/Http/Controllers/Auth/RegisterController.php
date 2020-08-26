@@ -70,16 +70,6 @@ class RegisterController extends Controller
     public function create(array $data)
     {
 
-//        User::create([
-//            'name' => request('name'),
-//            'email' => request('email'),
-//            'password' => Hash::make($data['password']),
-//            'last_ip' => request()->ip(),
-//            'language' => request('language'),
-//            'tel' => request('tel'),
-//            'country' => request('country'),
-//            'communication_media' => request('communication_media')
-//        ]);
         return User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -88,14 +78,8 @@ class RegisterController extends Controller
                 'language' => $data['language'],
                 'tel' => $data['tel'],
                 'country' => $data['country'],
-                'communication_media' => $data['communication_media']
+                'communication_media' => $data['communication_media'],
+                'subscription_id' => 1
             ]);
-        //return redirect()->route('pending');
     }
-
-    //show pending for confirmation page
-//    public function pending()
-//    {
-//        return view('/others/pending-for-confirmation');
-//    }
 }
