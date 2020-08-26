@@ -31,5 +31,7 @@ loading time.
 25 . how to translate errors sentences
 26. logout should be a global method in vue for all components
 27. all laravel routes should be added to vuejs by ziggy
+28. if user visits a page whcih is not authorized for then it should be redirected to
+access denied page.
 
 
