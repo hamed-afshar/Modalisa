@@ -29,9 +29,26 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         if ($user->isAdmin()) {
-            return view('admin');
+            return view('dashboards.system-admin');
         }
         return view('home');
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function security_center()
+    {
+        $this->authorize('viewAny', Role::class);
+        $roles = Role::all();
+        $permissions = Permission::all();
+        return view('dashboards.security-center', compact('roles', 'permissions'));
+    }
+
+    public function user_center()
+    {
+        $this->authorize('viewAny', User::class);
+        $users = User::all();
+        return view('dashboards.user-center', compact('users'));
+    }
 }
