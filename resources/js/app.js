@@ -50,7 +50,14 @@ Vue.component('delete-subscription-modal', require('./components/modals/delete-s
 Vue.component('edit-subscription-modal', require('./components/modals/edit-subscription-modal').default);
 
 
-
+/**
+ * include ziggy package for including routes from laravel to vue
+ */
+Vue.mixin({
+    methods: {
+        route: route
+    }
+});
 
 
 /**
@@ -60,12 +67,16 @@ Vue.component('edit-subscription-modal', require('./components/modals/edit-subsc
  */
 
 const lang= document.documentElement.lang.substr(0,2);
+/**
+ *add i18n package for vue localization
+ * @type {Vue}
+ */
 const i18n = new VueInternationalization({
     locale:lang,
     messages:Locale
 })
-
 const app = new Vue({
     el: '#app',
     i18n,
 });
+
