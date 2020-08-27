@@ -41,31 +41,41 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    //return a path
+    /*
+     * return path
+     */
     public function path()
     {
         return "/users/{$this->id}";
     }
 
-    //user might belongs to many roles
+    /*
+     * user might belongs to many roles
+     */
     public function roles()
     {
         return $this->belongsToMany('App\Role', 'user_roles')->withTimestamps();
     }
 
-    //assign a role to user
+    /*
+     * assign a role to user
+     */
     public function assignRole($role)
     {
-        $this->roles()->sync($role, false);
+        $this->roles()->attach($role);
     }
 
-    //get user's permissions
+    /*
+     * get user's permissions
+     */
     public function permissions()
     {
         return $this->roles->map->permissions->flatten()->pluck('name')->unique();
     }
 
-    //check to see if user is a systemadmin
+    /*
+     * check to see if user is a systemadmin
+     */
     public function isAdmin()
     {
         if ($this->roles()->pluck('name')->contains('SystemAdmin')) {
@@ -73,7 +83,9 @@ class User extends Authenticatable
         }
     }
 
-    //check to see if user is locked
+    /*
+     * check to see if user is locked
+     */
     public function isLocked()
     {
         if ($this->locked == 1) {
@@ -83,7 +95,9 @@ class User extends Authenticatable
         }
     }
 
-    //check to see if user is confirmed
+    /*
+     * check to see if user is confirmed
+     */
     public function isConfirmed()
     {
         if ($this->confirmed == 1) {
@@ -93,13 +107,17 @@ class User extends Authenticatable
         }
     }
 
-    //user belongs to one subscription
+    /*
+     * user belongs to one subscription
+     */
     public function subscription()
     {
         return $this->belongsTo('App\Subscription');
     }
 
-    // each user has many order relation
+    /*
+     * each user has many order relation
+     */
     public function orders()
     {
         return $this->hasMany('App\Order', 'user_id');
