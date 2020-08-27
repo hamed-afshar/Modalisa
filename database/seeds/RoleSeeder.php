@@ -11,10 +11,17 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        //create roles in db
-        factory(App\Role::class, 4)->create();
+        /*
+         * create roles in db
+         */
+        factory(App\Role::class)->create([
+            'name' => 'SystemAdmin',
+            'label' => 'System Administrator'
+        ]);
 
-        //assign SystemAdmin role to user
+        /*
+         * assign SystemAdmin role to user
+         */
         $SystemAdminUser = App\User::find(1);
         $role = App\Role::where('name', 'SystemAdmin')->first();
         $SystemAdminUser->assignRole($role);
