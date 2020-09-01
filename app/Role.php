@@ -41,9 +41,9 @@ class Role extends Model
     }
 
     /*
-   * assign a user to role
-   */
-    public function assignUser($user)
+     * change user's role
+    */
+    public function changeRole($user)
     {
         $this->users()->save($user);
     }
