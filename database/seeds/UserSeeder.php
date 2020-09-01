@@ -39,6 +39,6 @@ class UserSeeder extends Seeder
          */
         $SystemAdminUser = App\User::find(1);
         $role = App\Role::where('name', 'SystemAdmin')->first();
-        $role->assignUser($SystemAdminUser);
+        $role->changeRole($SystemAdminUser);
     }
 }
