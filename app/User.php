@@ -70,7 +70,7 @@ class User extends Authenticatable
      */
     public function isAdmin()
     {
-        if ($this->roles()->pluck('name')->contains('SystemAdmin')) {
+        if ($this->role()->pluck('name')->contains('SystemAdmin')) {
             return true;
         }
     }
