@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
     Route::post('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
     Route::delete('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
+    Route::post('/change-role/{role}/{user}', 'RoleController@changeRole')->name('roles.change');
 
     Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
     Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
