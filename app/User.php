@@ -50,19 +50,11 @@ class User extends Authenticatable
     }
 
     /*
-     * user might belongs to many roles
+     * user belongs to one role
      */
-    public function roles()
+    public function role()
     {
-        return $this->belongsToMany('App\Role', 'user_roles')->withTimestamps();
-    }
-
-    /*
-     * assign a role to user
-     */
-    public function assignRole($role)
-    {
-        $this->roles()->attach($role);
+        return $this->belongsTo('App\Role');
     }
 
     /*

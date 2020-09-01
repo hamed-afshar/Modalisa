@@ -9,11 +9,11 @@ class Role extends Model
     protected $guarded = [];
 
     /*
-     * Role might belongs to many users
+     * Role has many users
      */
     public function users()
     {
-        return $this->belongsToMany('App\User', 'user_roles')->withTimestamps();
+        return $this->hasMany('App\User');
     }
 
     /*
@@ -21,7 +21,7 @@ class Role extends Model
      */
     public function permissions()
     {
-        return $this->belongsToMany('App\Permission', 'role_permissions')->withTimestamps();
+        return $this->belongsToMany('App\Permission', 'role_permissions');
     }
 
     /*
@@ -38,6 +38,14 @@ class Role extends Model
     public function  disAllowTo($permission)
     {
         $this->permissions()->detach($permission);
+    }
+
+    /*
+   * assign a user to role
+   */
+    public function assignUser($user)
+    {
+        $this->users()->save($user);
     }
 
     /*
