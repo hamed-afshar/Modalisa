@@ -144,6 +144,17 @@ class RoleManagementTest extends TestCase
         $this->assertDatabaseMissing('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
     }
 
+    /** @test */
+    public function SystemAdmin_can_change_user_roles()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $newUser = factory('App\User')->create();
+        $newRole = factory('App\Role')->create(['name' => 'accountant']);
+        $this->post('/change-role/' . $newRole->id . '/' . $newUser->id);
+        $this->assertDatabaseHas('users', ['role_id' => $newRole->id]);
+    }
+
 
     /** @test */
     public function guests_can_not_access_role_management()
