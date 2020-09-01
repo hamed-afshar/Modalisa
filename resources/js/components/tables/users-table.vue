@@ -23,7 +23,7 @@
                         <option disabled>
                             {{ user.role.name }}
                         </option>
-                        <option v-for="role in roles" v-bind:value="role.id">
+                        <option v-for="role in roles" v-bind:value="{'roleID' : role.id, 'userID' : user.id}">
                             {{ role.name }}
                         </option>
                     </select>
@@ -34,8 +34,8 @@
                         <option disabled>
                             {{ user.subscription.plan }}
                         </option>
-                        <option v-for="subscription in subscriptions" v-bind:value="subscription.id">
-                            {{subscription.plan}}
+                        <option v-for="subscription in subscriptions" v-bind:value="{'subscriptionID' : subscription.id}">
+                            {{ subscription.plan }}
                         </option>
                     </select>
                 </td>
@@ -76,14 +76,16 @@
              * function to change user's role
              */
             changeRole(event) {
-                console.log(event.target.value)
+
+                console.log('role-id: ' + event.target.value);
+                console.log('user-id: ' + event.target.value.userID);
             },
 
             /*
              * function to change user's subscription
              */
             changeSubscription(event) {
-                console.log(event.target.value)
+                console.log(event.target.value);
             },
 
             /*
