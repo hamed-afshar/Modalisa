@@ -82,7 +82,7 @@ class RoleController extends Controller
         $this->authorize('delete', $role);
         $role->delete();
     }
-    
+
     /*
      * allow roles for permissions
      */
@@ -103,5 +103,12 @@ class RoleController extends Controller
         return $role->permissions;
     }
 
-
+    /*
+    * assign role to users
+    */
+    public function changeRole(Role $role, User $user)
+    {
+        $this->authorize('update', $role);
+        $role->changeRole($user);
+    }
 }
