@@ -67,7 +67,8 @@ export default {
             "all_permissions": "All Permissions",
             "add_subscription": "Add Subscription",
             "delete_subscription": "Delete Subscription",
-            "edit_subscription": "Edit Subscription"
+            "edit_subscription": "Edit Subscription",
+            "change_role": "Change Role"
         },
         "validation": {
             "accepted": "The {attribute} must be accepted.",
