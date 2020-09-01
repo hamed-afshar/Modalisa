@@ -102,7 +102,9 @@
 				.then(response => this.grantedPermissions = response.data)
 	        },
 
-            //function to be executed before opening modal
+            /*
+             *function to be executed before opening modal
+             */
             beforeOpen(event) {
                 this.roleID = event.params.id
                 axios.get('/roles/' + this.roleID)
