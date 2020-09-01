@@ -17,21 +17,41 @@
                 <td> {{ user.id }}</td>
                 <td> {{ user.name }}</td>
                 <td> {{ user.email }}</td>
-                <td> role </td>
-                <td> {{user.subscription.plan }}</td>
+                <!-- show user's role in first row and list of available roles afterward -->
+                <td>
+                    <select v-on:change="changeRole($event)">
+                        <option disabled>
+                            {{ user.role.name }}
+                        </option>
+                        <option v-for="role in roles" v-bind:value="role.id">
+                            {{ role.name }}
+                        </option>
+                    </select>
+                </td>
+                <!-- show user's role in first row and list of available roles afterward -->
+                <td>
+                    <select v-on:change="changeSubscription($event)">
+                        <option disabled>
+                            {{ user.subscription.plan }}
+                        </option>
+                        <option v-for="subscription in subscriptions" v-bind:value="subscription.id">
+                            {{subscription.plan}}
+                        </option>
+                    </select>
+                </td>
                 <!-- show icons based on user confirmation -->
                 <td v-if="user.confirmed == 1">
-                    <i class="fas fa-check text-green-600"></i>
+                    <i class="cursor-pointer fas fa-check text-green-600" v-on:click="changeConfirmation"></i>
                 </td>
                 <td v-else>
-                    <i class="fas fa-ban text-red-600"></i>
+                    <i class="cursor-pointer fas fa-ban text-red-600" v-on:click="changeConfirmation"></i>
                 </td>
                 <!-- show icons based on user lock -->
                 <td v-if="user.locked == 1">
-                    <i class="fas fa-lock text-red-600"></i>
+                    <i class="cursor-pointer fas fa-lock text-red-600" v-on:click="changeLock"></i>
                 </td>
                 <td v-else>
-                    <i class="fas fa-lock-open text-green-600"></i>
+                    <i class="cursor-pointer fas fa-lock-open text-green-600" v-on:click="changeLock"></i>
                 </td>
 
             </tr>
@@ -47,16 +67,52 @@
         data() {
             return {
                 users: [],
-                subscriptions: []
+                subscriptions: [],
+                roles: [],
             }
         },
-        methods: {},
+        methods: {
+            /*
+             * function to change user's role
+             */
+            changeRole(event) {
+                console.log(event.target.value)
+            },
+
+            /*
+             * function to change user's subscription
+             */
+            changeSubscription(event) {
+                console.log(event.target.value)
+            },
+
+            /*
+             * function to change user confirmation status
+             */
+            changeConfirmation() {
+                console.log('change confiramtion')
+            },
+
+            /*
+             * function to lock/unlock user
+             */
+            changeLock() {
+                console.log('change lock')
+            }
+        },
         mounted() {
             /*
              * fetch all users details from db
              */
             axios.get('/users')
                 .then(response => this.users = response.data);
+
+            /*
+			 * fetch all roles from db
+			*/
+            axios.get('/roles')
+                    .then(response => this.roles = response.data);
+
             /*
              * fetch all subscriptions from db
              */
