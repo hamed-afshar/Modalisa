@@ -11,7 +11,9 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //create SystemAdmin user first
+        /*
+         * create SystemAdmin user first
+         */
         factory(App\User::class)->create([
             'name' => 'Hamed Afshar',
             'email' => 'abtin_bep@yahoo.com',
@@ -23,5 +25,20 @@ class UserSeeder extends Seeder
             'country' => 'Iran',
             'communication_media' => 'telegram'
         ]);
+
+        /*
+         * create roles in db
+        */
+        factory(App\Role::class)->create([
+            'name' => 'SystemAdmin',
+            'label' => 'System Administrator'
+        ]);
+
+        /*
+         * assign SystemAdmin role to user
+         */
+        $SystemAdminUser = App\User::find(1);
+        $role = App\Role::where('name', 'SystemAdmin')->first();
+        $role->assignUser($SystemAdminUser);
     }
 }
