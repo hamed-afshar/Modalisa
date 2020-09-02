@@ -151,7 +151,7 @@ class RoleManagementTest extends TestCase
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $newUser = factory('App\User')->create();
         $newRole = factory('App\Role')->create(['name' => 'accountant']);
-        $this->post('/change-role/' . $newRole->id . '/' . $newUser->id);
+        $this->get('/change-role/' . $newRole->id . '/' . $newUser->id);
         $this->assertDatabaseHas('users', ['role_id' => $newRole->id]);
     }
 
