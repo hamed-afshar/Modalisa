@@ -90,7 +90,7 @@
              * reload granted permission list after
              */
             remove(permissionID) {
-                axios.delete('/disallow-to/' + this.roleID + '/' + permissionID)
+                axios.get('/disallow-to/' + this.roleID + '/' + permissionID)
 	            .then(response => this.grantedPermissions = response.data)
             },
 	        /*
@@ -98,7 +98,7 @@
 	         * reload granted permission list after
 	         */
 	        add(permissionID) {
-                axios.post('/allow-to/' + this.roleID + '/' + permissionID)
+                axios.get('/allow-to/' + this.roleID + '/' + permissionID)
 				.then(response => this.grantedPermissions = response.data)
 	        },
 
