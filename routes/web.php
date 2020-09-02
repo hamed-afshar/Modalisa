@@ -41,9 +41,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
     Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
     Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
-    Route::post('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
-    Route::delete('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
-    Route::post('/change-role/{role}/{user}', 'RoleController@changeRole')->name('roles.change');
+    Route::get('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
+    Route::get('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
+    Route::get('/change-role/{role}/{user}', 'RoleController@changeRole')->name('roles.change');
 
     Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
     Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
@@ -60,6 +60,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit');
     Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update');
     Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
+    Route::get('/change-subscription/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
+
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
