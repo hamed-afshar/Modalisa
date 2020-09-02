@@ -27,14 +27,6 @@ class UserSeeder extends Seeder
         ]);
 
         /*
-         * create roles in db
-        */
-        factory(App\Role::class)->create([
-            'name' => 'SystemAdmin',
-            'label' => 'System Administrator'
-        ]);
-
-        /*
          * assign SystemAdmin role to user
          */
         $SystemAdminUser = App\User::find(1);
