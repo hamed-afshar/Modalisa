@@ -19,19 +19,19 @@
                 <td> {{ user.email }}</td>
                 <!-- show user's role in first row and list of available roles afterward -->
                 <td>
-                    <select v-on:change="changeRole($event)">
-                        <option disabled>
+                    <select v-on:change="changeRole(user.id, $event)">
+                        <option  selected disabled>
                             {{ user.role.name }}
                         </option>
-                        <option v-for="role in roles" v-bind:value="{'roleID' : role.id, 'userID' : user.id}">
+                        <option v-for="role in roles" v-bind:value="role.id">
                             {{ role.name }}
                         </option>
                     </select>
                 </td>
                 <!-- show user's role in first row and list of available roles afterward -->
                 <td>
-                    <select v-on:change="changeSubscription($event)">
-                        <option disabled>
+                    <select v-on:change="changeSubscription(user.id, $event)">
+                        <option selected disabled>
                             {{ user.subscription.plan }}
                         </option>
                         <option v-for="subscription in subscriptions" v-bind:value="{'subscriptionID' : subscription.id}">
@@ -75,17 +75,17 @@
             /*
              * function to change user's role
              */
-            changeRole(event) {
-
-                console.log('role-id: ' + event.target.value);
-                console.log('user-id: ' + event.target.value.userID);
+            changeRole(userID, event) {
+                axios.get('/change-role/'  + event.target.value + '/' + userID);
             },
 
             /*
              * function to change user's subscription
              */
-            changeSubscription(event) {
-                console.log(event.target.value);
+            changeSubscription(userID, event) {
+                console.log('user-id: ' + userID);
+                console.log('role-id: ' + event.target.value);
+                axios.post('')
             },
 
             /*
