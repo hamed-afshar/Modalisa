@@ -9,14 +9,18 @@ class Subscription extends Model
 {
     protected $guarded = [];
 
-    // subscription may belongs to many users
+    /*
+     * subscription may belongs to many users
+     */
     public function users()
     {
         return $this->hasMany('App\User');
     }
 
-    //assing user to subscription
-    public function assignUser($user)
+    /*
+     * change user's subscription
+     */
+    public function changeSubscription($user)
     {
         return $this->users()->save($user);
     }
