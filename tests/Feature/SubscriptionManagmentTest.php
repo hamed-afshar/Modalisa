@@ -108,6 +108,18 @@ class SubscriptionManagmentTest extends TestCase
     }
 
     /** @test */
+    public function SystemAdmin_can_change_user_subscription()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $newUser = factory('App\User')->create();
+        $newSubscription = factory('App\Subscription')->create(['plan'=>'Gold']);
+        $this->get('/subscriptions/' . $newSubscription->id . '/' . $newUser->id);
+        $this->assertDatabaseHas('users', ['subscription_id' => $newSubscription->id]);
+
+    }
+
+    /** @test */
     public function guests_can_not_access_subscriptions_system()
     {
         $subscription = factory('App\Subscription')->create();
