@@ -79,8 +79,6 @@ class RegisterController extends Controller
                 'tel' => $data['tel'],
                 'country' => $data['country'],
                 'communication_media' => $data['communication_media'],
-                //default subscription value for newly registered user
-                'subscription_id' => 1
             ]);
     }
 }
