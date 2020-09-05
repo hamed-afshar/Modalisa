@@ -60,7 +60,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit');
     Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update');
     Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
-    Route::get('/change-subscription/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
+    Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
 
     Route::get('/orders', 'OrdersController@index');
