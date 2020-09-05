@@ -74,7 +74,6 @@ class RegisterController extends Controller
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'last_ip' => request()->ip(),
                 'language' => $data['language'],
                 'tel' => $data['tel'],
                 'country' => $data['country'],
