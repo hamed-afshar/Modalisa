@@ -25,7 +25,9 @@ class Subscription extends Model
         return $this->users()->save($user);
     }
 
-    //return permissions path
+    /*
+     * return permissions path
+     */
     public function path()
     {
         return "/subscriptions/{$this->id}";
