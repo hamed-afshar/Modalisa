@@ -34,24 +34,24 @@
                         <option selected disabled>
                             {{ user.subscription.plan }}
                         </option>
-                        <option v-for="subscription in subscriptions" v-bind:value="{'subscriptionID' : subscription.id}">
+                        <option v-for="subscription in subscriptions" v-bind:value="subscription.id">
                             {{ subscription.plan }}
                         </option>
                     </select>
                 </td>
                 <!-- show icons based on user confirmation -->
                 <td v-if="user.confirmed == 1">
-                    <i class="cursor-pointer fas fa-check text-green-600" v-on:click="changeConfirmation"></i>
+                    <i class="cursor-pointer fas fa-check text-green-600" v-on:click="changeConfirmation(user.id, user.confirmed)"></i>
                 </td>
                 <td v-else>
-                    <i class="cursor-pointer fas fa-ban text-red-600" v-on:click="changeConfirmation"></i>
+                    <i class="cursor-pointer fas fa-ban text-red-600" v-on:click="changeConfirmation(user.id, user.confirmed)"></i>
                 </td>
                 <!-- show icons based on user lock -->
                 <td v-if="user.locked == 1">
-                    <i class="cursor-pointer fas fa-lock text-red-600" v-on:click="changeLock"></i>
+                    <i class="cursor-pointer fas fa-lock text-red-600" v-on:click="changeLock(user.id, user.locked)"></i>
                 </td>
                 <td v-else>
-                    <i class="cursor-pointer fas fa-lock-open text-green-600" v-on:click="changeLock"></i>
+                    <i class="cursor-pointer fas fa-lock-open text-green-600" v-on:click="changeLock(user.id, user.locked)"></i>
                 </td>
 
             </tr>
@@ -75,33 +75,44 @@
             /*
              * function to change user's role
              */
-            changeRole(userID, event) {
+            changeRole(userID, event)
+            {
                 axios.get('/change-role/'  + event.target.value + '/' + userID);
             },
 
             /*
              * function to change user's subscription
              */
-            changeSubscription(userID, event) {
-                console.log('user-id: ' + userID);
-                console.log('role-id: ' + event.target.value);
-                axios.post('')
+            changeSubscription(userID, event)
+            {
+
+                axios.get('/change-subscriptions/' + event.target.value + '/' + userID);
             },
 
             /*
              * function to change user confirmation status
              */
-            changeConfirmation() {
-                console.log('change confiramtion')
+            changeConfirmation(userID, confirmationStatus) {
+                axios.patch('/users/' + userID, {
+                    'confirmed': !confirmationStatus
+                }).then(function () {
+                    window.location.reload()
+                });
             },
 
             /*
              * function to lock/unlock user
              */
-            changeLock() {
-                console.log('change lock')
+            changeLock(userID, lockedStatus) {
+                console.log(lockedStatus);
+                axios.patch('/users/' + userID, {
+                    'locked': !lockedStatus
+                }).then(function () {
+                    window.location.reload()
+                })
             }
         },
+
         mounted() {
             /*
              * fetch all users details from db
@@ -125,6 +136,7 @@
 </script>
 
 <style scoped>
+
     .modal-box {
         @apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
     }

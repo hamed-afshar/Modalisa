@@ -114,7 +114,7 @@ class SubscriptionManagmentTest extends TestCase
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $newUser = factory('App\User')->create();
         $newSubscription = factory('App\Subscription')->create(['plan'=>'Gold']);
-        $this->get('/subscriptions/' . $newSubscription->id . '/' . $newUser->id);
+        $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
         $this->assertDatabaseHas('users', ['subscription_id' => $newSubscription->id]);
 
     }

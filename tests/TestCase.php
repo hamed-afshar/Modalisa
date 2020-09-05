@@ -16,8 +16,8 @@ abstract class TestCase extends BaseTestCase
             'plan' => 'Basic',
             'cost_percentage' => 30
         ]);
-        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
         $role = factory('App\Role')->create(['name' => $role]);
+        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
         $role->changeRole($user);
         $this->actingAs($user);
     }

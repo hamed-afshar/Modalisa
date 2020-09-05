@@ -6,6 +6,7 @@ use App\AccessProvider;
 use App\Permission;
 use App\Role;
 use App\Subscription;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -79,8 +80,17 @@ class AdminFunctionsTest extends TestCase
     }
 
     /** @test */
-    public function SystemAdmin_can_confirm_or_lock_users()
+    public function SystemAdmin_can_confirm_and_unlock_users()
     {
+        $this->withExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin',0,1);
+        $newUser = factory('App\User')->create();
+        $this->patch($newUser->path() ,[
+            'confirmed' => 1,
+            'locked' => 0
+        ]);;
+        $this->assertEquals(1, User::where('id', $newUser->id)->value('confirmed'));
+        $this->assertEquals(0, User::where('id', $newUser->id)->value('locked'));
 
     }
 
