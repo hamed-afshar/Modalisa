@@ -104,7 +104,7 @@ class RoleController extends Controller
     }
 
     /*
-    * assign role to users
+    * change user's role
     */
     public function changeRole(Role $role, User $user)
     {
