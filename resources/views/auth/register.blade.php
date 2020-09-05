@@ -31,7 +31,9 @@
                             </div>
                             <div class="w-full lg:w-2/3">
                                 <input class="input-text w-full" type="email" id="email" name="email"
-                                       value="{{ old('email') }}" autocomplete="email" placeholder="name@example.com"
+                                       value="{{ old('email') }}"
+                                       autocomplete="email"
+                                       placeholder="name@example.com"
                                        required>
                             </div>
                             @error('email')
@@ -44,7 +46,10 @@
                             </div>
                             <div class="w-full lg:w-2/3">
                                 <input class="input-text w-full" type="number" id="tel" name="tel"
-                                       value="{{ old('tel') }}" autocomplete="tel" placeholder="989123463474" required>
+                                       value="{{ old('tel') }}"
+                                       autocomplete="tel"
+                                       placeholder="905031111111"
+                                       required>
                             </div>
                             @error('tel')
                             <div class="error"> {{ $message }}</div>
@@ -57,7 +62,10 @@
                             <div class="w-full lg:w-2/3">
                                 <select
                                         class="input-option w-full"
-                                        id="country" name="country" value="{{ old('country') }}" required>
+                                        id="country"
+                                        name="country"
+                                        value="{{ old('country') }}"
+                                        required>
                                     <option selected disabled>Country</option>
                                     <option value="Iran"> {{ __("translate.iran") }}</option>
                                     <option value="Turkey"> {{ __("translate.turkey") }}</option>
@@ -72,12 +80,14 @@
                                 <label class="label mb-1 py-1" for="language"> {{  __('Language')  }} </label>
                             </div>
                             <div class="w-full lg:w-2/3">
-                                <select
-                                        class="input-option w-full"
-                                        id="language" name="language" value="{{ old('language') }}" required>
+                                <select class="input-option w-full"
+                                        id="language"
+                                        name="language"
+                                        value="{{ old('language') }}"
+                                        required>
                                     <option disabled selected>{{ __("translate.language") }}</option>
-                                    <option value="Iran"> {{ __("translate.persian") }}</option>
-                                    <option value="Turkey"> {{ __("translate.turkish") }}</option>
+                                    <option value="Persian"> {{ __("translate.persian") }}</option>
+                                    <option value="Turkish"> {{ __("translate.turkish") }}</option>
                                 </select>
                             </div>
                             @error('language')
@@ -90,13 +100,14 @@
                                 <label class="label mb-1 py-1" for="media"> {{  __('Social Media')  }} </label>
                             </div>
                             <div class="w-full lg:w-2/3">
-                                <select
-                                        class="input-option w-full"
-                                        id="communication_media" name="communication_media"
-                                        value="{{ old("communication_media") }}" required>
+                                <select class="input-option w-full"
+                                        id="communication_media"
+                                        name="communication_media"
+                                        value="{{ old("communication_media") }}"
+                                        required>
                                     <option disabled selected>{{ __("translate.communication_media") }}</option>
-                                    <option value="Iran"> {{ __("translate.whatsapp") }}</option>
-                                    <option value="Turkey"> {{ __("translate.Telegram") }}</option>
+                                    <option value="Whatsapp"> {{ __("translate.whatsapp") }}</option>
+                                    <option value="Telegram"> {{ __("translate.Telegram") }}</option>
                                 </select>
                             </div>
                             @error('communication_media')
@@ -108,8 +119,13 @@
                                 <label class="label mb-1 py-1" for="password"> {{  __('translate.password')  }} </label>
                             </div>
                             <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full" type="password" id="password" name="password"
-                                       autocomplete="new-password" placeholder="********" required>
+                                <input class="input-text w-full"
+                                       type="password"
+                                       id="password"
+                                       name="password"
+                                       autocomplete="new-password"
+                                       placeholder="********"
+                                       required>
                             </div>
                             @error('password')
                             <div class="error"> {{ $message }}</div>
@@ -121,9 +137,13 @@
                                        for="password_confirmation"> {{  __('translate.password_confirm')  }} </label>
                             </div>
                             <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full" type="password" id="password_confirmation"
+                                <input class="input-text w-full"
+                                       type="password"
+                                       id="password_confirmation"
                                        name="password_confirmation"
-                                       autocomplete="new-password" placeholder="********" required>
+                                       autocomplete="new-password"
+                                       placeholder="********"
+                                       required>
                             </div>
                             @error('password_confirmation')
                             <div class="error"> {{ $message }}</div>

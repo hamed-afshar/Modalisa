@@ -125,9 +125,4 @@
     .table-body-row-all {
         @apply .bg-red-500 .border .px-4 .py-2 .text-center .text-white
     }
-
-    .table-body-row:hover {
-        @apply .bg-gray-100
-    }
-
 </style>

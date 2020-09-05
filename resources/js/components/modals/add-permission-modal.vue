@@ -105,24 +105,5 @@
 </script>
 
 <style>
-	.modal-box {
-		@apply .bg-white .text-gray-500 .border .rounded-lg .p-2;
-	}
-
-	.modal-header {
-		@apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .w-full .text-white .font-bold;
-	}
-
-    .table-header-row {
-        @apply .bg-white .text-gray-600 .px-4 .py-2
-    }
-
-    .table-body-row {
-        @apply .bg-white .border .px-4 .py-2 .text-center .text-gray-800
-    }
-
-    .table-body-row:hover {
-        @apply .bg-gray-100
-    }
 
 </style>
