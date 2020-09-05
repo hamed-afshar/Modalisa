@@ -81,4 +81,15 @@ class SubscriptionController extends Controller
         $this->authorize('delete', $subscription);
         $subscription->delete();
     }
+
+    /*
+     * change user's subscription
+     */
+    public function changeSubscription(Subscription $subscription, User $user)
+    {
+        $this->authorize('update', $subscription );
+        $subscription->changeSubscription($user);
+    }
+
+
 }

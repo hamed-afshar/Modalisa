@@ -22,7 +22,7 @@ class UserController extends Controller
     }
 
     /*
-     * systemadmin can see a single user
+     * Systemadmin can see a single user
      */
     public function show(User $user)
     {
@@ -44,17 +44,9 @@ class UserController extends Controller
      */
     public function update(User $user)
     {
-        $this->authorize('update', $user);
-        $data = request()->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'language' => 'required',
-            'tel' => 'required',
-            'country' => 'required',
-            'communication_media' => 'required'
-        ]);
-        $user->update($data);
+       $this->authorize('update', $user);
+       $data = request()->all();
+       $user->update($data);
     }
 
     /*
@@ -65,4 +57,5 @@ class UserController extends Controller
         $this->authorize('delete', $user);
         return redirect('access-denied');
     }
+
 }
