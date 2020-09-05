@@ -68,11 +68,15 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        if ($user->id = $model->id) {
-            if ($user->permissions()->contains('edit-profile')) {
-                return true;
-            }
+
+        if($user->isAdmin()) {
+            return true;
         }
+//        if ($user->id = $model->id) {
+//            if ($user->permissions()->contains('edit-profile')) {
+//                return true;
+//            }
+//        }
     }
 
     /**
