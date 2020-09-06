@@ -19,6 +19,7 @@ return [
     "Telegram" => "Telegram",
     "password" => "Password",
     "password_confirm" => "Confirm Password",
+    "reset_password" => "Reset Password",
     "communication_media" => "Communication Media",
     "signup" => "Signup",
     "signin" => "Sigin",
@@ -29,6 +30,7 @@ return [
     "id" => "ID",
     "name" => "Name",
     "email" => "Email",
+    "email_address" => "Email Address",
     "subscription" => "Subscription",
     "confirmed" => "Confirmed",
     "locked" => "Locked",
@@ -57,5 +59,6 @@ return [
     "add_subscription" => "Add Subscription",
     "delete_subscription" => "Delete Subscription",
     "edit_subscription" => "Edit Subscription",
-    "last_login" => "Last Login"
+    "last_login" => "Last Login",
+    "send_reset_link" => "Send Password Reset Link"
 ];
