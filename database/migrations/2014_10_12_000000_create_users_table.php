@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->boolean('confirmed')->default(0);
             $table->timestamp('last_login')->nullable();
             $table->boolean('locked')->default(1);
-            $table->ipAddress('last_ip');
+            $table->ipAddress('last_ip')->nullable();
             $table->string('language');
             $table->string('tel');
             $table->string('country');
