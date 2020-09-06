@@ -34,5 +34,6 @@ loading time.
 28. if user visits a page whcih is not authorized for then it should be redirected to
 access denied page..
 29. all security and policy system should review
+30. considering captcha for user registration and signin
 
 
