@@ -3,13 +3,15 @@
         <table class="table-auto w-full">
             <thead>
             <tr class="table-header-row">
-                <th> {{ $t("translate.id") }}</th>
-                <th> {{ $t("translate.name") }}</th>
-                <th> {{ $t("translate.email") }}</th>
-                <th> {{ $tc("translate.role", 1)}}</th>
-                <th> {{ $tc("translate.subscription" , 1) }}</th>
-                <th> {{ $t("translate.confirmed") }}</th>
-                <th> {{ $t("translate.locked") }}</th>
+                <th> {{ $t("translate.id") }} </th>
+                <th> {{ $t("translate.name") }} </th>
+                <th> {{ $t("translate.email") }} </th>
+                <th> {{ $t("translate.verified") }} </th>
+                <th> {{ $t("translate.last_login")}}</th>
+                <th> {{ $tc("translate.role", 1) }} </th>
+                <th> {{ $tc("translate.subscription" , 1) }} </th>
+                <th> {{ $t("translate.confirmed") }} </th>
+                <th> {{ $t("translate.locked") }} </th>
             </tr>
             </thead>
             <tbody>
@@ -17,6 +19,8 @@
                 <td> {{ user.id }}</td>
                 <td> {{ user.name }}</td>
                 <td> {{ user.email }}</td>
+                <td> {{ user.email_verified_at}}</td>
+                <td> {{ user.last_login }}</td>
                 <!-- show user's role in first row and list of available roles afterward -->
                 <td>
                     <select v-on:change="changeRole(user.id, $event)">
