@@ -43,6 +43,7 @@ return [
     "subscription" => "Subscription | Subscriptions",
     "save" => "Save",
     "delete" => "Delete",
+    "verified" => "Verified",
 
     //sentences
     "add_permission" => "Add Permission",
@@ -56,4 +57,5 @@ return [
     "add_subscription" => "Add Subscription",
     "delete_subscription" => "Delete Subscription",
     "edit_subscription" => "Edit Subscription",
+    "last_login" => "Last Login"
 ];

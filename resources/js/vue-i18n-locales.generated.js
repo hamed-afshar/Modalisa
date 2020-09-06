@@ -57,6 +57,7 @@ export default {
             "role": "Role | Roles",
             "save": "Save",
             "delete": "Delete",
+            "verified": "Verified",
             "add_permission": "Add Permission",
             "delete_permission": "Delete Permission",
             "add_role": "Add Role",
@@ -68,7 +69,7 @@ export default {
             "add_subscription": "Add Subscription",
             "delete_subscription": "Delete Subscription",
             "edit_subscription": "Edit Subscription",
-            "change_role": "Change Role"
+            "last_login": "Last Login"
         },
         "validation": {
             "accepted": "The {attribute} must be accepted.",
