@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div id="app">
+        <general-navbar></general-navbar>
         <div class="container max-w-xs md:max-w-full mx-auto mt-2 mb-6">
             <div class="flex justify-around py-24">
                 <div class="box py-8 px-16">
@@ -33,7 +34,7 @@
                                    required
                                    autocomplete="email"
                                    value="{{ old('email') }}"
-                                   placeholder="yourname@example.com">
+                                   placeholder="your-name@yahoo.com">
                             @error('email')
                             <div class="error">
                                 {{ $message }}
