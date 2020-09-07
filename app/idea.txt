@@ -35,5 +35,6 @@ loading time.
 access denied page..
 29. all security and policy system should review
 30. considering captcha for user registration and signin
-31. translate errors
+31. translate errors.
+32. country for orders should be add to db
 
