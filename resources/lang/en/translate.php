@@ -25,7 +25,8 @@ return [
     "signin" => "Sigin",
     "login" => "Login",
     "remember" => "Remember Me",
-    "already_have_an_account?" => "Already have an account?",
+    "already_have_account" => "Already Have Account?",
+    "dont_have_account" => "Don't You Have Account",
     "forget_password" => "Forgot Your Password?",
     "id" => "ID",
     "name" => "Name",
@@ -46,6 +47,7 @@ return [
     "save" => "Save",
     "delete" => "Delete",
     "verified" => "Verified",
+    "register" => "Register",
 
     //sentences
     "add_permission" => "Add Permission",
@@ -62,8 +64,8 @@ return [
     "last_login" => "Last Login",
     "send_reset_link" => "Send Password Reset Link",
     "verify_email" => "Verify Your Email Address",
-    "verify_email_sentence" => "Before proceeding, please check your email for a verification link. 
-    If you did not receive the email, 
-    click here to request another.",
-    "verify_again" => "A fresh verification link has been sent to your email address."
+    "verify_email_sentence" => "A fresh verification link has been sent to your email address. Before proceeding, please check your email for a verification link.
+    If you did not receive the email",
+    "verify_again" => "click here to request another.",
+    "request_sent" => "Request Has Been Sent"
 ];
