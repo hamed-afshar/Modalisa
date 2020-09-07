@@ -60,5 +60,10 @@ return [
     "delete_subscription" => "Delete Subscription",
     "edit_subscription" => "Edit Subscription",
     "last_login" => "Last Login",
-    "send_reset_link" => "Send Password Reset Link"
+    "send_reset_link" => "Send Password Reset Link",
+    "verify_email" => "Verify Your Email Address",
+    "verify_email_sentence" => "Before proceeding, please check your email for a verification link. 
+    If you did not receive the email, 
+    click here to request another.",
+    "verify_again" => "A fresh verification link has been sent to your email address."
 ];
