@@ -2,162 +2,146 @@
 @section('content')
     <div id="app">
         <div class="container max-w-xs md:max-w-full mx-auto mt-2 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-6">
-                <div class="col-start-3 col-span-2">
-                    <div class="flex flex-wrap justify-center">
-                        <div
-                                class="inline-block bg-pink-800 border border-solid rounded-full px-8 py-4 transform translate-y-1/2 shadow-xl text-white font-bold">
-                            {{ __("translate.signup") }}
-                        </div>
-                    </div>
-                    <form method="POST" action="{{ route('register')}}" class="bg-white shadow-md rounded px-8 py-8">
+            <div class="flex justify-around py-24">
+                <div class="box py-8 px-16">
+                    <form method="POST" action="{{ route('register')}}">
                         @csrf
-                        <div class="flex flex-wrap mb-6 mt-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="name"> {{  __('translate.full_name')  }} </label>
+                        <div class="w-full">
+                            <div class="w-full text-center font-bold text-xl mb-2">
+                                <span class="text-pink-600"> {{ __('translate.register') }} </span>
                             </div>
-                            <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full"
-                                       type="text" id="name" name="name" value="{{ old('name') }}" autocomplete="name"
-                                       autofocus placeholder="Alex Morgan" required>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.full_name') }}</span>
+                            <input class="input-text w-full"
+                                   type="text"
+                                   id="name"
+                                   name="name"
+                                   autofocus
+                                   required
+                                   autocomplete="name"
+                                   value="{{old('name')}}"
+                                   placeholder="Alex Morgan">
                             @error('name')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="email"> {{  __('translate.email')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full" type="email" id="email" name="email"
-                                       value="{{ old('email') }}"
-                                       autocomplete="email"
-                                       placeholder="name@example.com"
-                                       required>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.email_address') }}</span>
+                            <input class="input-text w-full"
+                                   type="email"
+                                   id="email"
+                                   name="email"
+                                   required
+                                   autocomplete="email"
+                                   value="{{ old('email') }}"
+                                   placeholder="yourname@example.com">
                             @error('email')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="mobile"> {{  __('translate.mobile')  }}</label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full" type="number" id="tel" name="tel"
-                                       value="{{ old('tel') }}"
-                                       autocomplete="tel"
-                                       placeholder="905031111111"
-                                       required>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.mobile') }}</span>
+                            <input class="input-text w-full"
+                                   type="text"
+                                   id="tel"
+                                   name="tel"
+                                   required
+                                   autocomplete="tel"
+                                   value="{{old('tel')}}"
+                                   placeholder="905031112233"
+                                    maxlength="12">
                             @error('tel')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="country"> {{  __('translate.country')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <select
-                                        class="input-option w-full"
-                                        id="country"
-                                        name="country"
-                                        value="{{ old('country') }}"
-                                        required>
-                                    <option selected disabled>Country</option>
-                                    <option value="Iran"> {{ __("translate.iran") }}</option>
-                                    <option value="Turkey"> {{ __("translate.turkey") }}</option>
-                                </select>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.country') }}</span>
+                            <select class="input-option w-full"
+                                    id=country"
+                                    name="country"
+                                    required>
+                                <option value="Iran" {{ old('country')=="Iran"?'selected':''}} selected>
+                                    {{ __("translate.iran") }}
+                                </option>
+                                <option value="Turkey" {{ old('country')=="Turkey"?'selected':''}}>
+                                    {{ __("translate.turkey") }}
+                                </option>
+                            </select>
                             @error('country')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="language"> {{  __('Language')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <select class="input-option w-full"
-                                        id="language"
-                                        name="language"
-                                        value="{{ old('language') }}"
-                                        required>
-                                    <option disabled selected>{{ __("translate.language") }}</option>
-                                    <option value="Persian"> {{ __("translate.persian") }}</option>
-                                    <option value="Turkish"> {{ __("translate.turkish") }}</option>
-                                </select>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.language') }}</span>
+                            <select class="input-option w-full"
+                                    id=language"
+                                    name="language"
+                                    required>
+                                <option value="Persian" {{ old('language')=="Persian"?'selected':''}} selected>
+                                    {{ __("translate.persian") }}
+                                </option>
+                                <option value="Turkish" {{ old('language')=="Turkish"?'selected':''}}>
+                                    {{ __("translate.turkish") }}
+                                </option>
+                            </select>
                             @error('language')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="media"> {{  __('Social Media')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <select class="input-option w-full"
-                                        id="communication_media"
-                                        name="communication_media"
-                                        value="{{ old("communication_media") }}"
-                                        required>
-                                    <option disabled selected>{{ __("translate.communication_media") }}</option>
-                                    <option value="Whatsapp"> {{ __("translate.whatsapp") }}</option>
-                                    <option value="Telegram"> {{ __("translate.Telegram") }}</option>
-                                </select>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.communication_media') }}</span>
+                            <select class="input-option w-full"
+                                    id="communication_media"
+                                    name="communication_media"
+                                    required>
+                                <option value="WhatsApp" {{ old('communication_media')=="WhatsApp"?'selected':''}} selected>
+                                    {{ __("translate.whatsapp") }}
+                                </option>
+                                <option value="Telegram" {{ old('communication_media')=="Telegram"?'selected':''}}>
+                                    {{ __("translate.Telegram") }}
+                                </option>
+                            </select>
                             @error('communication_media')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1" for="password"> {{  __('translate.password')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full"
-                                       type="password"
-                                       id="password"
-                                       name="password"
-                                       autocomplete="new-password"
-                                       placeholder="********"
-                                       required>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.password') }}</span>
+                            <input class="input-text w-full"
+                                   type="password"
+                                    id="password"
+                                    name="password"
+                                    autocomplete="new-password"
+                                    required
+                                    placeholder="********">
                             @error('password')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex flex-wrap mb-6">
-                            <div class="w-full lg:w-1/3">
-                                <label class="label mb-1 py-1"
-                                       for="password_confirmation"> {{  __('translate.password_confirm')  }} </label>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <input class="input-text w-full"
-                                       type="password"
-                                       id="password_confirmation"
-                                       name="password_confirmation"
-                                       autocomplete="new-password"
-                                       placeholder="********"
-                                       required>
-                            </div>
+                            <span class="label py-1"> {{ __('translate.password_confirm') }}</span>
+                            <input class="input-text w-full"
+                                   type="password"
+                                   id="password_confirmation"
+                                   name="password_confirmation"
+                                   autocomplete="new-password"
+                                   required
+                                   placeholder="********">
                             @error('password_confirmation')
-                            <div class="error"> {{ $message }}</div>
+                            <div class="error">
+                                {{ $message }}
+                            </div>
                             @enderror
-                        </div>
-                        <div class="flex">
-                            <button class="btn-pink uppercase shadow-xl w-full px-1 py-3 mt-1"
-                                    type="submit">{{ __("translate.signup") }}</button>
-                        </div>
-                        <div class="flex justify-center mt-2 w-full">
-                            <div class="label pt-2">{{ __("translate.already_have_an_account?") }}</div>
-                        </div>
-                        <div class="flex justify-center w-full">
-                            <a href="{{ route("login") }}" class="link p-1">{{ __("translate.login") }}</a>
+                            <button class="w-full btn-pink uppercase shadow-xl px-1 py-2 mt-2" type="submit">
+                                {{ __("translate.register") }}
+                            </button>
+                            <div class="flex mt-2">
+                                <div class="w-2/3 label pt-2">
+                                    {{ __("translate.already_have_account") }}
+                                </div>
+                                <div class="w-1/3 link pt-1">
+                                    <a href="{{ route("login") }}"> {{ __("translate.login") }}</a>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
