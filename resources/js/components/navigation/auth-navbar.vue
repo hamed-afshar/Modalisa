@@ -13,7 +13,7 @@
 
 <script>
     export default {
-        name: "navbar",
+        name: "auth-navbar",
 	    date() {
             return {
 
