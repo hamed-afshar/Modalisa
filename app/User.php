@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\UserRegisteredEvent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -38,7 +39,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    /*
+    /**
      * return path
      */
     public function path()
@@ -46,7 +47,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return "/users/{$this->id}";
     }
 
-    /*
+    /**
      * user belongs to one role
      */
     public function role()
@@ -54,7 +55,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo('App\Role');
     }
 
-    /*
+    /**
      * get user's permissions
      */
     public function permissions()
@@ -62,7 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles->map->permissions->flatten()->pluck('name')->unique();
     }
 
-    /*
+    /**
      * check to see if user is a systemadmin
      */
     public function isAdmin()
@@ -72,7 +73,7 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    /*
+    /**
      * check to see if user is locked
      */
     public function isLocked()
@@ -84,7 +85,7 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    /*
+    /**
      * check to see if user is confirmed
      */
     public function isConfirmed()
@@ -96,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
         }
     }
 
-    /*
+    /**
      * user belongs to one subscription
      */
     public function subscription()
@@ -104,12 +105,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo('App\Subscription');
     }
 
-    /*
+    /**
      * each user has many order relation
      */
     public function orders()
     {
         return $this->hasMany('App\Order', 'user_id');
     }
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => UserRegisteredEvent::class,
+    ];
 
 }
