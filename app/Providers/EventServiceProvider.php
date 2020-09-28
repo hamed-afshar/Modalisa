@@ -20,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\UserRegisteredEvent' => [
             'App\Listeners\SendWelcomeEmailListener',
+            'App\Listeners\NotifyUserRegistrationListener'
         ],
     ];
 
