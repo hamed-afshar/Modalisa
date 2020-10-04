@@ -26,8 +26,9 @@ Vue.use(VModal);
  */
 
 Vue.component('guest-navbar', require('./components/navigation/guest-navbar').default);
-Vue.component('auth-navbar', require('./components/navigation/auth-navbar').default);
+Vue.component('admin-navbar', require('./components/navigation/admin-navbar').default);
 Vue.component('general-navbar', require('./components/navigation/general-navbar').default);
+
 
 Vue.component('admin-header', require('./components/headers/admin-header').default);
 

@@ -23,13 +23,25 @@
     font-size: 20px;
 }
 
+/* navbar section */
 
-.top-navbar-item {
-    @apply .text-sm .font-semibold .pb-2 .border-b-2 .border-solid .border-transparent;
+.top-navbar-icon {
+    @apply .text-gray-600;
 }
 
-.top-navbar-item:hover {
-    @apply .border-pink-600 .text-pink-600;
+.top-navbar-icon:hover {
+    @apply .text-gray-800;
+}
+
+.top-navbar-menu {
+    @apply .bg-white .rounded-lg .shadow-xl
+}
+.top-navbar-menu-item {
+    @apply .block .px-4 .py-2 .text-gray-800
+}
+
+.top-navbar-menu-item:hover {
+    @apply .text-white .bg-indigo-500
 }
 
 .btn {

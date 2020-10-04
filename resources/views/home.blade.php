@@ -1,11 +1,12 @@
 @extends('layouts.app')
 @section('content')
+    <!-- Dashboard for normal users -->
     <div id="app">
         @guest
             <guest-navbar></guest-navbar>
         @endguest
         @auth
-            <auth-navbar></auth-navbar>
+            <general-navbar></general-navbar>
         @endauth
         <div class="row justify-content-center">
             <div class="col-md-8">
