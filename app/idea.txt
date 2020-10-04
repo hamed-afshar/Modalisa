@@ -39,3 +39,4 @@ access denied page..
 32. country for orders should be add to db
 33. mobile number should be 12 digit and only accept numbers in register form
 34. clicking on logo in general header should redirect us to welcome page
+35. seperated menu for mobile and desktop needed
