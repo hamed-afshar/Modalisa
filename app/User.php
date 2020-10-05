@@ -120,11 +120,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Order', 'user_id');
     }
-
-    /**
-     * fetch all notification from db
-     */
-
-
-
 }
