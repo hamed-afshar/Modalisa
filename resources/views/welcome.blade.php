@@ -23,10 +23,10 @@
         <div class="bg-white flex shadow-2xl w-full">
             <div class="flex-1"></div>
             <nav class="md:flex-1 sm:w-full text-center pt-5">
-                <a href="$" class="hover:text-pink-600 pr-2" ><i class="fab fa-instagram fa-lg"></i> </a>
-                <a href="$" class="hover:text-pink-600 pr-2"><i class="far fa-envelope fa-lg"></i> </a>
-                <a href="$" class="hover:text-pink-600 pr-2"><i class="fab fa-whatsapp fa-lg"></i> </a>
-                <a href="$" class="hover:text-pink-600 pr-2"><i class="fab fa-telegram-plane fa-lg"></i> </a>
+                <a href="#" class="hover:text-pink-600 pr-2" ><i class="fab fa-instagram fa-lg"></i> </a>
+                <a href="#" class="hover:text-pink-600 pr-2"><i class="far fa-envelope fa-lg"></i> </a>
+                <a href="#" class="hover:text-pink-600 pr-2"><i class="fab fa-whatsapp fa-lg"></i> </a>
+                <a href="#" class="hover:text-pink-600 pr-2"><i class="fab fa-telegram-plane fa-lg"></i> </a>
 
             </nav>
             <div class="flex-1"></div>

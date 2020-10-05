@@ -10,13 +10,15 @@
         <div class="relative px-2 flex flex-row-reverse items-center">
           <div class="px-2">
             <button v-on:click="userMenuOpen =! userMenuOpen" class="block">
-              <i class="hidden sm:block fas fa-user fa-2x top-navbar-icon"></i>
-              <i class="block sm:hidden fas fa-bars fa-2x top-navbar-icon"></i>
+              <i class="hidden sm:block fas fa-user fa-3x top-navbar-icon"></i>
+              <i class="block sm:hidden fas fa-bars fa-3x top-navbar-icon"></i>
             </button>
+
           </div>
           <div class="px-2 pt-2">
-            <button v-on:click="notificationMenuOpen =! notificationMenuOpen" class="block">
-              <i class="fas fa-bell fa-2x top-navbar-icon"></i>
+            <button v-on:click="notificationMenuOpen =! notificationMenuOpen" class="block relative">
+              <i class="fas fa-bell fa-3x top-navbar-icon"></i>
+              <span class="badge"> 32 </span>
             </button>
             <!-- Hidden button to close menus when clicking on the screen -->
             <button v-if="userMenuOpen || notificationMenuOpen" v-on:click="closeMenu" tabindex="-1"
@@ -29,7 +31,6 @@
             <div v-if="notificationMenuOpen" class="absolute w-64 right-0 mt-3 mr-4 py-2 top-navbar-menu">
               <notification-menu />
             </div>
-
           </div>
         </div>
       </div>
@@ -78,5 +79,20 @@ export default {
 </script>
 
 <style scoped>
+/* unread message count */
+.badge {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #d63f8c;
+  color: #d7e6fd;
+  right: 0;
+  border-radius: 9999px;
+  font-size: 18px;
+  min-width: 24px;
+  line-height: 24px;
+  min-height: 18px;
+  text-align: center;
+}
 
 </style>
