@@ -11,7 +11,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
 
     use Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -37,6 +36,15 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+    ];
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => UserRegisteredEvent::class,
     ];
 
     /**
@@ -114,12 +122,9 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * The event map for the model.
-     *
-     * @var array
+     * fetch all notification from db
      */
-    protected $dispatchesEvents = [
-        'created' => UserRegisteredEvent::class,
-    ];
+
+
 
 }
