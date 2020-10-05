@@ -38,8 +38,7 @@ class UserRegistered extends Notification implements ShouldQueue
      * Get the database representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return JSON data to store in db
-     */
+     **/
     public function toDatabase($notifiable)
     {
         return [
