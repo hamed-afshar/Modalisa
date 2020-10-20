@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div id="app">
-        <general-navbar></general-navbar>
+        <guest-navbar></guest-navbar>
         <div class="container max-w-full mx-auto">
             <div class="flex justify-around py-24">
                 <div class="box py-8 px-6 shadow-2xl">

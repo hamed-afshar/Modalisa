@@ -1,16 +1,13 @@
 @extends('layouts.app')
 @section('content')
     <div id="app">
-        @guest
-            <guest-navbar></guest-navbar>
-        @endguest
-        @auth
-            <auth-navbar></auth-navbar>
-        @endauth
         <div class="container max-w-full mx-auto">
             <div class="flex justify-around py-24">
                 <div class="box py-8 px-6 shadow-2xl">
                     <div class="flex flex-wrap">
+                        <div class="w-full flex justify-end">
+                            <a href="{{ auth()->logout() }}"> <i class="fas fa-times cursor-pointer"></i> </a>
+                        </div>
                         <div class="w-full text-center font-bold text-lg">
                             {{ __('translate.verify_email') }}
                         </div>
@@ -42,3 +39,4 @@
         </div>
     </div>
 @endsection
+

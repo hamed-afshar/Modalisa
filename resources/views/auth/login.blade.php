@@ -1,6 +1,6 @@
 @extends('layouts.app')
 <div id="app">
-    <general-navbar></general-navbar>
+    <guest-navbar></guest-navbar>
     <div class="container max-w-full mx-auto">
         <div class="flex justify-around py-24">
             <div class="box py-8 px-16 shadow-2xl">
@@ -50,7 +50,7 @@
                                                type="checkbox"
                                                name="remember"
                                                id="remember"
-                                            {{ old('remember') ?'checked':'' }}>
+                                                {{ old('remember') ?'checked':'' }}>
                                         {{ __("translate.remember") }}
                                     </label>
                                 </div>

@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between px-4 py-2">
       <!-- Left Side -->
       <div>
-        <logo />
+        <logo/>
       </div>
       <!-- Right Side -->
       <div>
@@ -25,11 +25,11 @@
                     class="fixed inset-0 w-full h-full bg-black opacity-50 cursor-default"></button>
             <!-- User Menu Items -->
             <div v-if="userMenuOpen" class="absolute w-48 right-0 mt-3 mr-4 py-2 top-navbar-menu">
-             <admin-user-drop-down-menu />
+              <admin-user-drop-down-menu/>
             </div>
             <!-- Notification Menu Items -->
             <div v-if="notificationMenuOpen" class="absolute w-64 right-0 mt-3 mr-4 py-2 top-navbar-menu">
-              <notification-menu />
+              <notification-menu/>
             </div>
           </div>
         </div>
@@ -42,6 +42,7 @@
 import Logo from "./logo";
 import AdminUserDropDownMenu from "./adminUserDropDownMenu";
 import NotificationMenu from "./notificationMenu";
+
 export default {
   name: "auth-navbar",
   components: {NotificationMenu, AdminUserDropDownMenu, Logo},
@@ -79,20 +80,6 @@ export default {
 </script>
 
 <style scoped>
-/* unread message count */
-.badge {
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  background-color: #d63f8c;
-  color: #d7e6fd;
-  right: 0;
-  border-radius: 9999px;
-  font-size: 18px;
-  min-width: 24px;
-  line-height: 24px;
-  min-height: 18px;
-  text-align: center;
-}
+
 
 </style>

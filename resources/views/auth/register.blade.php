@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div id="app">
-        <general-navbar></general-navbar>
+        <guest-navbar></guest-navbar>
         <div class="container max-w-xs md:max-w-full mx-auto mt-2 mb-6">
             <div class="flex justify-around py-24">
                 <div class="box py-8 px-16">
@@ -49,7 +49,7 @@
                                    autocomplete="tel"
                                    value="{{old('tel')}}"
                                    placeholder="905031112233"
-                                    maxlength="12">
+                                   maxlength="12">
                             @error('tel')
                             <div class="error">
                                 {{ $message }}
@@ -94,7 +94,8 @@
                                     id="communication_media"
                                     name="communication_media"
                                     required>
-                                <option value="WhatsApp" {{ old('communication_media')=="WhatsApp"?'selected':''}} selected>
+                                <option value="WhatsApp"
+                                        {{ old('communication_media')=="WhatsApp"?'selected':''}} selected>
                                     {{ __("translate.whatsapp") }}
                                 </option>
                                 <option value="Telegram" {{ old('communication_media')=="Telegram"?'selected':''}}>
@@ -109,11 +110,11 @@
                             <span class="label py-1"> {{ __('translate.password') }}</span>
                             <input class="input-text w-full"
                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    autocomplete="new-password"
-                                    required
-                                    placeholder="********">
+                                   id="password"
+                                   name="password"
+                                   autocomplete="new-password"
+                                   required
+                                   placeholder="********">
                             @error('password')
                             <div class="error">
                                 {{ $message }}
