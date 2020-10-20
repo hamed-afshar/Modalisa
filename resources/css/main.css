@@ -44,6 +44,23 @@
     @apply .text-white .bg-indigo-500
 }
 
+.badge {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    background-color: #d63f8c;
+    color: #d7e6fd;
+    right: 0;
+    border-radius: 9999px;
+    font-size: 18px;
+    min-width: 24px;
+    line-height: 24px;
+    min-height: 18px;
+    text-align: center;
+}
+
+/* end of navbar section */
+
 .btn {
     @apply .text-white .border .rounded-lg .cursor-pointer;
 }
