@@ -12,10 +12,9 @@ class ProjectTests extends TestCase {
         RefreshDatabase;
 
     /** @test */
-    public function a_retailer_can_make_an_order() {
+    public function retailer_can_create_order() {
         $this->withoutExceptionHandling();
-        $user = factory('App\User')->create(['access_level' => 'Retailer']);
-        $this->actingAs($user);
+        $this->prepRetailerEnv('Retailer', 'create-order', 0, 1 );
         $attributes = [
             'id' => $this->faker->numberBetween($min = 3000, $max = 4000),
             'user_id' => $user->id,
