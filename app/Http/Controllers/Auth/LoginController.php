@@ -42,6 +42,12 @@ class LoginController extends Controller
 
     function authenticated(Request $request, $user)
     {
+        if(!$user->isConfirmed()) {
+            return view('users.not-confirmed');
+        }
+        if($user->isLocked()) {
+            return view('users.locked');
+        }
         $user->update([
            'last_login' => Carbon::now()->toDateTimeString(),
            'last_ip' => $request->getClientIp()
