@@ -47,6 +47,7 @@ return [
     "delete" => "Delete",
     "verified" => "Verified",
     "register" => "Register",
+    "dashboard" => 'Dashboard',
 
     //sentences
     "add_permission" => "Add Permission",

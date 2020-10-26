@@ -51,6 +51,8 @@ Vue.component('add-subscription-modal', require('./components/modals/add-subscri
 Vue.component('delete-subscription-modal', require('./components/modals/delete-subscription-modal').default);
 Vue.component('edit-subscription-modal', require('./components/modals/edit-subscription-modal').default);
 
+Vue.component('users-sidebar', require('./components/dashboards/users-sidebar').default);
+
 
 /**
  * include ziggy package for including routes from laravel to vue

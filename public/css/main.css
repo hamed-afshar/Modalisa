@@ -14059,41 +14059,64 @@ video {
   font-size: 20px;
 }
 
-.top-navbar-item {
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding-bottom: 0.5rem;
-  border-bottom-width: 2px;
-  border-style: solid;
-  border-color: transparent;
+/* navbar section */
+
+.top-navbar-icon {
+  color: #718096;
 }
 
-.top-navbar-item:hover {
-  border-color: #d53f8c;
-  color: #d53f8c;
+.top-navbar-icon:hover {
+  color: #2d3748;
 }
+
+.top-navbar-menu {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)
+}
+
+.top-navbar-menu-item {
+  display: block;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: #2d3748
+}
+
+.top-navbar-menu-item:hover {
+  color: #fff;
+  background-color: #667eea
+}
+
+.badge {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  background-color: #d63f8c;
+  color: #d7e6fd;
+  right: 0;
+  border-radius: 9999px;
+  font-size: 18px;
+  min-width: 24px;
+  line-height: 24px;
+  min-height: 18px;
+  text-align: center;
+}
+
+/* end of navbar section */
 
 .btn {
   color: #fff;
-  font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
   cursor: pointer;
 }
 
 .btn-pink {
   color: #fff;
-  font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
   cursor: pointer;
   background-color: #d53f8c;
 }
@@ -14104,13 +14127,8 @@ video {
 
 .btn-green {
   color: #fff;
-  font-weight: 500;
   border-width: 1px;
   border-radius: 0.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
   cursor: pointer;
   background-color: #48bb78;
 }
@@ -14121,16 +14139,16 @@ video {
 
 .label {
   display: block;
-  font-weight: 700;
   color: #4a5568;
   font-size: 0.875rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 
 .input {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: #e2e8f0;
   border-width: 1px;
   border-radius: 0.25rem;
   line-height: 1.25;
@@ -14145,7 +14163,6 @@ video {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: #e2e8f0;
   border-width: 1px;
   border-radius: 0.25rem;
   line-height: 1.25;
@@ -14167,7 +14184,6 @@ video {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: #e2e8f0;
   border-width: 1px;
   border-radius: 0.25rem;
   line-height: 1.25;
@@ -14183,7 +14199,6 @@ video {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: #e2e8f0;
   border-width: 1px;
   border-radius: 0.25rem;
   line-height: 1.25;
@@ -14199,10 +14214,8 @@ video {
 
 .box {
   background-color: #fff;
-  color: #a0aec0;
   border-width: 1px;
   border-radius: 0.5rem;
-  padding: 0.5rem;
 }
 
 .box-item {
@@ -14223,7 +14236,6 @@ video {
   padding-right: 0.75rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  width: 100%;
   color: #fff;
   font-weight: 700
 }
@@ -14233,19 +14245,77 @@ video {
 }
 
 .link:hover {
-  color: #2b6cb0
+  color: #2b6cb0;
+  cursor: pointer
 }
 
 .error {
   color: #e53e3e;
-  font-weight: 700;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  font-weight: 200;
   margin-left: 0.5rem;
   margin-right: 0.5rem
 }
 
-.modal {
+.success {
+  color: #38a169;
+  font-weight: 200;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem
+}
+
+.x-button {
+  color: #d53f8c
+}
+
+.link-button {
+  color: #d53f8c
+}
+
+.modal-box {
+  background-color: #fff;
+  color: #a0aec0;
+  border-width: 1px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.modal-header {
+  display: inline-block;
+  border-width: 1px;
+  border-radius: 0.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background-color: #6b46c1;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  color: #fff;
+  font-weight: 700;
+}
+
+.table-header-row {
+  background-color: #fff;
+  color: #718096;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem
+}
+
+.table-body-row {
+  background-color: #fff;
+  border-width: 1px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  color: #2d3748
+}
+
+.table-body-row:hover {
+  background-color: #f7fafc
 }
 
 @media (min-width: 640px) {
