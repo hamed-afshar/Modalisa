@@ -10,14 +10,13 @@
         <div class="relative px-2 flex flex-row-reverse items-center">
           <div class="px-2">
             <button v-on:click="userMenuOpen =! userMenuOpen" class="block">
-              <i class="hidden sm:block fas fa-user fa-3x top-navbar-icon"></i>
-              <i class="block sm:hidden fas fa-bars fa-3x top-navbar-icon"></i>
+              <i class="hidden sm:block fas fa-user fa-2x top-navbar-icon"></i>
+              <i class="block sm:hidden fas fa-bars fa-2x top-navbar-icon"></i>
             </button>
-
           </div>
           <div class="px-2 pt-2">
             <button v-on:click="notificationMenuOpen =! notificationMenuOpen" class="block relative">
-              <i class="fas fa-bell fa-3x top-navbar-icon"></i>
+              <i class="fas fa-bell fa-2x top-navbar-icon"></i>
               <span class="badge"> 32 </span>
             </button>
             <!-- Hidden button to close menus when clicking on the screen -->
