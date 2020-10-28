@@ -61,6 +61,8 @@
 
 /* end of navbar section */
 
+/* Button section */
+
 .btn {
     @apply .text-white .border .rounded-lg .cursor-pointer;
 }
@@ -80,6 +82,8 @@
 .btn-green:hover {
     @apply .bg-green-600;
 }
+
+/* end of button section */
 
 .label {
     @apply .block .text-gray-700 .text-sm .px-1;
@@ -118,7 +122,7 @@
 }
 
 .box-header {
-    @apply .inline-block .border .rounded .shadow-2xl .bg-purple-700 .px-3 .py-2 .text-white .font-bold
+    @apply .inline-block .border .rounded .shadow-2xl .bg-indigo-800 .px-3 .py-2 .text-white .font-bold
 }
 
 
@@ -156,6 +160,13 @@
 }
 
 /* table section */
+.table-back {
+    @apply .bg-white .shadow .rounded-md
+}
+
+.table-design {
+    @apply .table-auto .mb-2 .w-full .border-collapse
+}
 
 .table-header-cell {
     @apply .py-3 .px-5 .bg-indigo-800 .font-medium .text-sm .text-gray-100 .px-5 .py-3
