@@ -30,6 +30,11 @@
             <div v-if="notificationMenuOpen" class="absolute w-64 right-0 mt-3 mr-4 py-2 top-navbar-menu">
               <notification-menu/>
             </div>
+
+          </div>
+          <!-- add order button -->
+          <div class="mx-4">
+            <circle-plus-button></circle-plus-button>
           </div>
         </div>
       </div>
