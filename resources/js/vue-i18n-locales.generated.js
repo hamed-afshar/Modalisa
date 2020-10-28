@@ -48,7 +48,7 @@ export default {
             "email": "Email",
             "email_address": "Email Address",
             "confirmed": "Confirmed",
-            "locked": "Your Account is Locked!",
+            "locked": "Locked",
             "system_admin_dashboard": "System Admin Dashboard",
             "user_center": "User Center",
             "security_center": "Security Center",
@@ -96,6 +96,7 @@ export default {
             "verify_email_sentence": "A fresh verification link has been sent to your email address. Before proceeding, please check your email for a verification link.\r\n    If you did not receive the email",
             "verify_again": "click here to request another.",
             "request_sent": "Request Has Been Sent",
+            "locked_title": "Your Account is Locked!",
             "locked_sentence": "You are restricted to access your dashboard, please contact system administrator!",
             "not_confirmed": "Your Account is Not Confirmed!",
             "not_confirmed_sentence": "Your account is not confirmed yet, you can access your dashboard once it becomes confirmed"

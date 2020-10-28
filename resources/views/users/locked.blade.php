@@ -15,7 +15,7 @@
                             @csrf
                         </form>
                         <div class="w-full text-center font-bold text-lg">
-                            {{ __('translate.locked') }}
+                            {{ __('translate.locked_title') }}
                         </div>
                         <div class="w-full text-center font-bold text-pink-600">
                             {{ __('translate.locked_sentence') }}
