@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white shadow rounded-md my-6">
-        <table class="table-auto w-full border-collapse">
+    <div class="table-back">
+        <table class="table-design">
             <thead class="border-b">
             <tr>
                 <th class="table-header-cell"> {{ $t("translate.id") }} </th>

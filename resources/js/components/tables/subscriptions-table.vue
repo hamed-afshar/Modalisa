@@ -1,61 +1,63 @@
 <template>
-	<div>
-		<table class="table-auto w-full">
-			<thead>
-			<tr></tr>
-			</thead>
-			<tbody>
-			<div class="overflow-y-auto">
-				<tr class="table-body-row flex flex-row" v-for="subscription in subscriptions"
-				    v-bind:key="subscription.id">
-					<td class="w-2/5">
-						<a class="link" v-on:click="$modal.show('edit-subscription-modal',
+  <div>
+    <div class="table-back">
+      <table class="table-design">
+        <thead class="border-b">
+        <tr></tr>
+        </thead>
+        <tbody>
+        <div class="overflow-y-auto">
+          <tr class="table-body-row flex flex-row" v-for="subscription in subscriptions"
+              v-bind:key="subscription.id">
+            <td class="w-2/5 table-body-cell">
+              <a class="link" v-on:click="$modal.show('edit-subscription-modal',
 						{id:subscription.id, plan: subscription.plan, cost: subscription.cost_percentage}, {},
 							  {'before-open': event=>{}})">
-							{{ subscription.plan }}
-						</a>
-					</td>
-					<td class="w-2/5">
-						<a class="link" v-on:click="$modal.show('edit-subscription-modal',
+                {{ subscription.plan }}
+              </a>
+            </td>
+            <td class="w-2/5 table-body-cell">
+              <a class="link" v-on:click="$modal.show('edit-subscription-modal',
 						{id:subscription.id, plan: subscription.plan, cost: subscription.cost_percentage}, {},
 							  {'before-open': event=>{}})">
-							{{ subscription.cost_percentage }}
-						</a>
-					</td>
-					<td class="w-1/5 flex justify-end">
-						<i class="fas fa-times cursor-pointer x-button"
-						   v-on:click="$modal.show('delete-subscription-modal',
+                {{ subscription.cost_percentage }}
+              </a>
+            </td>
+            <td class="w-1/5 flex justify-end table-body-cell">
+              <i class="fas fa-times cursor-pointer x-button"
+                 v-on:click="$modal.show('delete-subscription-modal',
 						   {id:subscription.id, plan: subscription.plan},{},
 						   {'before-open' :event=>{}})">
-						</i>
-					</td>
-				</tr>
-			</div>
-			</tbody>
-		</table>
-		<div class="flex justify-end transform  -translate-y-4 translate-x-1 md:-translate-y-7 md:translate-x-5">
-			<button v-on:click="$modal.show('add-subscription-modal')">
-				<circle-plus-button></circle-plus-button>
-			</button>
-		</div>
-		<add-subscription-modal v-bind:fields="{
+              </i>
+            </td>
+          </tr>
+        </div>
+        </tbody>
+      </table>
+      <add-subscription-modal v-bind:fields="{
 		    title: $t('translate.add_subscription'),
 		    maxPlan: 15,
 		    maxCost: 2
 		}">
-		</add-subscription-modal>
-		<delete-subscription-modal v-bind:fields="{
+      </add-subscription-modal>
+      <delete-subscription-modal v-bind:fields="{
 		    title: $t('translate.delete_subscription'),
 		}">
-		</delete-subscription-modal>
-		<edit-subscription-modal v-bind:fields="{
+      </delete-subscription-modal>
+      <edit-subscription-modal v-bind:fields="{
 		    title:$t('translate.edit_subscription'),
 		    maxPlan: 15,
 		    maxCost: 2
 		}">
-		</edit-subscription-modal>
+      </edit-subscription-modal>
+    </div>
+    <div class="flex justify-end transform  -translate-y-4 translate-x-1 md:-translate-y-7 md:translate-x-5">
+      <button v-on:click="$modal.show('add-subscription-modal')">
+        <circle-plus-button></circle-plus-button>
+      </button>
+    </div>
+  </div>
 
-	</div>
 </template>
 
 <script>
