@@ -36,7 +36,7 @@
                     {{ errors.get('label')}}
                 </div>
                 <div class="mt-4">
-                    <button class="btn-pink w-full mb-2" v-on:click="save"> {{ $t('translate.save') }}</button>
+                    <button class="btn-pink w-full px-4 py-2 mb-2" v-on:click="save"> {{ $t('translate.save') }}</button>
                 </div>
             </div>
         </div>

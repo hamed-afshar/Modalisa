@@ -36,7 +36,7 @@
 					{{ errors.get('cost_percentage')}}
 				</div>
 				<div class="mt-4">
-					<button class="btn-pink w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
+					<button class="btn-pink px-4 py-2 w-full" v-on:click="save"> {{ $t('translate.save')}}</button>
 				</div>
 
 			</div>
