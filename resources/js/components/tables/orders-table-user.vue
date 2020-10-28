@@ -7,7 +7,7 @@
         <th class="table-header-cell">{{ $t('translate.id') }}</th>
         <th class="table-header-cell">{{ $t('translate.date') }}</th>
         <th class="table-header-cell">{{ $t('translate.time') }}</th>
-        <th class="table-header-cell">{{ $t('translate.pic') }}</th>
+        <th class="table-header-cell">{{ $t('translate.picture') }}</th>
         <th class="table-header-cell">{{ $t('translate.price') }}</th>
         <th class="table-header-cell">{{ $t('translate.quantity') }}</th>
         <th class="table-header-cell">{{ $t('translate.size') }}</th>
