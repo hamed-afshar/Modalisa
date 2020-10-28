@@ -48,6 +48,12 @@ return [
     "verified" => "Verified",
     "register" => "Register",
     "dashboard" => 'Dashboard',
+    "orders_table" => 'Orders Table',
+    "customer" => 'Customer | Customers',
+    "transfer" => 'Transfer',
+    "refund_exchange" => 'Refund & Exchange',
+    "available" => 'Available',
+    "report" => 'Report | Reports',
 
     //sentences
     "add_permission" => "Add Permission",

@@ -28,27 +28,27 @@
       <nav class="mt-10">
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-th-list sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Orders Table </span>
+          <span class="sidebar-menu-text"> {{ $t('translate.orders_table') }} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fa fa-users sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Customers </span>
+          <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1)}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-file-invoice-dollar sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Transfer </span>
+          <span class="sidebar-menu-text"> {{ $t('translate.transfer')}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-bookmark sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Refund & Exchange </span>
+          <span class="sidebar-menu-text"> {{ $t('translate.refund_exchange')}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-tag sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Available </span>
+          <span class="sidebar-menu-text"> {{ $t('translate.available')}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-book-reader sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> Reports </span>
+          <span class="sidebar-menu-text"> {{ $tc('translate.report', 1)}} </span>
         </div>
       </nav>
     </div>
