@@ -54,7 +54,17 @@ return [
     "refund_exchange" => 'Refund & Exchange',
     "available" => 'Available',
     "report" => 'Report | Reports',
-
+    "order" => 'Order | Orders',
+    "picture" => 'Pic',
+    "price" => 'Price',
+    "size" => 'Size',
+    "color" => 'Color',
+    "weight" => 'Weight',
+    "date" => 'Date',
+    "time" => 'Time',
+    "quantity" => 'Quantity',
+    "status" => 'Status',
+    "country" => 'Country',
     //sentences
     "add_permission" => "Add Permission",
     "delete_permission" => "Delete Permission",
