@@ -3,8 +3,20 @@
     <h3 class="text-gray-700 text-3xl font-medium"> Dashboard </h3>
     <div class="mt-4">
       <div class="flex flex-wrap -mx-6">
+        <!-- remaining creadit report -->
+        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
+          <div class="flex items-center px-5 py-6 shadow-sm rounded-md bg-white">
+            <div class="p-3 rounded-full bg-indigo-600 opacity-75">
+              <i class="fas fa-check-circle fa-2x text-white"></i>
+            </div>
+            <div class="mx-5">
+              <h4 class="text-2xl font-semibold text-gray-700">4850</h4>
+              <div class="text-gray-500"> TL</div>
+            </div>
+          </div>
+        </div>
         <!-- orders short report -->
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
+        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
           <div class="flex items-center px-5 py-6 shadow-sm rounded-md bg-white">
             <div class="p-3 rounded-full bg-indigo-600 opacity-75">
               <i class="fas fa-shopping-bag fa-2x text-white"></i>
@@ -14,17 +26,13 @@
               <div class="text-gray-500"> Monthly</div>
             </div>
             <div class="mx-5">
-              <h4 class="text-2xl font-semibold text-gray-700">400</h4>
-              <div class="text-gray-500"> Weekly</div>
-            </div>
-            <div class="mx-5">
               <h4 class="text-2xl font-semibold text-gray-700">30</h4>
               <div class="text-gray-500"> Daily</div>
             </div>
           </div>
         </div>
         <!-- money short report -->
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
+        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
           <div class="flex items-center px-5 py-6 shadow-sm rounded-md bg-white">
             <div class="p-3 rounded-full bg-pink-600 opacity-75">
               <i class="fas fa-dollar-sign fa-2x text-white"></i>
@@ -34,17 +42,13 @@
               <div class="text-gray-500"> Monthly</div>
             </div>
             <div class="mx-5">
-              <h4 class="text-2xl font-semibold text-gray-700">1895</h4>
-              <div class="text-gray-500"> Weekly</div>
-            </div>
-            <div class="mx-5">
               <h4 class="text-2xl font-semibold text-gray-700">750</h4>
               <div class="text-gray-500"> Daily</div>
             </div>
           </div>
         </div>
         <!-- shipping report -->
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
+        <div class="w-full px-6 sm:w-1/2 xl:w-1/4">
           <div class="flex items-center px-5 py-6 shadow-sm rounded-md bg-white">
             <div class="p-3 rounded-full bg-orange-600 opacity-75">
               <i class="fas fa-shipping-fast fa-2x text-white"></i>
@@ -54,8 +58,8 @@
               <div class="text-gray-500"> Orders</div>
             </div>
             <div class="mx-5">
-              <h4 class="text-2xl font-semibold text-gray-700">25 kg</h4>
-              <div class="text-gray-500"> Weight</div>
+              <h4 class="text-2xl font-semibold text-gray-700">25</h4>
+              <div class="text-gray-500"> Weight(kg)</div>
             </div>
           </div>
         </div>
