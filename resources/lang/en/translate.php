@@ -50,7 +50,7 @@ return [
     "dashboard" => 'Dashboard',
     "orders_table" => 'Orders Table',
     "customer" => 'Customer | Customers',
-    "transfer" => 'Transfer',
+    "wallet" => 'Wallet',
     "refund_exchange" => 'Refund & Exchange',
     "available" => 'Available',
     "report" => 'Report | Reports',
@@ -64,6 +64,7 @@ return [
     "time" => 'Time',
     "quantity" => 'Quantity',
     "status" => 'Status',
+    "transfer" => 'Transfer',
     //sentences
     "add_permission" => "Add Permission",
     "delete_permission" => "Delete Permission",

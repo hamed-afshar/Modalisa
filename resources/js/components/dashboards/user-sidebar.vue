@@ -27,16 +27,18 @@
       </div>
       <nav class="mt-10">
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-th-list sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $t('translate.orders_table') }} </span>
+          <a v-bind:href="route('home')">
+            <i class="fas fa-th-list sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $t('translate.orders_table') }} </span>
+          </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fa fa-users sidebar-menu-icon"></i>
           <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1)}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-file-invoice-dollar sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $t('translate.transfer')}} </span>
+          <i class="fas fa-wallet sidebar-menu-icon"></i>
+          <span class="sidebar-menu-text"> {{ $t('translate.wallet')}} </span>
         </div>
         <div class="flex items-center sidebar-menu-item">
           <i class="fas fa-bookmark sidebar-menu-icon"></i>
