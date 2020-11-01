@@ -65,6 +65,9 @@ return [
     "quantity" => 'Quantity',
     "status" => 'Status',
     "transfer" => 'Transfer',
+    "amount" => 'Amount',
+    "currency" => 'Currency',
+    "description" => 'Description',
     //sentences
     "add_permission" => "Add Permission",
     "delete_permission" => "Delete Permission",
