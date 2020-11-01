@@ -27,30 +27,40 @@
       </div>
       <nav class="mt-10">
         <div class="flex items-center sidebar-menu-item">
-          <a v-bind:href="route('home')">
+          <a v-on:click="passLink('orders')">
             <i class="fas fa-th-list sidebar-menu-icon"></i>
             <span class="sidebar-menu-text"> {{ $t('translate.orders_table') }} </span>
           </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fa fa-users sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1)}} </span>
+          <a v-on:click="passLink('customers')">
+            <i class="fa fa-users sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1) }} </span>
+          </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-wallet sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $t('translate.wallet')}} </span>
+          <a v-on:click="passLink('wallet')">
+            <i class="fas fa-wallet sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $t('translate.wallet') }} </span>
+          </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-bookmark sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $t('translate.refund_exchange')}} </span>
+          <a v-on:click="passLink('refund')">
+            <i class="fas fa-bookmark sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $t('translate.refund_exchange') }} </span>
+          </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-tag sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $t('translate.available')}} </span>
+          <a v-on:click="passLink('available')">
+            <i class="fas fa-tag sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $t('translate.available') }} </span>
+          </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <i class="fas fa-book-reader sidebar-menu-icon"></i>
-          <span class="sidebar-menu-text"> {{ $tc('translate.report', 1)}} </span>
+          <a v-on:click="passLink('reports')">
+            <i class="fas fa-book-reader sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $tc('translate.report', 1) }} </span>
+          </a>
         </div>
       </nav>
     </div>
@@ -59,15 +69,40 @@
 
 <script>
 export default {
-    name: "users-sidebar",
-    setup() {
+  name: "users-sidebar",
+  setup() {
 
-    },
-    data() {
-        return {
-            isOpen: false,
-        }
-    },
+  },
+  data() {
+    return {
+      isOpen: false,
+    }
+  },
+  methods: {
+    passLink(link) {
+      switch (link) {
+        case 'orders':
+          Event.$emit('orders');
+          break;
+        case 'customers':
+          Event.$emit('customers');
+          break;
+        case 'wallet':
+          Event.$emit('wallet');
+          break;
+        case 'refunds':
+          Event.$emit('refunds');
+          break;
+        case 'available':
+          Event.$emit('available');
+          break;
+        case 'reports':
+          Event.$emit('reports');
+          break;
+
+      }
+    }
+  }
 }
 </script>
 

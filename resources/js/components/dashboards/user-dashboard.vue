@@ -67,7 +67,24 @@
     </div>
     <div class="flex flex-col mt-8">
       <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <slot v-if="orders">
           <orders-table-user></orders-table-user>
+        </slot>
+<!--        <slot v-if="customers">-->
+<!--          <orders-table-user></orders-table-user>-->
+<!--        </slot>-->
+        <slot v-if="wallet">
+          <wallet-table-user></wallet-table-user>
+        </slot>
+<!--        <slot v-if="refund">-->
+<!--          <orders-table-user></orders-table-user>-->
+<!--        </slot>-->
+<!--        <slot v-if="available">-->
+<!--          <orders-table-user></orders-table-user>-->
+<!--        </slot>-->
+<!--        <slot v-if="reports">-->
+<!--          <orders-table-user></orders-table-user>-->
+<!--        </slot>-->
       </div>
     </div>
 
@@ -76,7 +93,64 @@
 
 <script>
 export default {
-  name: "user-dashboard"
+  name: "user-dashboard",
+  data() {
+    return {
+      orders: Boolean,
+      customers: Boolean,
+      wallet: Boolean,
+      refund: Boolean,
+      available: Boolean,
+      reports: Boolean
+    }
+  },
+  methods: {
+    /*
+     * make all slot's variables false
+     */
+    reset() {
+      this.orders = false;
+      this.customers = false;
+      this.wallet = false;
+      this.refunds = false;
+      this.available = false;
+      this.reports = false;
+    }
+  },
+
+  created() {
+    /*
+     * only shows order list on creation time
+     */
+    this.orders = true;
+    this.customers = false;
+    this.wallet = false;
+    this.refunds = false;
+    this.available = false;
+    this.reports = false;
+    /*
+     * listening for sidebar link click signal
+     * choose slot content regarding to clicked item in sidebar menu
+     */
+    Event.$on('orders', () => {
+      this.reset();
+      this.orders = true
+
+    });
+    Event.$on('customers', () => {
+      this.customers = true
+    });
+    Event.$on('wallet', () => {
+      this.reset();
+      this.wallet = true
+    });
+    Event.$on('available', () => {
+      this.available = true
+    });
+    Event.$on('reports', () => {
+      this.reports = true
+    });
+  }
 }
 </script>
 
