@@ -37,6 +37,8 @@ Vue.component('permission-table', require('./components/tables/permissions-table
 Vue.component('users-table', require('./components/tables/users-table').default);
 Vue.component('subscriptions-table', require('./components/tables/subscriptions-table').default);
 Vue.component('orders-table-user', require('./components/tables/orders-table-user').default);
+Vue.component('wallet-table-user', require('./components/tables/wallet-table-user').default);
+
 Vue.component('circle-plus-button', require('./components/buttons/circle-plus-button').default);
 
 Vue.component('add-role-modal', require('./components/modals/add-role-modal').default);
@@ -54,6 +56,7 @@ Vue.component('edit-subscription-modal', require('./components/modals/edit-subsc
 
 Vue.component('user-sidebar', require('./components/dashboards/user-sidebar').default);
 Vue.component('user-dashboard', require('./components/dashboards/user-dashboard').default);
+Vue.component('dashboard-layout', require('./components/dashboards/dashboard-layout').default);
 
 
 /**
