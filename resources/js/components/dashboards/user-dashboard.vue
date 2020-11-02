@@ -99,8 +99,6 @@ export default {
       orders: Boolean,
       customers: Boolean,
       wallet: Boolean,
-      refund: Boolean,
-      available: Boolean,
       reports: Boolean
     }
   },
@@ -112,8 +110,6 @@ export default {
       this.orders = false;
       this.customers = false;
       this.wallet = false;
-      this.refunds = false;
-      this.available = false;
       this.reports = false;
     }
   },
@@ -135,7 +131,6 @@ export default {
     Event.$on('orders', () => {
       this.reset();
       this.orders = true
-
     });
     Event.$on('customers', () => {
       this.customers = true
@@ -143,9 +138,6 @@ export default {
     Event.$on('wallet', () => {
       this.reset();
       this.wallet = true
-    });
-    Event.$on('available', () => {
-      this.available = true
     });
     Event.$on('reports', () => {
       this.reports = true
