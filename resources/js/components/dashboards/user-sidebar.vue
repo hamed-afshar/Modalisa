@@ -23,7 +23,7 @@
                     <span class="text-white mx-2">
                         Gold Subscription
                     </span>
-        </div>
+        </div>mai
       </div>
       <nav class="mt-10">
         <div class="flex items-center sidebar-menu-item">
@@ -33,27 +33,15 @@
           </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <a v-on:click="passLink('customers')">
-            <i class="fa fa-users sidebar-menu-icon"></i>
-            <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1) }} </span>
-          </a>
-        </div>
-        <div class="flex items-center sidebar-menu-item">
           <a v-on:click="passLink('wallet')">
             <i class="fas fa-wallet sidebar-menu-icon"></i>
             <span class="sidebar-menu-text"> {{ $t('translate.wallet') }} </span>
           </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
-          <a v-on:click="passLink('refund')">
-            <i class="fas fa-bookmark sidebar-menu-icon"></i>
-            <span class="sidebar-menu-text"> {{ $t('translate.refund_exchange') }} </span>
-          </a>
-        </div>
-        <div class="flex items-center sidebar-menu-item">
-          <a v-on:click="passLink('available')">
-            <i class="fas fa-tag sidebar-menu-icon"></i>
-            <span class="sidebar-menu-text"> {{ $t('translate.available') }} </span>
+          <a v-on:click="passLink('customers')">
+            <i class="fa fa-users sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text"> {{ $tc('translate.customer', 1) }} </span>
           </a>
         </div>
         <div class="flex items-center sidebar-menu-item">
@@ -89,12 +77,6 @@ export default {
           break;
         case 'wallet':
           Event.$emit('wallet');
-          break;
-        case 'refunds':
-          Event.$emit('refunds');
-          break;
-        case 'available':
-          Event.$emit('available');
           break;
         case 'reports':
           Event.$emit('reports');
