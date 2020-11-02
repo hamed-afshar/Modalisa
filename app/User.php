@@ -113,11 +113,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo('App\Subscription');
     }
 
+
     /**
-     * each user has many order relation
+     * each user has many transactions
      */
-    public function orders()
+    public function  transactions()
     {
-        return $this->hasMany('App\Order', 'user_id');
+        return $this->hasMany('Transactions');
     }
 }
