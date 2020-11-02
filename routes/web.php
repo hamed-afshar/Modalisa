@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
     Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
+    Route::get('/transactions', 'TransactionsController@index')->name('transactions.index');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
