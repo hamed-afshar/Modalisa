@@ -32,10 +32,11 @@ abstract class TestCase extends BaseTestCase
 
     protected function prepNormalEnv($role, $permission, $locked, $confirmed)
     {
-        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
+        $subscription = factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => $role]);
         $permission = factory('App\Permission')->create(['name' => $permission]);
-        $user->assignRole($role);
+        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
+        $role->changeRole($user);
         $role->allowTo($permission);
         $this->actingAs($user);
     }
