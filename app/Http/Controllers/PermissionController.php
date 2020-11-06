@@ -19,7 +19,7 @@ class PermissionController extends Controller
 
     /*
      * form to create permissions
-     * vue-js modal generates this form
+     * VueJs modal generates this form
     */
     public function create()
     {
