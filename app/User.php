@@ -6,17 +6,19 @@ use App\Events\UserRegisteredEvent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use phpDocumentor\Reflection\Types\True_;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
 
     use Notifiable;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $guarded=[];
+    protected $guarded = [];
 
     protected $dates = ['last_login'];
 
@@ -68,7 +70,24 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function permissions()
     {
-        return $this->roles->map->permissions->flatten()->pluck('name')->unique();
+        $role = auth()->user()->role;
+        return $role->permissions;
+    }
+
+    /**
+     * check user's permissions for a specific action
+     * @param $permission
+     * @return void
+     */
+    public function checkPermission($permission): bool
+    {
+        $permissions = $this->permissions();
+        foreach ($permissions as $per) {
+            if ($per->name === $permission) {
+                return true;
+            }
+            return false;
+        }
     }
 
     /**
@@ -117,7 +136,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * each user has many transactions
      */
-    public function  transactions()
+    public function transactions()
     {
         return $this->hasMany('Transactions');
     }
