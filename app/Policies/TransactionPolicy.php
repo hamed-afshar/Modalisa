@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Transaction;
 use App\Transactions;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -10,6 +11,11 @@ class TransactionPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Determine whether user is locked or not confirmed first
+     * @param User $user
+     * @return bool
+     */
     public function before(User $user)
     {
         if($user->isLocked() || !($user->isConfirmed())) {
@@ -25,19 +31,23 @@ class TransactionPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        if($user->checkPermission('make-payment')) {
+            return true;
+        }
     }
 
     /**
      * Determine whether the user can view the transactions.
      *
      * @param  \App\User  $user
-     * @param  \App\Transactions  $transactions
+     * @param  \App\Transaction  $transaction
      * @return mixed
      */
-    public function view(User $user, Transactions $transactions)
+    public function view(User $user, Transaction $transaction)
     {
-        //
+        if($user->checkPermission('make-payment')) {
+            return true;
+        }
     }
 
     /**
@@ -48,7 +58,9 @@ class TransactionPolicy
      */
     public function create(User $user)
     {
-        //
+        if($user->checkPermission('make-payment')) {
+            return true;
+        }
     }
 
     /**
