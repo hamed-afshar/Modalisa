@@ -62,7 +62,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
     Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
-    Route::get('/transactions', 'TransactionsController@index')->name('transactions.index');
+    Route::get('/transactions', 'TransactionController@index')->name('transactions.index');
+    Route::get('/transactions', 'TransactionController@create')->name('transactions.create');
+    Route::post('/transactions', 'TransactionController@store')->name('transactions.store');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
