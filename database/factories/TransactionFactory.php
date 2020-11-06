@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Transactions;
+use App\Transaction;
 use Faker\Generator as Faker;
 
-$factory->define(Transactions::class, function (Faker $faker) {
+$factory->define(Transaction::class, function (Faker $faker) {
     return [
         'currency' => 'Tl',
         'amount' => '1000',

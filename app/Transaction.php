@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transactions extends Model
+class Transaction extends Model
 {
     protected $guarded = [];
 
     public function user()
     {
-        $this->belongsTo('App\Transactions');
+        $this->belongsTo('App\Transaction');
     }
 }
