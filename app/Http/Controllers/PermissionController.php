@@ -40,7 +40,7 @@ class PermissionController extends Controller
 
     /*
      * show a single permission
-     * vue-js shows this single permission
+     * VueJs shows this single permission
      */
     public function show(Permission $permission)
     {
@@ -49,7 +49,7 @@ class PermissionController extends Controller
 
     /*
      * edit form
-     * vue-js generates this form
+     * VueJs generates this form
      */
     public function edit(Permission $permission)
     {
