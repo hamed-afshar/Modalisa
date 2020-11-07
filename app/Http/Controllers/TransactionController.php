@@ -35,9 +35,48 @@ class TransactionController extends Controller
             'currency' => 'required',
             'amount' => 'required',
             'pic' => 'required',
-            'comment' => 'required'
         ]));
+    }
 
+    /*
+     * show a single transaction
+     * VueJs shows this single transaction
+     */
+    public function show(Transaction $transaction)
+    {
+        $this->authorize('view', $transaction);
+    }
+
+    /*
+     * edit form
+     * VueJs generates this form
+     */
+    public function edit(Transaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+    }
+
+    /*
+     * update transactions
+     */
+    public function update(Transaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+        $data = request()->validate([
+            'currency' => 'required',
+            'amount' => 'required',
+            'pic' => 'required',
+            'comment' => 'required'
+        ]);
+        $transaction->update($data);
+    }
+
+    /*
+     * delete transactions
+     */
+    public function destroy(Transaction $transaction)
+    {
+        $this->authorize('delete', $transaction);
     }
 
 }
