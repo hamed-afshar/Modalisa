@@ -41,3 +41,4 @@ access denied page..
 34. clicking on logo in general header should redirect us to welcome page
 35. seperated menu for mobile and desktop needed
 36. find a better solution for sidebar link clicks and related slots in user-dashboard.
+37. delete unsed routes from web.php
