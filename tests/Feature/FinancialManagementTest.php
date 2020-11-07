@@ -13,18 +13,37 @@ class FinancialManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    /** @test
-     * this test is not show anything in blade files because
-     * transaction information will be available in vuejs
+    /*
+     * make sure that retailers can not change or access other retailers transactions
+     * for all actions including index,create,store,edit,update,delete
+     * we only test one of these actions
      */
-//    public function retailers_can_see_their_transactions()
-//    {
-//        $this->withoutExceptionHandling();
-//        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-//        $transaction = factory('App\Transaction')->create(['user_id' => auth()->user()->id]);
-//        $this->get('/transactions')->assertSee($transaction->comment)
-//            ->assertSee(200);
-//    }
+    /** @test */
+    public function retailers_only_can_access_to_their_own_resources()
+    {
+        $this->withoutExceptionHandling();
+        $subscription = factory('App\Subscription')->create();
+        $role = factory('App\Role')->create(['name' => 'retailer']);
+        $permission = factory('App\Permission')->create(['name' => 'make-payment']);
+        $user = factory('App\User')->create(['confirmed' => 1, 'locked' => 0]);
+        $newUser = factory('App\User')->create(['confirmed' => 1, 'locked' => 0]);
+        $role->changeRole($user);
+        $role->changeRole($newUser);
+        $role->allowTo($permission);
+        $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
+        $newAttributes = [
+            'currency' => 'USD',
+            'amount' => '9999',
+            'pic' => 'new_link',
+            'comment' => 'new comment'
+        ];
+        $this->actingAs($newUser);
+        $this->patch($transaction->path(), $newAttributes)->assertForbidden();
+    }
+
+    /*
+     * retailers_can_see_their_transactions
+     */
 
     /*
      * form_is_available_to_create_a_transaction
