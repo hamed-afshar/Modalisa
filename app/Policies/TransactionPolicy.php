@@ -25,8 +25,8 @@ class TransactionPolicy
 
     /**
      * Determine whether the user can view any transactions.
-     *
-     * @param  \App\User  $user
+     * User should have make-payment permission to be allowed
+     * @param User $user
      * @return mixed
      */
     public function viewAny(User $user)
@@ -38,8 +38,8 @@ class TransactionPolicy
 
     /**
      * Determine whether the user can view the transactions.
-     *
-     * @param  \App\User  $user
+     * User should have make-payment permission to be allowed
+     * @param User $user
      * @param  \App\Transaction  $transaction
      * @return mixed
      */
@@ -52,8 +52,8 @@ class TransactionPolicy
 
     /**
      * Determine whether the user can create transactions.
-     *
-     * @param  \App\User  $user
+     * User should have make-payment permission to be allowed
+     * @param User $user
      * @return mixed
      */
     public function create(User $user)
@@ -65,24 +65,26 @@ class TransactionPolicy
 
     /**
      * Determine whether the user can update the transactions.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Transactions  $transactions
+     * User should have make-payment permission to be allowed
+     * @param User $user
+     * @param Transaction $transaction
      * @return mixed
      */
-    public function update(User $user, Transactions $transactions)
+    public function update(User $user, Transaction $transaction)
     {
-        //
+        if($user->checkPermission('make-payment')) {
+            return true;
+        }
     }
 
     /**
      * Determine whether the user can delete the transactions.
      *
-     * @param  \App\User  $user
-     * @param  \App\Transactions  $transactions
+     * @param User $user
+     * @param Transaction $transaction
      * @return mixed
      */
-    public function delete(User $user, Transactions $transactions)
+    public function delete(User $user, Transaction $transaction)
     {
         //
     }
@@ -90,11 +92,11 @@ class TransactionPolicy
     /**
      * Determine whether the user can restore the transactions.
      *
-     * @param  \App\User  $user
-     * @param  \App\Transactions  $transactions
+     * @param User $user
+     * @param Transaction $transaction
      * @return mixed
      */
-    public function restore(User $user, Transactions $transactions)
+    public function restore(User $user, Transaction $transaction)
     {
         //
     }
@@ -102,11 +104,11 @@ class TransactionPolicy
     /**
      * Determine whether the user can permanently delete the transactions.
      *
-     * @param  \App\User  $user
-     * @param  \App\Transactions  $transactions
+     * @param User $user
+     * @param Transaction $transaction
      * @return mixed
      */
-    public function forceDelete(User $user, Transactions $transactions)
+    public function forceDelete(User $user, Transaction $transaction)
     {
         //
     }
