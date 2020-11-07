@@ -6,6 +6,7 @@ use App\AccessProvider;
 use App\Permission;
 use App\Role;
 use App\Subscription;
+use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -82,7 +83,6 @@ class AdminFunctionsTest extends TestCase
     /** @test */
     public function SystemAdmin_can_confirm_and_unlock_users()
     {
-        $this->withExceptionHandling();
         $this->prepAdminEnv('SystemAdmin',0,1);
         $newUser = factory('App\User')->create();
         $this->patch($newUser->path() ,[
@@ -98,6 +98,7 @@ class AdminFunctionsTest extends TestCase
     public function SystemAdmin_can_delete_users()
     {
 
+
     }
 
     /** @test */
@@ -110,6 +111,20 @@ class AdminFunctionsTest extends TestCase
     public function locked_users_can_not_access_system()
     {
 
+    }
+
+    /** @test */
+    public function admin_can_confirm_transactions()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0 ,1);
+        $newUser = factory('App\User')->create();
+        $transaction = factory('App\Transaction')->create(['user_id' => $newUser->id]);
+        $confirmationAttributes = [
+            'confirmed' => 1
+        ];
+        $this->patch($transaction->path(), $confirmationAttributes );
+        $this->assertEquals($confirmationAttributes['confirmed'], Transaction::where('id', $transaction->id)->value('confirmed'));
     }
 
 }
