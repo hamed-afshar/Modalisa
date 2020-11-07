@@ -6,6 +6,7 @@ use App\Transaction;
 use App\Transactions;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionPolicy
 {
@@ -13,12 +14,13 @@ class TransactionPolicy
 
     /**
      * Determine whether user is locked or not confirmed first
+     * Also Determine to check any user just enable to modify its own transactions
      * @param User $user
      * @return bool
      */
     public function before(User $user)
     {
-        if($user->isLocked() || !($user->isConfirmed())) {
+        if($user->isLocked() || !($user->isConfirmed()) || !(Auth::user()->id = $user->id)) {
             return false;
         }
     }
