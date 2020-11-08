@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Transaction extends Model
 {
@@ -21,6 +22,6 @@ class Transaction extends Model
      */
     public function user()
     {
-        $this->belongsTo('App\Transaction');
+        return $this->belongsTo('App\User');
     }
 }
