@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -30,12 +31,14 @@ class TransactionController extends Controller
     public function store()
     {
         $this->authorize('create', Transaction::class);
-        Transaction::create(request()->validate([
-            'user_id' => 'required',
+        $user = Auth::user();
+        $data = request()->validate([
             'currency' => 'required',
             'amount' => 'required',
             'pic' => 'required',
-        ]));
+            'comment' => 'required',
+        ]);
+        $user->transactions()->create($data);
     }
 
     /*
@@ -78,5 +81,4 @@ class TransactionController extends Controller
     {
         $this->authorize('delete', $transaction);
     }
-
 }

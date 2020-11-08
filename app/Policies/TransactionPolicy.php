@@ -20,7 +20,7 @@ class TransactionPolicy
      */
     public function before(User $user)
     {
-        if($user->isLocked() || !($user->isConfirmed()) || !(Auth::user()->id = $user->id)) {
+        if($user->isLocked() || !($user->isConfirmed())) {
             return false;
         }
     }
@@ -68,13 +68,14 @@ class TransactionPolicy
     /**
      * Determine whether the user can update the transactions.
      * User should have make-payment permission to be allowed
+     * user also can only update its own records
      * @param User $user
      * @param Transaction $transaction
      * @return mixed
      */
     public function update(User $user, Transaction $transaction)
     {
-        if($user->checkPermission('make-payment')) {
+        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
             return true;
         }
     }
