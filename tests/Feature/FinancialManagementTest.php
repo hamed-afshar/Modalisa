@@ -13,15 +13,13 @@ class FinancialManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    /*
+    /** @test
      * make sure that retailers can not change or access other retailers transactions
      * for all actions including index,create,store,edit,update,delete
      * we only test one of these actions
      */
-    /** @test */
     public function retailers_only_can_access_to_their_own_resources()
     {
-        $this->withoutExceptionHandling();
         $subscription = factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => 'retailer']);
         $permission = factory('App\Permission')->create(['name' => 'make-payment']);
@@ -61,14 +59,6 @@ class FinancialManagementTest extends TestCase
     }
 
     /** @test */
-    public function user_id_is_required()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $attributes = factory('App\Transaction')->raw(['user_id' => '']);
-        $this->post('/transactions', $attributes)->assertSessionHasErrors('user_id');
-    }
-
-    /** @test */
     public function currency_is_required()
     {
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
@@ -92,13 +82,6 @@ class FinancialManagementTest extends TestCase
         $this->post('/transactions', $attributes)->assertSessionHasErrors('pic');
     }
 
-    /** @test */
-    public function comment_is_required()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'comment' => '']);
-        $this->post('/transactions', $attributes)->assertSessionHasNoErrors();
-    }
 
     /*
      * retailer_can_see_a_single_transaction
@@ -106,7 +89,7 @@ class FinancialManagementTest extends TestCase
      */
 
     /** @test */
-    public function retailer_can_edit_a_transaction()
+    public function retailer_can_update_a_transaction()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0 , 1);
@@ -119,6 +102,15 @@ class FinancialManagementTest extends TestCase
         ];
         $this->patch($transaction->path(), $newAttributes);
         $this->assertDatabaseHas('transactions', $newAttributes);
+    }
+
+    /** @test */
+    public function transaction_belong_to_a_user()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $user = Auth::user();
+        $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $transaction->user);
     }
 
 
