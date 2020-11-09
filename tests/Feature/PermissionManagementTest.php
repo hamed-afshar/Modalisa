@@ -13,21 +13,42 @@ class PermissionManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    /** @test */
-    public function only_SystemAdmin_can_see_permissions()
+    /** @test
+     * only SystemAdmin can make changes to the permissions
+     * other users are not allowed to make any changes including
+     * index, create, store, show, update  delete
+     */
+
+    public function other_users_can_not_make_changes_to_the_permissions()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $this->prepNormalEnv('retailer', 'make-payment', 0,1);
         $permission = factory('App\Permission')->create();
-        $this->get('/permissions')->assertSee($permission->id)
-            ->assertStatus(200);
+        $newAttributes = factory('App\Permission')->raw();
+        $this->get($permission->path())->assertForbidden();
+        $this->get($permission->path() . '/create')->status(404);
+        $this->post('/permissions', $newAttributes)->assertForbidden();
+        $this->get($permission->path())->assertForbidden();
+        $this->get($permission->path() . '/edit')->status(404);
+        $this->patch($permission->path(), $newAttributes)->assertForbidden();
+        $this->delete($permission->path())->assertForbidden();
+
     }
 
     /** @test */
-    public function form_is_available_to_create_permission()
+    public function only_SystemAdmin_can_see_permissions()
     {
         $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin', 0,1 );
-        $this->get('/permissions/create')->assertOk();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $permission = factory('App\Permission')->create();
+        $this->get('/permissions')->assertSeeText($permission->name);
+    }
+
+    /*
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_create_permission()
+    {
+
     }
 
     /** @test */
@@ -37,7 +58,6 @@ class PermissionManagementTest extends TestCase
         $attributes = factory('App\Permission')->raw();
         $this->post('/permissions', $attributes);
         $this->assertDatabaseHas('permissions', $attributes);
-
     }
 
     /** @test */
@@ -61,28 +81,28 @@ class PermissionManagementTest extends TestCase
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $permission = factory('App\Permission')->create();
-        $this->get('/permissions/1')->assertSee($permission->name);
+        $this->get('/permissions/1')->assertSeeText($permission->name);
     }
 
-    /** @test */
-    public function form_is_available_to_edit_a_permission()
+    /*
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_update_a_permission()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $permission = factory('App\Permission')->create();
-        $this->get($permission->path() . '/edit')->assertSee($permission->name);
 
     }
 
     /** @test */
-    public function only_SystemAdmin_can_edit_a_permission()
+    public function only_SystemAdmin_can_update_a_permission()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $permission = factory('App\Permission')->create();
         $newAttributes = [
-            'name' => 'New Name'
+            'name' => 'New Name',
+            'label' => 'New Label',
         ];
         $this->patch($permission->path(), $newAttributes);
-        $this->assertEquals($newAttributes['name'], Permission::where('id', $permission->id)->value('name'));
+        $this->assertDatabaseHas('permissions', $newAttributes);
     }
 
     /** @test */
@@ -94,22 +114,27 @@ class PermissionManagementTest extends TestCase
         $this->assertDatabaseMissing('permissions', ['id' => $permission->id]);
     }
 
-    /** @test */
+    /** @test
+     * many to many relationship
+     */
     public function role_belongs_to_many_permissions()
-        //many to many relationship
     {
+        $this->withoutExceptionHandling();
         $role = factory('App\Role')->create();
         $permission = factory('App\Permission')->create();
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $role->permissions);
+        $role->allowTo($permission);
+        $this->assertInstanceOf(Permission::class, $role->permissions->find(1));
     }
 
-    /** @test */
-    public function permission_belongs_to_many_permissions()
-        //many to many relationship
+    /** @test
+     * many to many relationship
+     */
+    public function permission_belongs_to_many_roles()
     {
         $role = factory('App\Role')->create();
         $permission = factory('App\Permission')->create();
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $permission->roles);
+        $role->allowTo($permission);
+        $this->assertInstanceOf(Role::class, $permission->roles->find(1));
     }
 
     /** @test */
