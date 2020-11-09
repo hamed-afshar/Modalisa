@@ -44,7 +44,7 @@ class FinancialManagementTest extends TestCase
      * retailers can not make any changes to confirmed transactions
      * including edit and delete
      */
-    public function retailer_can_not_delete_confirmed_transactions()
+    public function retailer_can_not_delete_or_update_confirmed_transactions()
     {
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id, 'confirmed' => 1]);
@@ -66,12 +66,13 @@ class FinancialManagementTest extends TestCase
         $this->patch('/transactions/confirm/' . $transaction->id, $newAttributes)->assertForbidden();
     }
 
-        /*
-         * this should test in VueJs
-         */
+    /** @test */
     public function retailers_can_see_their_transactions()
     {
-
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $this->get('/transactions')->assertSeeText($transaction->pic);
     }
 
     /*
@@ -117,13 +118,12 @@ class FinancialManagementTest extends TestCase
         $this->post('/transactions', $attributes)->assertSessionHasErrors('pic');
     }
 
-
-    /*
-     * this should be tested in VueJs
-     */
+    /** @test */
     public function retailer_can_see_a_single_transaction()
     {
-
+        $this->prepNormalEnv('retailers', 'make-payment', 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $this->get($transaction->path())->assertSeeText($transaction->pic);
     }
 
     /*
@@ -135,7 +135,7 @@ class FinancialManagementTest extends TestCase
     }
 
     /** @test */
-    public function retailer_can_update_a_transaction()
+    public function retailer_can_update_not_confirmed_transactions()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
@@ -151,7 +151,16 @@ class FinancialManagementTest extends TestCase
     }
 
     /** @test */
-    public function transaction_belong_to_a_user()
+    public function retailer_can_delete_not_confirmed_transactions()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $this->delete($transaction->path());
+        $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+    }
+
+    /** @test */
+    public function transaction_belongs_to_a_user()
     {
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $user = Auth::user();

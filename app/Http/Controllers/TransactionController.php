@@ -15,16 +15,17 @@ class TransactionController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Transaction::class);
+        return Transaction::all();
     }
 
     /*
      * form to create transaction
      * VueJS modal generates this form
      */
-    public function create()
-    {
-        $this->authorize('create', Transaction::class);
-    }
+//    public function create()
+//    {
+//        $this->authorize('create', Transaction::class);
+//    }
 
     /*
      * store transactions
@@ -49,16 +50,17 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         $this->authorize('view', $transaction);
+        return $transaction;
     }
 
     /*
      * edit form
      * VueJs generates this form
      */
-    public function edit(Transaction $transaction)
-    {
-        $this->authorize('update', $transaction);
-    }
+//    public function edit(Transaction $transaction)
+//    {
+//        $this->authorize('update', $transaction);
+//    }
 
     /*
      * update transactions
