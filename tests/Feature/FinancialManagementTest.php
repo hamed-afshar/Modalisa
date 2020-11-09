@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Transaction;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +16,7 @@ class FinancialManagementTest extends TestCase
 
     /** @test
      * make sure that retailers can not change or access other retailers transactions
-     * for all actions including index,create,store,edit,update,delete
-     * we only test one of these actions
+     * for all actions including update,delete
      */
     public function retailers_only_can_access_to_their_own_resources()
     {
@@ -37,16 +37,51 @@ class FinancialManagementTest extends TestCase
         ];
         $this->actingAs($newUser);
         $this->patch($transaction->path(), $newAttributes)->assertForbidden();
+        $this->delete($transaction->path(), $newAttributes)->assertForbidden();
+    }
+
+    /** @test
+     * retailers can not make any changes to confirmed transactions
+     * including edit and delete
+     */
+    public function retailer_can_not_delete_confirmed_transactions()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id, 'confirmed' => 1]);
+        $this->patch($transaction->path())->assertForbidden();
+        $this->delete($transaction->path())->assertForbidden();
+    }
+
+    /** @test
+     * retailers can not confirm the transactions
+     * only SystemAdmin is able to confirm transactions
+     */
+    public function retailers_can_not_confirm_transactions()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $newAttributes = [
+            'confirmed' => 1
+        ];
+        $this->patch('/transactions/confirm/' . $transaction->id, $newAttributes)->assertForbidden();
+    }
+
+        /*
+         * this should test in VueJs
+         */
+    public function retailers_can_see_their_transactions()
+    {
+
     }
 
     /*
-     * retailers_can_see_their_transactions
-     */
-
-    /*
-     * form_is_available_to_create_a_transaction
      * this should be tested in VueJs
      */
+
+    public function form_is_available_to_create_a_transaction()
+    {
+
+    }
 
     /** @test */
     public function retailers_can_create_transaction()
@@ -84,15 +119,26 @@ class FinancialManagementTest extends TestCase
 
 
     /*
-     * retailer_can_see_a_single_transaction
      * this should be tested in VueJs
      */
+    public function retailer_can_see_a_single_transaction()
+    {
+
+    }
+
+    /*
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_update_a_transaction()
+    {
+
+    }
 
     /** @test */
     public function retailer_can_update_a_transaction()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0 , 1);
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         $newAttributes = [
             'currency' => 'USD',
@@ -110,9 +156,28 @@ class FinancialManagementTest extends TestCase
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $transaction->user);
+        $this->assertInstanceOf(User::class, $transaction->user);
     }
 
+    /** @test */
+    public function user_can_have_many_transactions()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $user = Auth::user();
+        factory('App\Transaction')->create(['user_id' => $user->id]);
+        $transaction = $user->transactions->find(1);
+        $this->assertInstanceOf(Transaction::class, $transaction);
+    }
 
-
+    /** @test */
+    public function guests_can_not_access_transaction_management()
+    {
+        $this->get('/transactions')->assertRedirect('login');
+        $this->get('/transactions/create')->assertRedirect('login');
+        $this->post('/transactions')->assertRedirect('login');
+        $this->get('/transactions/1')->assertRedirect('login');
+        $this->get('/transactions/1' . '/edit')->assertRedirect('login');
+        $this->patch('/transactions/1')->assertRedirect('login');
+        $this->delete('/transactions/1')->assertRedirect('login');
+    }
 }

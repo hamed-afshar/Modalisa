@@ -114,7 +114,7 @@ class AdminFunctionsTest extends TestCase
     }
 
     /** @test */
-    public function admin_can_confirm_transactions()
+    public function only_SystemAdmin_can_confirm_transactions()
     {
         $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0 ,1);
@@ -123,7 +123,7 @@ class AdminFunctionsTest extends TestCase
         $confirmationAttributes = [
             'confirmed' => 1
         ];
-        $this->patch($transaction->path(), $confirmationAttributes );
+        $this->patch('/transactions/confirm/' . $transaction->id, $confirmationAttributes );
         $this->assertEquals($confirmationAttributes['confirmed'], Transaction::where('id', $transaction->id)->value('confirmed'));
     }
 
