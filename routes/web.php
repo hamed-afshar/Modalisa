@@ -63,7 +63,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
     Route::get('/transactions', 'TransactionController@index')->name('transactions.index');
-    Route::get('/transactions', 'TransactionController@create')->name('transactions.create');
+    Route::get('/transactions/create', 'TransactionController@create')->name('transactions.create');
     Route::post('/transactions', 'TransactionController@store')->name('transactions.store');
     Route::get('/transactions/{transaction}', 'TransactionController@show')->name('transactions.show');
     Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
