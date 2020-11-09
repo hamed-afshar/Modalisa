@@ -3,10 +3,9 @@
 namespace App\Policies;
 
 use App\Transaction;
-use App\Transactions;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Access\Response;
 
 class TransactionPolicy
 {
@@ -76,7 +75,7 @@ class TransactionPolicy
     public function update(User $user, Transaction $transaction)
     {
         if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
-            return true;
+            return $transaction->confirmed ? Response::deny('deny') : Response::allow();
         }
     }
 
@@ -89,7 +88,23 @@ class TransactionPolicy
      */
     public function delete(User $user, Transaction $transaction)
     {
-        //
+        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
+            return $transaction->confirmed ? Response::deny('deny') : Response::allow();
+        }
+    }
+
+    /**
+     * Determine whether user can confirm the transactions.
+     * only SystemAdmin is able to confirm transactions
+     * @param  User $user
+     * @param  Transaction $transaction
+     * @return mixed
+     */
+    public function confirm(User $user, Transaction $transaction)
+    {
+        if($user->isAdmin()) {
+            return true;
+        }
     }
 
     /**

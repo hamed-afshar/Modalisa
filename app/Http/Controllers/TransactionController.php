@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
@@ -80,5 +81,18 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $this->authorize('delete', $transaction);
+        $transaction->delete();
+    }
+
+    /*
+     * confirm transactions
+     */
+    public function confirm(Transaction $transaction)
+    {
+        $this->authorize('confirm', $transaction);
+        $data = request()->validate([
+            'confirmed' => 'required'
+        ]);
+        $transaction->update($data);
     }
 }
