@@ -76,12 +76,12 @@ class PermissionManagementTest extends TestCase
         $this->post('/permissions', $attributes)->assertSessionHasErrors('label');
     }
 
-    /** @test */
+    /*
+     * This test is not necessary
+     */
     public function only_SystemAdmin_can_view_a_single_permission()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $permission = factory('App\Permission')->create();
-        $this->get('/permissions/1')->assertSeeText($permission->name);
+
     }
 
     /*
