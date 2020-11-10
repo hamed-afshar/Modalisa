@@ -22,7 +22,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can view any models.
+     * Determine whether the SystemAdmin can view any models.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -35,7 +35,7 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Determine whether the SystemAdmin can view the model.
      *
      * @param  \App\User  $user
      * @param  \App\User  $model
@@ -49,18 +49,20 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can create models.
+     * Determine whether the SystemAdmin can create models.
      *
      * @param  \App\User  $user
      * @return mixed
      */
     public function create(User $user)
     {
-        //
+        if ($user->isAdmin()) {
+            return true;
+        }
     }
 
     /**
-     * Determine whether the user can update their profile.
+     * Determine whether the SystemAdmin can update user's information.
      *
      * @param  \App\User  $user
      * @param  \App\User  $model
@@ -68,15 +70,9 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-
         if($user->isAdmin()) {
             return true;
         }
-//        if ($user->id = $model->id) {
-//            if ($user->permissions()->contains('edit-profile')) {
-//                return true;
-//            }
-//        }
     }
 
     /**
@@ -89,6 +85,17 @@ class UserPolicy
     public function delete(User $user, User $model)
     {
         return false;
+    }
+
+    /**
+     * Determine whether user can update it's profile
+     * users only can update their own profiles
+     */
+    public function profile(User $user, User $modal)
+    {
+        if($user->id == $modal->id) {
+            return true;
+        }
     }
 
     /**

@@ -35,24 +35,28 @@ class UserManagementTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $user->updated_at);
     }
 
-    /** @test */
-    //users have form to update their profiles
-    public function form_is_available_to_edit_a_user()
+    /* This should be tested in VueJS */
+    public function form_is_available_to_update_users()
     {
-        $this->prepNormalEnv('retailer', 'edit-profile', 0, 1);
-        $user = User::find(1);
-        $this->get($user->path() . '/edit')->assertSee($user->name);
     }
 
     /** @test */
-    //users can update their profiles
+    public function users_can_register_into_the_system()
+    {
+        $this->withoutExceptionHandling();
+        $attributes = factory('App\User')->raw();
+        $this->post('/users', $attributes);
+        $this->assertDatabaseHas('users', $attributes);
+    }
+
+    /** @test */
     public function users_can_update_their_profiles()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'edit-profile', 0, 1);
         $newDetails = factory('App\User')->raw();
         $user = User::find(1);
-        $this->patch($user->path(), [
+        $this->patch('/edit-profile/' . $user->id, [
             'name' => $newDetails['name'],
             'email' => $newDetails['email'],
             'password' => $newDetails['password'],
@@ -61,7 +65,7 @@ class UserManagementTest extends TestCase
             'country' => $newDetails['country'],
             'communication_media' => $newDetails['communication_media']
         ]);
-        $this->assertEquals($newDetails['email'], User::where('id', $user->id)->value('email'));
+        $this->assertDatabaseHas('users', ['id'=>$user->id]);
     }
 
     /** @test */
@@ -69,8 +73,7 @@ class UserManagementTest extends TestCase
     {
         $this->prepAdminEnv('SystemAdmin', 0,1);
         $user = User::find(1);
-        $this->delete($user->path())->assertSeeText("unauthorized");
-
+        $this->delete($user->path())->assertForbidden();
     }
 
     /** @test */
@@ -81,7 +84,6 @@ class UserManagementTest extends TestCase
         $this->get('users/1/edit')->assertRedirect('login');
         $this->patch('users/1')->assertRedirect('login');
         $this->delete('/users/1')->assertRedirect('login');
-
     }
 
 }

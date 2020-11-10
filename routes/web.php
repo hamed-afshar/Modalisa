@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit');
     Route::patch('/users/{user}', 'UserController@update')->name('users.update');
     Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy');
+    Route::patch('/edit-profile/{user}', 'UserController@editProfile')->name('users.profile');
 
     Route::get('/roles', 'RoleController@index')->name('roles.index');
     Route::get('/roles/create', 'RoleController@create')->name('roles.create');

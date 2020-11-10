@@ -21,12 +21,11 @@ class UserController extends Controller
     }
 
     /*
-     * Systemadmin can see a single user
+     * SystemAdmin can see a single user
      */
     public function show(User $user)
     {
         $this->authorize('view', User::class);
-        return view('users.show', compact('user'));
     }
 
     /*
@@ -35,17 +34,16 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('update', $user);
-        return view('users.edit', compact('user'));
     }
 
     /*
-     * update user's profile
+     * update user's information by SystemAdmin
      */
     public function update(User $user)
     {
-       $this->authorize('update', $user);
-       $data = request()->all();
-       $user->update($data);
+        $this->authorize('update', $user);
+        $data = request()->all();
+        $user->update($data);
     }
 
     /*
@@ -57,4 +55,21 @@ class UserController extends Controller
         return redirect('access-denied');
     }
 
+    /*
+     * edit profile by user
+     */
+    public function editProfile(User $user)
+    {
+        $this->authorize('profile', $user);
+        $data = request()->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'language' => 'required',
+            'tel' => 'required',
+            'country' => 'required',
+            'communication_media' => 'required'
+        ]);
+        $user->update($data);
+    }
 }
