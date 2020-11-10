@@ -47,8 +47,7 @@ class RoleManagementTest extends TestCase
     }
 
     /** @test */
-    public
-    function only_SystemAdmin_can_see_roles()
+    public function only_SystemAdmin_can_see_roles()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $roles = Role::find(1);
@@ -58,8 +57,7 @@ class RoleManagementTest extends TestCase
     /*
       * this should be tested in VueJs
       */
-    public
-    function form_is_available_to_create_roles()
+    public function form_is_available_to_create_roles()
     {
 
     }
