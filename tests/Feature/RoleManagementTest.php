@@ -15,33 +15,69 @@ class RoleManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
+    /** @test
+     * only SystemAdmin can make changes to the roles
+     * other users are not allowed to make any changes including
+     * index, create, store, show, update  delete
+     */
+
+    public function other_users_can_not_make_changes_to_the_roles()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $role = factory('App\Role')->create();
+        $newAttributes = factory('App\Role')->raw();
+        $this->get($role->path())->assertForbidden();
+        $this->get($role->path() . '/create')->status(404);
+        $this->post('/roles', $newAttributes)->assertForbidden();
+        $this->get($role->path())->assertForbidden();
+        $this->get($role->path() . '/edit')->status(404);
+        $this->patch($role->path(), $newAttributes)->assertForbidden();
+        $this->delete($role->path())->assertForbidden();
+
+    }
+
     /** @test */
-    public function only_SystemAdmin_can_see_roles()
+    public function SystemAdmin_can_see_all_permission_assigned_to_a_role()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0 , 1);
+        $role = Role::find(1);
+        $permission = Permission::find(1);
+        $this->get($role->path())->assertSee($permission);
+    }
+
+    /** @test */
+    public
+    function only_SystemAdmin_can_see_roles()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $roles = Role::find(1);
-        $this->get('/roles')->assertStatus(200)
-            ->assertSeeText($roles->id);
+        $this->get('/roles')->assertSeeText($roles->name);
+    }
+
+    /*
+      * this should be tested in VueJs
+      */
+    public
+    function form_is_available_to_create_roles()
+    {
+
     }
 
     /** @test */
-    public function form_is_available_to_create_roles()
+    public
+    function only_SystemAdmin_can_create_roles()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $this->get('/roles/create')->assertStatus(200);
-    }
-
-    /** @test */
-    public function only_SystemAdmin_can_create_roles()
-    {
+        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $attributes = factory('App\Role')->raw(['name' => 'retailer', 'label' => 'test']);
-        $this->post('/roles', $attributes)->assertRedirect('/roles');
+        $this->post('/roles', $attributes);
         $this->assertDatabaseHas('roles', $attributes);
     }
 
     /** @test */
-    public function named_is_required()
+    public
+    function named_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $attributes = factory('App\Role')->raw(['name' => '']);
@@ -49,103 +85,108 @@ class RoleManagementTest extends TestCase
     }
 
     /** @test */
-    public function label_is_required()
+    public
+    function label_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $attributes = factory('App\Role')->raw(['label' => '']);
         $this->post('/roles', $attributes)->assertSessionHasErrors('label');
     }
 
-    /** @test */
-    public function only_SystemAdmin_can_vew_a_single_role()
+    /*
+     * This test is not necessary
+     */
+    public
+    function only_SystemAdmin_can_vew_a_single_role()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $role = Role::find(1);
-        $this->get($role->path())->assertSee($role->name);
+
     }
 
-    /** @test */
+    /*
+     * this should be tested in VueJs
+     */
     public function form_is_available_to_edit_a_role()
     {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $role = Role::find(1);
-        $this->get($role->path() . '/edit')->assertSee($role->name);
+
     }
 
     /** @test */
     public function only_SystemAdmin_can_update_a_role()
     {
+        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         $newAttributes = [
-            'name' => 'New Name'
+            'name' => 'New Name',
+            'label' => 'New Label'
         ];
-        $this->patch($role->path(), $newAttributes)->assertRedirect($role->path());
-        $this->assertEquals($newAttributes['name'], Role::where('id', $role->id)->value('name'));
+        $this->patch($role->path(), $newAttributes);
+        $this->assertDatabaseHas('roles', $newAttributes);
     }
 
     /** @test */
-    public function only_SystemAdmin_can_delete_a_role()
+    public
+    function only_SystemAdmin_can_delete_a_role()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $role = Role::find(1);
-        $this->delete($role->path())->assertRedirect('/roles');
+        $role = factory('App\Role')->create();
+        $this->delete($role->path());
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
     }
 
-    /** @test */
-    //many to many relationship
-    public function user_belongs_to_many_roles()
+    /** @test
+     * one to many relationship
+     */
+    public
+    function role_have_many_users()
     {
-        $user = factory('App\User')->create();
-        $role = factory('App\Role')->create();
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $user->roles);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $role = Role::find(1);
+        $this->assertInstanceOf(User::class, $role->users->find(1));
     }
 
-    /** @test */
-    //many to many relationship
-    public function role_belongs_to_many_users()
+    /** @test
+     * one to many relationship
+     */
+    public
+    function user_belongs_to_a_role()
     {
-        $user = factory('App\User')->create();
-        $role = factory('App\Role')->create();
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $role->users);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $user = User::find(1);
+        $this->assertInstanceOf(Role::class, $user->role);
     }
 
+
     /** @test */
-    //SystemAdmin can view all permissions associated to a role
-    public function SystemAdmin_can_view_permissions_associated_to_a_role()
+    public
+    function SystemAdmin_can_allow_role_to_permission()
     {
         $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
-        $this->get('/granted-permissions/' . $role->id)->assertOk();
-    }
-
-    /** @test */
-    public function SystemAdmin_can_allow_role_to_permission()
-    {
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $role = Role::find(1);
-        $permission = factory('App\Permission')->create();
+        factory('App\Permission')->create();
         $permission = Permission::find(1);
-        $this->post('/allow-to/' . $role->id . '/' . $permission->id)->assertOk();
+
+        $this->get('/allow-to/' . $role->id . '/' . $permission->id);
         $this->assertDatabaseHas('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
     }
 
     /** @test */
-    public function SystemAdmin_can_disallow_role_to_permission()
+    public
+    function SystemAdmin_can_disallow_role_to_permission()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $role = Role::find(1);
         factory('App\Permission')->create();
         $permission = Permission::find(1);
         $role->allowTo($permission);
-        $this->delete('/disallow-to/' . $role->id . '/' . $permission->id)->assertOk();
+        $this->get('/disallow-to/' . $role->id . '/' . $permission->id);
         $this->assertDatabaseMissing('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
     }
 
     /** @test */
-    public function SystemAdmin_can_change_user_roles()
+    public
+    function SystemAdmin_can_change_user_roles()
     {
         $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
@@ -157,7 +198,8 @@ class RoleManagementTest extends TestCase
 
 
     /** @test */
-    public function guests_can_not_access_role_management()
+    public
+    function guests_can_not_access_role_management()
     {
         $role = factory('App\Role')->create();
         $this->get('/roles')->assertRedirect('login');
