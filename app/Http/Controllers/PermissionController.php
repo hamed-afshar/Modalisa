@@ -17,13 +17,12 @@ class PermissionController extends Controller
     }
 
     /*
-     * form to create permissions
-     * VueJs modal generates this form
+     * This should be tested in VueJs
     */
-//    public function create()
-//    {
-//        $this->authorize('create', Permission::class);
-//    }
+    public function create()
+    {
+
+    }
 
     /*
      * store permission
@@ -48,13 +47,11 @@ class PermissionController extends Controller
     }
 
     /*
-     * edit form
-     * VueJs generates this form
+     * This should be tested in VueJs
      */
-//    public function edit(Permission $permission)
-//    {
-//        $this->authorize('update', $permission);
-//    }
+    public function edit(Permission $permission)
+    {
+    }
 
     /*
      * update permissions
