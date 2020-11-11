@@ -73,12 +73,7 @@ class AdminFunctionsTest extends TestCase
         $subscription->assignUser($user);
         $this->assertDatabaseHas('users', ['subscription_id' => $subscription->id]);
     }
-
-    /** @test */
-    public function form_is_available_to_edit_users()
-    {
-
-    }
+    
 
     /** @test */
     public function SystemAdmin_can_confirm_and_unlock_users()
@@ -91,25 +86,6 @@ class AdminFunctionsTest extends TestCase
         ]);;
         $this->assertEquals(1, User::where('id', $newUser->id)->value('confirmed'));
         $this->assertEquals(0, User::where('id', $newUser->id)->value('locked'));
-
-    }
-
-    /** @test */
-    public function SystemAdmin_can_delete_users()
-    {
-
-
-    }
-
-    /** @test */
-    public function not_confirmed_users_can_not_access_system()
-    {
-
-    }
-
-    /** @test */
-    public function locked_users_can_not_access_system()
-    {
 
     }
 
