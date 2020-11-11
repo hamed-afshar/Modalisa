@@ -26,6 +26,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', User::class);
+        return $user;
     }
 
     /*
@@ -52,7 +53,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('delete', $user);
-        return redirect('access-denied');
     }
 
     /*
@@ -64,7 +64,7 @@ class UserController extends Controller
         $data = request()->validate([
             'name' => 'required',
             'email' => 'required',
-            'password' => 'required',
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'language' => 'required',
             'tel' => 'required',
             'country' => 'required',

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Permission;
 use App\Role;
+use App\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
@@ -29,10 +30,9 @@ class UserManagementTest extends TestCase
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $user = User::find(1);
-        $this->get($user->path())->assertSee($user->name);
-        $this->assertInstanceOf(Carbon::class, $user->last_login);
-        $this->assertInstanceOf(Carbon::class, $user->created_at);
-        $this->assertInstanceOf(Carbon::class, $user->updated_at);
+
+        $this->get($user->path())->assertSee($user);
+
     }
 
     /* This should be tested in VueJS */
@@ -44,9 +44,23 @@ class UserManagementTest extends TestCase
     public function users_can_register_into_the_system()
     {
         $this->withoutExceptionHandling();
-        $attributes = factory('App\User')->raw();
-        $this->post('/users', $attributes);
-        $this->assertDatabaseHas('users', $attributes);
+        $subscription = factory('App\Subscription')->create();
+        $role = factory('App\Role')->create();
+        $attributes = [
+            'id' => 1,
+            'subscription_id' => $subscription->id,
+            'role_id' => $role->id,
+            'name' => 'Hamed Afshar',
+            'email' => 'asghar@yahoo.com',
+            'password' => '13651362',
+            'password_confirmation' => '13651362',
+            'language' => 'Persian',
+            'tel' => '989123463474',
+            'country' => 'Iran',
+            'communication_media' => 'telegram'
+        ];
+        $this->post('/register', $attributes);
+        $this->assertDatabaseHas('users', ['name' => 'Hamed Afshar']);
     }
 
     /** @test */
@@ -65,13 +79,31 @@ class UserManagementTest extends TestCase
             'country' => $newDetails['country'],
             'communication_media' => $newDetails['communication_media']
         ]);
-        $this->assertDatabaseHas('users', ['id'=>$user->id]);
+        $this->assertDatabaseHas('users', ['id' => $user->id]);
+    }
+
+    /** @test */
+    public function users_can_not_update_others_profile()
+    {
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $user1 = User::find(1);
+        $user2 = factory('App\User')->create();
+        $this->patch('/edit-profile/' . $user2->id, [
+            'name' => 'new-name',
+            'email' => 'new-email@yahoo.com',
+            'password' => '123456789',
+            'password_confirmation' => '123456789',
+            'language' => 'english',
+            'tel' => '989122035389',
+            'country' => 'Turkey',
+            'communication_media' => 'whatsapp'
+        ])->assertForbidden();
     }
 
     /** @test */
     public function users_can_not_be_deleted_from_system()
     {
-        $this->prepAdminEnv('SystemAdmin', 0,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $user = User::find(1);
         $this->delete($user->path())->assertForbidden();
     }
