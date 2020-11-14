@@ -21,6 +21,6 @@ class Status extends Model
      */
     public function products()
     {
-        return $this->hasMany('App\Status');
+        return $this->hasMany('App\Products');
     }
 }

@@ -72,6 +72,14 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.delete');
     Route::patch('/transactions/confirm/{transaction}', 'TransactionController@confirm')->name('transaction.confirm');
 
+    Route::get('/statuses', 'StatusController@index')->name('status.index');
+    Route::get('/statuses/create', 'StatusController@create')->name('status.create');
+    Route::post('/statuses', 'StatusController@store')->name('status.store');
+    Route::get('/statuses/{status}', 'StatusController@show')->name('status.show');
+    Route::get('/statuses/{status}/edit', 'StatusController@edit')->name('status.edit');
+    Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
+    Route::delete('/statuses/{status}', 'StatusController@delete')->name('status.delete');
+
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
