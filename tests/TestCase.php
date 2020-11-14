@@ -40,18 +40,4 @@ abstract class TestCase extends BaseTestCase
         $role->allowTo($permission);
         $this->actingAs($user);
     }
-
-    /*
-     * prepare retailer environment
-     */
-
-    protected function prepRetailerEnv($role, $permission, $locked, $confirmed)
-    {
-        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
-        $role = factory('App\Role')->create(['name' => $role]);
-        $permission = factory('App\Permission')->create(['name' => $permission]);
-        $user->assignRole($role);
-        $role->allowTo($permission);
-        $this->actingAs($user);
-    }
 }
