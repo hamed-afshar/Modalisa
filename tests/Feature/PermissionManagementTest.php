@@ -16,19 +16,20 @@ class PermissionManagementTest extends TestCase
     /** @test
      * only SystemAdmin can make changes to the permissions
      * other users are not allowed to make any changes including
-     * index, create, store, show, update  delete
+     * index, create, store, show, update and delete
      */
 
     public function other_users_can_not_make_changes_to_the_permissions()
     {
+
         $this->prepNormalEnv('retailer', 'make-payment', 0,1);
         $permission = factory('App\Permission')->create();
         $newAttributes = factory('App\Permission')->raw();
         $this->get($permission->path())->assertForbidden();
-        $this->get($permission->path() . '/create')->status(404);
+        $this->get('permissions/create')->assertForbidden();
         $this->post('/permissions', $newAttributes)->assertForbidden();
         $this->get($permission->path())->assertForbidden();
-        $this->get($permission->path() . '/edit')->status(404);
+        $this->get($permission->path() . '/edit')->assertForbidden();
         $this->patch($permission->path(), $newAttributes)->assertForbidden();
         $this->delete($permission->path())->assertForbidden();
 

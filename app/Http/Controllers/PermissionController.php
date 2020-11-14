@@ -17,10 +17,12 @@ class PermissionController extends Controller
     }
 
     /*
-     * This should be tested in VueJs
+     * Status create form
+     * VueJs Modal
     */
     public function create()
     {
+        $this->authorize('create', Permission::class);
 
     }
 
@@ -47,10 +49,12 @@ class PermissionController extends Controller
     }
 
     /*
-     * This should be tested in VueJs
+     * Permission update form
+     * VueJs Modal
      */
     public function edit(Permission $permission)
     {
+        $this->authorize('update', Permission::class);
     }
 
     /*
