@@ -8,7 +8,7 @@ class Product extends Model
 {
     protected $guarded =[];
 
-    /*
+    /**
      * return product path
      */
 
@@ -17,11 +17,19 @@ class Product extends Model
         return "/products/{$this->path()}";
     }
 
-    /*
+    /**
      * each product belongs to a status
      */
     public function status()
     {
         return $this->belongsTo('App\Status');
+    }
+
+    /**
+     * each product has many histories
+     */
+    public function histories()
+    {
+        return $this->hasMany('App\History');
     }
 }
