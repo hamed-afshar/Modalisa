@@ -46,7 +46,7 @@ class TransactionPolicy
      */
     public function view(User $user, Transaction $transaction)
     {
-        if($user->checkPermission('make-payment')) {
+        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
             return true;
         }
     }

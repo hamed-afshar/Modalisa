@@ -28,7 +28,7 @@ class FinancialManagementTest extends TestCase
         $role->changeRole($user);
         $role->changeRole($newUser);
         $role->allowTo($permission);
-        $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
+        $transaction1 = factory('App\Transaction')->create(['user_id' => $user->id]);
         $newAttributes = [
             'currency' => 'USD',
             'amount' => '9999',
@@ -36,8 +36,9 @@ class FinancialManagementTest extends TestCase
             'comment' => 'new comment'
         ];
         $this->actingAs($newUser);
-        $this->patch($transaction->path(), $newAttributes)->assertForbidden();
-        $this->delete($transaction->path(), $newAttributes)->assertForbidden();
+        $this->get($transaction1->path())->assertForbidden();
+        $this->patch($transaction1->path(), $newAttributes)->assertForbidden();
+        $this->delete($transaction1->path(), $newAttributes)->assertForbidden();
     }
 
     /** @test
@@ -75,7 +76,8 @@ class FinancialManagementTest extends TestCase
         $this->get('/transactions')->assertSeeText($transaction->pic);
     }
 
-    /*
+
+    /**
      * this should be tested in VueJs
      */
 
@@ -123,7 +125,7 @@ class FinancialManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailers', 'make-payment', 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
-        $this->get($transaction->path())->assertSeeText($transaction->pic);
+        $this->get($transaction->path())->assertSeeText($transaction->comment);
     }
 
     /*

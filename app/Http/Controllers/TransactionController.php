@@ -9,25 +9,25 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    /*
+    /**
      * index transactions
      */
     public function index()
     {
         $this->authorize('viewAny', Transaction::class);
-        return Transaction::all();
+        return Auth::user()->transactions;
     }
 
-    /*
+    /**
      * form to create transaction
      * VueJS modal generates this form
      */
-//    public function create()
-//    {
-//        $this->authorize('create', Transaction::class);
-//    }
+    public function create()
+    {
+        $this->authorize('create', Transaction::class);
+    }
 
-    /*
+    /**
      * store transactions
      */
     public function store()
@@ -43,26 +43,26 @@ class TransactionController extends Controller
         $user->transactions()->create($data);
     }
 
-    /*
+    /**
      * show a single transaction
      * VueJs shows this single transaction
      */
     public function show(Transaction $transaction)
     {
         $this->authorize('view', $transaction);
-        return $transaction;
+        return Auth::user()->transactions->find($transaction);
     }
 
-    /*
+    /**
      * edit form
      * VueJs generates this form
      */
-//    public function edit(Transaction $transaction)
-//    {
-//        $this->authorize('update', $transaction);
-//    }
+    public function edit(Transaction $transaction)
+    {
+        $this->authorize('update', $transaction);
+    }
 
-    /*
+    /**
      * update transactions
      */
     public function update(Transaction $transaction)
@@ -77,7 +77,7 @@ class TransactionController extends Controller
         $transaction->update($data);
     }
 
-    /*
+    /**
      * delete transactions
      */
     public function destroy(Transaction $transaction)
@@ -86,7 +86,7 @@ class TransactionController extends Controller
         $transaction->delete();
     }
 
-    /*
+    /**
      * confirm transactions
      */
     public function confirm(Transaction $transaction)
