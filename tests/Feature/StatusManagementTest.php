@@ -76,6 +76,14 @@ class StatusManagementTest extends TestCase
         $this->post('/statuses', $newAttributes)->assertSessionHasErrors('description');
     }
 
+    /** @test */
+    public function priority_is_required()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $newAttributes = factory('App\Status')->raw(['priority' => '']);
+        $this->post('/statuses', $newAttributes)->assertSessionHasErrors('priority');
+    }
+
     /*
      * This test is not neccessary
      */
@@ -99,6 +107,7 @@ class StatusManagementTest extends TestCase
         $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $status = factory('App\Status')->create();
         $newAttributes = [
+            'priority'=>'1',
             'name'=>'New Name',
             'description' => 'New Description'
         ];
@@ -123,8 +132,7 @@ class StatusManagementTest extends TestCase
     {
         $status = factory('App\Status')->create();
         factory('App\Product')->create(['status_id' => $status->id]);
-        $product = $status->products->find(1);
-        $this->assertInstanceOf(Product::class, $product);
+        $this->assertInstanceOf(Product::class, $status->products->find(1));
     }
 
     /** @test

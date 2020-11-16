@@ -33,6 +33,7 @@ class StatusController extends Controller
     {
         $this->authorize('create', Status::class);
         Status::create(request()->validate([
+            'priority' =>'required',
             'name' => 'required',
             'description' => 'required'
         ]));
@@ -64,6 +65,7 @@ class StatusController extends Controller
     {
         $this->authorize('update', $status);
         $data = request()->validate([
+            'priority' => 'required',
             'name' => 'required',
             'description' => 'required'
         ]);
