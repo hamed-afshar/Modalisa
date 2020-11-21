@@ -93,4 +93,14 @@ class ProjectTests extends TestCase {
         $this->delete('/orders')->assertRedirect('access-denied');
     }
 
+    /** @test */
+    public function each_user_has_many_products()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 0, 1);
+        factory('App/')
+
+    }
+
+
 }
