@@ -14,10 +14,10 @@ class HistoryManagementTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test */
-    public function retailers_can_check_their_histories()
+    public function retailers_can_check_their_product_histories()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'change-status', 0, 1);
+        $this->prepNormalEnv('retailer', 'check-status', 0, 1);
         $product = factory('App\Product')->create();
         $status = factory('App\Status')->create();
         $history = factory('App\History')->create([
