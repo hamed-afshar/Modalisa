@@ -18,14 +18,23 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'check-status', 0, 1);
-        $product = factory('App\Product')->create();
-        $status = factory('App\Status')->create();
-        $history = factory('App\History')->create([
+        $this->prepOrder();
+        $product = Product::find(1);
+        $status1 = factory('App\Status')->create();
+        $history1 = factory('App\History')->create([
             'product_id' => $product->id,
-            'status_id' => $status->id,
+            'status_id' => $status1->id,
         ]);
-        $this->get('/histories')->assertSeeText($history->created_at);
-
+        $status2 = factory('App\Status')->create([
+            'name' => 'arrived',
+            'description' => 'arrived to office'
+        ]);
+        $history2 = factory('App\History')->create([
+            'product_id' => $product->id,
+            'status_id' => $status2->id,
+        ]);
+        $this->get('/histories/' .  $product->id)->assertSeeText($history1->created_at)
+            ->assertSeeText($history2->created_at);
     }
 
     /** @test

@@ -80,7 +80,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
     Route::delete('/statuses/{status}', 'StatusController@delete')->name('status.delete');
 
-    Route::get('/histories', 'HistoryController@index')->name('history.index');
+    Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
