@@ -91,7 +91,7 @@ class ProjectTests extends TestCase
     }
 
     /** @test */
-    public function guest_can_not_access_order_managment_system()
+    public function guest_can_not_access_order_management_system()
     {
         $attributes = factory('App\Order')->raw();
         $order = factory('App\Order')->create();
@@ -164,9 +164,9 @@ class ProjectTests extends TestCase
     public function each_user_has_many_products()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 0, 1);
-        $product = factory('App\Product')->create();
-
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepOrder();
+        $this->assertInstanceOf(Product::class, Auth::user()->products->find(1));
     }
 
 
