@@ -2,19 +2,26 @@
 
 namespace Tests\Feature;
 
+use App\Customer;
+use App\Order;
+use App\Product;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class ProjectTests extends TestCase {
+class ProjectTests extends TestCase
+{
 
     use WithFaker,
         RefreshDatabase;
 
     /** @test */
-    public function retailer_can_create_order() {
+    public function retailer_can_create_order()
+    {
         $this->withoutExceptionHandling();
-        $this->prepRetailerEnv('Retailer', 'create-order', 0, 1 );
+        $this->prepRetailerEnv('Retailer', 'create-order', 0, 1);
         $attributes = [
             'id' => $this->faker->numberBetween($min = 3000, $max = 4000),
             'user_id' => $user->id,
@@ -26,36 +33,41 @@ class ProjectTests extends TestCase {
     }
 
     /** @test */
-    public function an_order_requires_orderID() {
+    public function an_order_requires_orderID()
+    {
         $this->actingAs(factory('App\User')->create());
         $attributes = factory('App\Order')->raw(['id' => '']);
         $this->post('/orders', $attributes)->assertSessionHasErrors('id');
     }
 
     /** @test */
-    public function an_order_requires_userID() {
+    public function an_order_requires_userID()
+    {
         $this->actingAs(factory('App\User')->create());
         $attributes = factory('App\Order')->raw(['user_id' => '']);
         $this->post('/orders', $attributes)->assertSessionHasErrors('user_id');
     }
 
     /** @test */
-    public function an_order_requires_country() {
+    public function an_order_requires_country()
+    {
         $this->actingAs(factory('App\User')->create());
         $attributes = factory('App\Order')->raw(['country' => '']);
         $this->post('/orders', $attributes)->assertSessionHasErrors('country');
     }
 
     /** @test */
-    public function a_user_can_view_their_order() {
+    public function a_user_can_view_their_order()
+    {
         $this->be(factory('App\User')->create());
         $order = factory('App\Order')->create(['user_id' => auth()->id()]);
         $this->get($order->path())
-                ->assertSee($order->id);
+            ->assertSee($order->id);
     }
 
     /** @test */
-    public function an_authenticated_user_cannot_view_the_orders_of_others() {
+    public function an_authenticated_user_cannot_view_the_orders_of_others()
+    {
         $this->withoutExceptionHandling();
         $this->be(factory('App\User')->create());
         $order = factory('App\Order')->create();
@@ -63,13 +75,15 @@ class ProjectTests extends TestCase {
     }
 
     /** @test */
-    public function it_belongs_to_a_user() {
+    public function it_belongs_to_a_user()
+    {
         $order = factory('App\Order')->create();
         $this->assertInstanceOf('App\User', $order->owner);
     }
 
     /** @test */
-    public function other_users_can_not_access_order_management_system() {
+    public function other_users_can_not_access_order_management_system()
+    {
         $user = factory('App\User')->create(['access_level' => 'Accountant']);
         $this->actingAs($user);
         // other users can not make order
@@ -77,7 +91,8 @@ class ProjectTests extends TestCase {
     }
 
     /** @test */
-    public function guest_can_not_access_order_managment_system() {
+    public function guest_can_not_access_order_managment_system()
+    {
         $attributes = factory('App\Order')->raw();
         $order = factory('App\Order')->create();
         //guests can not create user
@@ -89,16 +104,68 @@ class ProjectTests extends TestCase {
     }
 
     /** @test */
-    public function orders_can_not_be_deleted_from_system() {
+    public function orders_can_not_be_deleted_from_system()
+    {
         $this->delete('/orders')->assertRedirect('access-denied');
     }
 
-    /** @test */
+    /** @test
+     * one to many relationship
+     */
+
+    public function each_user_has_many_orders()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepOrder();
+        $this->assertInstanceOf(Order::class, Auth::user()->orders->find(1));
+    }
+
+    /** @test
+     * one to many relationship
+     */
+    public function each_order_belongs_to_a_user()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepOrder();
+        $order = Order::find(1);
+        $this->assertInstanceOf(User::class, $order->user);
+    }
+
+    /** @test
+     * one to many relationship
+     */
+    public function each_customer_has_many_orders()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepOrder();
+        $customer = Customer::find(1);
+        $this->assertInstanceOf(Order::class, $customer->orders->find(1));
+    }
+
+    /** @test
+     * one to many relationship
+     */
+    public function each_order_belongs_to_a_customer()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepOrder();
+        $order = Order::find(1);
+        $this->assertInstanceOf(Customer::class, $order->customer);
+    }
+
+
+    /** @test
+     * one to many through relationship
+     */
     public function each_user_has_many_products()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 0, 1);
-        factory('App/')
+        $product = factory('App\Product')->create();
 
     }
 
