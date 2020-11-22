@@ -5,12 +5,13 @@ namespace Tests;
 use App\Permission;
 use App\Role;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Auth;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    /*
+    /**
      * prepare administrator environment
      */
 
@@ -26,7 +27,7 @@ abstract class TestCase extends BaseTestCase
         $this->actingAs($user);
     }
 
-    /*
+    /**
      * prepare normal user environment
      */
 
@@ -40,4 +41,21 @@ abstract class TestCase extends BaseTestCase
         $role->allowTo($permission);
         $this->actingAs($user);
     }
+
+    /**
+     * create order and product
+     */
+
+    protected function prepOrder()
+    {
+        $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
+        $order = factory('App\Order')->create([
+            'user_id' => Auth::user()->id,
+            'customer_id' => $customer->id
+        ]);
+        $product = factory('App\Product')->create([
+            'order_id' => $order->id,
+        ]);
+    }
+
 }
