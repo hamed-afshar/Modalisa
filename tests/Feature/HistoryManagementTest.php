@@ -33,8 +33,28 @@ class HistoryManagementTest extends TestCase
             'product_id' => $product->id,
             'status_id' => $status2->id,
         ]);
-        $this->get('/histories/' .  $product->id)->assertSeeText($history1->created_at)
+        $this->get('/histories/' . $product->id)->assertSeeText($history1->created_at)
             ->assertSeeText($history2->created_at);
+    }
+
+    /** @test
+     * history created on product creation
+     */
+    public function product_model_observe_to_create_history_on_product_creation()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $status = factory('App\Status')->create();
+        $this->prepOrder();
+        $this->assertDatabaseHas('histories', ['product_id' => Product::find(1)->id, 'status_id' => $status->id]);
+    }
+
+    /** @test
+     * history created on story changes
+     */
+    public function only_BuyerAdmin_can_change_product_history()
+    {
+
     }
 
     /** @test
