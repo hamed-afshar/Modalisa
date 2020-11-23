@@ -17,13 +17,6 @@ class Product extends Model
         return "/products/{$this->path()}";
     }
 
-    /**
-     * each product belongs to a status
-     */
-    public function status()
-    {
-        return $this->belongsTo('App\Status');
-    }
 
     /**
      * each product has many histories

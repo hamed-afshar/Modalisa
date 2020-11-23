@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\History;
 use App\Product;
 use App\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -33,7 +34,7 @@ class StatusManagementTest extends TestCase
     }
 
     /** @test */
-    public function only_BuyerAdmin_can_see_all_statuses()
+    public function onlySystemAdmin_can_see_all_statuses()
     {
         $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
@@ -85,9 +86,9 @@ class StatusManagementTest extends TestCase
     }
 
     /*
-     * This test is not neccessary
+     * This test is not necessary
      */
-    public function only_system_admin_can_view_a_single_status()
+    public function only_SystemAdmin_can_view_a_single_status()
     {
 
     }
@@ -125,26 +126,6 @@ class StatusManagementTest extends TestCase
         $this->assertDatabaseMissing('statuses', ['id' => $status->id]);
     }
 
-    /** @test
-     * one to many relationship
-     */
-    public function status_can_have_many_products()
-    {
-        $status = factory('App\Status')->create();
-        factory('App\Product')->create(['status_id' => $status->id]);
-        $this->assertInstanceOf(Product::class, $status->products->find(1));
-    }
-
-    /** @test
-     * one to many relationship
-     */
-    public function product_belongs_to_a_status()
-    {
-        $this->withoutExceptionHandling();
-        $status = factory('App\Status')->create();
-        $product = factory('App\Product')->create(['status_id' => $status->id]);
-        $this->assertInstanceOf(Status::class, $product->status);
-    }
 
     /** @test */
     public function guests_can_not_access_permission_management()

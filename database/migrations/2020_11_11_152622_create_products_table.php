@@ -15,7 +15,6 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('status_id')->nullable();
             $table->unsignedBigInteger('order_id');
             $table->string('size');
             $table->string('color');
@@ -29,7 +28,6 @@ class CreateProductsTable extends Migration
             $table->string('ref');
             $table->timestamps();
 
-            $table->foreign('status_id')->references('id')->on('statuses')->onUpdate('cascade')->onDelete('SET NULL');
             $table->foreign('order_id')->references('id')->on('orders')->onUpdate('cascade')->onDelete('cascade');
         });
     }

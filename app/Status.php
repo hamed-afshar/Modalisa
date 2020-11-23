@@ -16,13 +16,6 @@ class Status extends Model
         return "/statuses/{$this->id}";
     }
 
-    /**
-     * each status has many products
-     */
-    public function products()
-    {
-        return $this->hasMany('App\Products');
-    }
 
     /**
      * each status has many histories
