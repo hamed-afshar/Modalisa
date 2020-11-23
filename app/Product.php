@@ -25,4 +25,15 @@ class Product extends Model
     {
         return $this->hasMany('App\History');
     }
+
+    /**
+     * change history for product
+     */
+    public function changeHistory($status)
+    {
+        $data = [
+            'status_id' => $status->id
+        ];
+        $this->histories()->update($data);
+    }
 }
