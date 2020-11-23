@@ -27,4 +27,13 @@ class HistoryController extends Controller
         $this->authorize('create', History::class);
         $product->changeHistory($status);
     }
+
+    /**
+     * delete history
+     */
+    public function destroy(History $history)
+    {
+        $this->authorize('delete', $history);
+        $history->delete();
+    }
 }

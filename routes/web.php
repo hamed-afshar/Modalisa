@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
     Route::post('/change-history/{product}/{status}', 'HistoryController@store')->name('history.store');
+    Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.delete');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');

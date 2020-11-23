@@ -26,7 +26,7 @@ class HistoryPolicy
      */
     public function viewAny(User $user)
     {
-        if($user->checkPermission('check-status'))
+        if($user->checkPermission('check-history'))
         {
             return true;
         }
@@ -79,7 +79,10 @@ class HistoryPolicy
      */
     public function delete(User $user, History $history)
     {
-        //
+        if($user->checkPermission('delete-history'))
+        {
+            return true;
+        }
     }
 
     /**

@@ -14,20 +14,34 @@ class HistoryManagementTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test */
+    public function other_users_can_not_access_history_system()
+    {
+//        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailers', 'make-order', 0, 1);
+        $status = factory('App\Status')->create();
+        $this->prepOrder();
+        $product = Product::find(1);
+        $history = History::find(1);
+        $this->get('/histories/' . $product->id)->assertForbidden();
+        $this->post('/change-history/' . $product->id . '/' . $status->id)->assertForbidden();
+        $this->delete('/histories/' . $history->id)->assertForbidden();
+    }
+
+    /** @test */
     public function retailers_can_check_their_product_histories()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'check-status', 0, 1);
+        $this->prepNormalEnv('retailer', 'check-history', 0, 1);
+        $status1 = factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
-        $status1 = factory('App\Status')->create();
-        $history1 = factory('App\History')->create([
-            'product_id' => $product->id,
-            'status_id' => $status1->id,
-        ]);
         $status2 = factory('App\Status')->create([
             'name' => 'arrived',
             'description' => 'arrived to office'
+        ]);
+        $history1 = factory('App\History')->create([
+            'product_id' => $product->id,
+            'status_id' => $status1->id,
         ]);
         $history2 = factory('App\History')->create([
             'product_id' => $product->id,
@@ -61,6 +75,18 @@ class HistoryManagementTest extends TestCase
         $product = Product::find(1);
         $this->post('/change-history/' . $product->id . '/' . $status->id);
         $this->assertDatabaseHas('histories', ['product_Id' => $product->id, 'status_id' => $status->id]);
+    }
+
+    /** @test */
+    public function only_BuyerAdmin_can_delete_histories()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('BuyerAdmin', 'delete-history', 0, 1);
+        $status = factory('App\Status')->create();
+        $this->prepOrder();
+        $history = History::find(1);
+        $this->delete('/histories/' . $history->id);
+        $this->assertDatabaseMissing('histories', ['id' => $history->id]);
     }
 
     /** @test
@@ -123,5 +149,12 @@ class HistoryManagementTest extends TestCase
         $this->assertInstanceOf(Product::class, $history->product);
     }
 
+    /** @test */
+    public function guests_can_not_access_history_management()
+    {
+        $this->get('/histories/1')->assertRedirect('login');
+        $this->post('/change-history/1/1')->assertRedirect('login');
+        $this->delete('/histories/1')->assertRedirect('login');
+    }
 
 }
