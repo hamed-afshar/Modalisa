@@ -17,7 +17,7 @@ class StatusPolicy
      */
     public function before(User $user)
     {
-        if (!($user->isAdmin())) {
+        if (!($user->isAdmin()) || $user->isLocked() || !($user->isConfirmed())) {
             return false;
         }
     }
