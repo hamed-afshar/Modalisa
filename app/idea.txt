@@ -45,3 +45,4 @@ access denied page..
 38. access denied responces should back from policies.
 39. can we delete orders or not?
 40 which tyoe is suitable for price? String or integer?
+41. status must set to 1 on product creation time.
