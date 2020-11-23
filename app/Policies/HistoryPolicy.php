@@ -52,7 +52,10 @@ class HistoryPolicy
      */
     public function create(User $user)
     {
-        //
+        if($user->checkPermission('change-history'))
+        {
+            return true;
+        }
     }
 
     /**

@@ -32,8 +32,9 @@ class Product extends Model
     public function changeHistory($status)
     {
         $data = [
+            'product_id' => $this->id,
             'status_id' => $status->id
         ];
-        $this->histories()->update($data);
+        $this->histories()->create($data);
     }
 }

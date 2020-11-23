@@ -55,7 +55,12 @@ class HistoryManagementTest extends TestCase
     public function only_BuyerAdmin_can_change_product_history()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('BuyerAdmin', 'change-history', 0, 1)
+        $this->prepNormalEnv('BuyerAdmin', 'change-history', 0, 1);
+        $status = factory('App\Status')->create();
+        $this->prepOrder();
+        $product = Product::find(1);
+        $this->post('/change-history/' . $product->id . '/' . $status->id);
+        $this->assertDatabaseHas('histories', ['product_Id' => $product->id, 'status_id' => $status->id]);
     }
 
     /** @test
