@@ -20,8 +20,8 @@ class CreateCustomersTable extends Migration
             $table->string('tel');
             $table->string('communication_media');
             $table->string('communication_id');
-            $table->string('address');
-            $table->string('email');
+            $table->string('address')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

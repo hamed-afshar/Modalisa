@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
+    protected $guarded = [];
+
+    /**
+     * return path
+     */
+    public function path()
+    {
+        return "/customers/{$this->id}";
+    }
+
     /**
      * each customer has many orders
      */
@@ -13,5 +23,14 @@ class Customer extends Model
     public function orders()
     {
         return $this->hasMany('App\Order');
+    }
+
+    /**
+     * each customer belongs to a user
+     */
+    public function user()
+    {
+       return $this->belongsTo('App\User');
+
     }
 }

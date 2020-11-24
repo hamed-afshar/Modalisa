@@ -141,15 +141,27 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany('App\Transaction');
     }
 
-    /** each user has many products */
+    /**
+     * each user has many products
+     */
     public function products()
     {
         return $this->hasManyThrough('App\Product', 'App\Order');
     }
 
-    /** each user has many orders */
+    /**
+     * each user has many orders
+     */
     public function orders()
     {
         return $this->hasMany('App\Order');
+    }
+
+    /**
+     * each user has many customers
+     */
+    public function customers()
+    {
+        return $this->hasMany('App\Customer');
     }
 }

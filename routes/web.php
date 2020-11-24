@@ -88,6 +88,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders/{order}', 'OrdersController@show');
     Route::post('/orders', 'OrdersController@store');
 
+    Route::get('/customers', 'CustomerController@index')->name('customers.index');
+    Route::get('/customers/create', 'CustomerController@create')->name('customers.create');
+    Route::post('/customers', 'CustomerController@store')->name('customers.store');
+    Route::get('/customers/{customer}', 'CustomerController@show')->name('customers.show');
+    Route::get('/customers/{customer}/edit', 'CustomerController@edit')->name('customers.edit');
+    Route::patch('/customers/{customer}', 'CustomerController@update')->name('customers.update');
+    Route::delete('/customers/{customer}', 'CustomerController@destroy')->name('customers.destroy');
 
 });
 
