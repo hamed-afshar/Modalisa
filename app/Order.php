@@ -13,4 +13,12 @@ class Order extends Model
     {
         return $this->belongsTo('App\Customer');
     }
+
+    /**
+     * each order may have many notes
+     */
+    public function notes()
+    {
+        return $this->morphMany('App\Note', 'notable');
+    }
 }
