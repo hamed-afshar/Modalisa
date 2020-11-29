@@ -8,6 +8,6 @@ use Faker\Generator as Faker;
 $factory->define(Cost::class, function (Faker $faker) {
     return [
         'amount' => 100,
-        'description' => 'delivery'
+        'description' => 'delivery to office'
     ];
 });
