@@ -15,7 +15,10 @@ class CreateCostsTable extends Migration
     {
         Schema::create('costs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->timestamps();
+            $table->integer('amount');
+            $table->string('description');
+            $table->morphs('costable');
+            $table->timestamp();
         });
     }
 
