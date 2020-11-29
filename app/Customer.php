@@ -33,4 +33,12 @@ class Customer extends Model
        return $this->belongsTo('App\User');
 
     }
+
+    /**
+     * each customer may have notes
+     */
+    public function notes()
+    {
+        return $this->morphMany('App\Note', 'notable');
+    }
 }

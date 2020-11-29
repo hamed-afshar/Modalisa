@@ -37,4 +37,12 @@ class Product extends Model
         ];
         $this->histories()->create($data);
     }
+
+    /**
+     * each product may have many notes
+     */
+    public function notes()
+    {
+        return $this->morphMany('App\Note', 'notable');
+    }
 }
