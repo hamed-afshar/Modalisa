@@ -45,4 +45,12 @@ class Product extends Model
     {
         return $this->morphMany('App\Note', 'notable');
     }
+
+    /**
+     * each product belongs to a kargo
+     */
+    public function kargo()
+    {
+        return $this->belongsTo('App\Kargo');
+    }
 }

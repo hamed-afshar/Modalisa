@@ -15,7 +15,15 @@ class CreateKargosTable extends Migration
     {
         Schema::create('kargos', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->integer('weight');
+            $table->string('receiver_name');
+            $table->string('receiver_tel');
+            $table->string('receiver_address');
+            $table->timestamp('sending_date');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('SET NULL');
         });
     }
 

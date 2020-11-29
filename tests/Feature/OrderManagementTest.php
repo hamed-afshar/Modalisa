@@ -3,11 +3,13 @@
 namespace Tests\Feature;
 
 use App\Customer;
+use App\Kargo;
 use App\Order;
 use App\Product;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -167,6 +169,32 @@ class ProjectTests extends TestCase
         $this->prepNormalEnv('retailer', 'make-order', 0, 1);
         $this->prepOrder();
         $this->assertInstanceOf(Product::class, Auth::user()->products->find(1));
+    }
+
+    /** @test
+     * one to many relationship
+     */
+    public function each_karo_has_many_products()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $kargo = Kargo::find(1);
+        $this->assertInstanceOf(Product::class, $kargo->products->find(1));
+    }
+
+    /** @test
+     * one to many relation ship
+     */
+    public function each_product_belongs_to_a_kargo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $product = Product::find(1);
+        $this->assertInstanceOf(Kargo::class, $product->kargo);
     }
 
 

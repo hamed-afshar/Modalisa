@@ -53,8 +53,10 @@ abstract class TestCase extends BaseTestCase
             'user_id' => Auth::user()->id,
             'customer_id' => $customer->id
         ]);
+        $kargo = factory('App\Kargo')->create(['user_id' => Auth::user()->id]);
         $product = factory('App\Product')->create([
             'order_id' => $order->id,
+            'kargo_id' => $kargo->id
         ]);
     }
 
