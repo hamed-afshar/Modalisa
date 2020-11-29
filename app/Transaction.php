@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     protected $guarded = [];
 
-    /*
+    /**
      * return transaction path
      */
     public function path()
@@ -17,11 +17,20 @@ class Transaction extends Model
         return "/transactions/{$this->id}";
     }
 
-    /*
+    /**
      * each transaction belongs to a user
      */
     public function user()
     {
         return $this->belongsTo('App\User');
     }
+
+    /**
+     * each transaction may have many notes
+     */
+    public function notes()
+    {
+        return $this->morphMany('App\Note', 'notable');
+    }
+
 }
