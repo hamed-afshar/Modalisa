@@ -18,7 +18,7 @@ class CreateCostsTable extends Migration
             $table->integer('amount');
             $table->string('description');
             $table->morphs('costable');
-            $table->timestamp();
+            $table->timestamps();
         });
     }
 
