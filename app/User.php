@@ -164,4 +164,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Customer');
     }
+
+    /**
+     * each user has many notes
+     */
+    public function notes()
+    {
+        return $this->hasMany('App\Note');
+    }
 }

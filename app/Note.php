@@ -14,4 +14,12 @@ class Note extends Model
         return $this->morphTo();
     }
 
+    /**
+     * each note belongs to a user
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
 }
