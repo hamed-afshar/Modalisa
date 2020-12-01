@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Policies;
+
+use App\Note;
+use App\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class NotePolicy
+{
+    use HandlesAuthorization;
+    /**
+     * Determine whether user is locked or not confirmed first
+     * @param User $user
+     * @return bool
+     */
+    public function before(User $user)
+    {
+        if($user->isLocked() || !($user->isConfirmed())) {
+            return false;
+        }
+    }
+
+    /**
+     * Determine whether the user can view any notes.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user, Note $note)
+    {
+        if($user->checkPermission('see-notes') && $note->notable->user_id == $user->id )
+        {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the note.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Note  $note
+     * @return mixed
+     */
+    public function view(User $user, Note $note)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can create notes.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function create(User $user)
+    {
+
+    }
+
+    /**
+     * Determine whether the user can update the note.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Note  $note
+     * @return mixed
+     */
+    public function update(User $user, Note $note)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can delete the note.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Note  $note
+     * @return mixed
+     */
+    public function delete(User $user, Note $note)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can restore the note.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Note  $note
+     * @return mixed
+     */
+    public function restore(User $user, Note $note)
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can permanently delete the note.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Note  $note
+     * @return mixed
+     */
+    public function forceDelete(User $user, Note $note)
+    {
+        //
+    }
+}

@@ -21,11 +21,56 @@ class NoteManagementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-//    /** @test */
-//    public function user_can_see_all_notes_related_to_a_model()
-//    {
-//
-//    }
+    /** @test */
+    public function users_can_only_access_to_their_own_notes()
+    {
+        $this->prepNormalEnv('retailer', 'see-notes', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user1 = Auth::user();
+        $order = Order::find(1);
+        $note = factory('App\Note')->create(['user_id' => $user1->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        $user2 = factory('App\User')->create();
+        $this->actingAs($user2);
+        $this->get('/notes/' . $note->id)->assertForbidden();
+    }
+
+    /**
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_create_a_note()
+    {
+
+    }
+
+    /** @test */
+
+    public function user_can_create_a_note()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $attributes = factory('App\Note')->raw(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        $this->post('/notes', $attributes);
+        $this->assertDatabaseHas('notes', ['id' => 1]);
+    }
+
+    /** @test */
+    public function user_can_see_all_notes_related_to_a_model()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'see-notes', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        $this->get('/notes/' . $note->id)->assertSeeText($note->body);
+    }
+
     /** @test
      * one to many relationship
      */
@@ -37,7 +82,7 @@ class NoteManagementTest extends TestCase
         $this->prepOrder();
         $order = Order::find(1);
         $user = Auth::user();
-        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
         $this->assertInstanceOf(Note::class, $user->notes->find(1));
     }
 
@@ -47,7 +92,7 @@ class NoteManagementTest extends TestCase
     public function each_note_belongs_to_a_user()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0 , 1);
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
         factory('App\Status')->create();
         $this->prepOrder();
         $user = Auth::user();
