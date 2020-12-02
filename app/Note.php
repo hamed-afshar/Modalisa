@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Note extends Model
 {
     /**
+     * return path
+     */
+    public function path()
+    {
+        return "/notes/{$this->id}";
+    }
+
+    /**
      * each note belongs to a model
      */
     public function notable()

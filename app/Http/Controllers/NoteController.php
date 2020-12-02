@@ -26,4 +26,37 @@ class NoteController extends Controller
     {
         $this->authorize('create', Note::class);
     }
+
+    /**
+     * store notes
+     */
+    public function store()
+    {
+        $this->authorize('create', Note::class);
+        $user = Auth::user();
+        $data = request()->validate([
+            'title' => 'required',
+            'body' => 'required',
+            'notable_type' => 'required',
+            'notable_id' => 'required'
+        ]);
+        $user->notes()->create($data);
+    }
+
+    /**
+     * edit form
+     * VueJs generates this form
+     */
+    public function edit()
+    {
+
+    }
+
+    /**
+     * update a note
+     */
+    public function update($note)
+    {
+        $this->authorize('update', $note);
+    }
 }

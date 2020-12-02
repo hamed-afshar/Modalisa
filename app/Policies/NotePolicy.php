@@ -29,8 +29,7 @@ class NotePolicy
      */
     public function viewAny(User $user, Note $note)
     {
-        if($user->checkPermission('see-notes') && $note->notable->user_id == $user->id )
-        {
+        if($user->checkPermission('see-notes') && $note->notable->user_id == $user->id ) {
             return true;
         }
     }
@@ -55,7 +54,9 @@ class NotePolicy
      */
     public function create(User $user)
     {
-
+       if($user->checkPermission('create-notes')) {
+           return true;
+       }
     }
 
     /**
@@ -67,7 +68,7 @@ class NotePolicy
      */
     public function update(User $user, Note $note)
     {
-        //
+        return false
     }
 
     /**

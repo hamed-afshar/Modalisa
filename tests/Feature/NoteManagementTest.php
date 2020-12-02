@@ -44,7 +44,6 @@ class NoteManagementTest extends TestCase
     }
 
     /** @test */
-
     public function user_can_create_a_note()
     {
         $this->withoutExceptionHandling();
@@ -57,6 +56,77 @@ class NoteManagementTest extends TestCase
         $this->post('/notes', $attributes);
         $this->assertDatabaseHas('notes', ['id' => 1]);
     }
+
+    /** @test */
+    public function title_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $attributes = factory('App\Note')->raw(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id, 'title' => '']);
+        $this->post('/notes', $attributes)->assertSessionHasErrors('title');
+    }
+
+    /** @test */
+    public function body_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $attributes = factory('App\Note')->raw(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id, 'body' => '']);
+        $this->post('/notes', $attributes)->assertSessionHasErrors('body');
+    }
+
+    /** @test */
+    public function notable_type_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $attributes = factory('App\Note')->raw(['user_id' => $user->id, 'notable_type' => '', 'notable_id' => $order->id]);
+        $this->post('/notes', $attributes)->assertSessionHasErrors('notable_type');
+    }
+
+    /** @test */
+    public function notable_id_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $attributes = factory('App\Note')->raw(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => '']);
+        $this->post('/notes', $attributes)->assertSessionHasErrors('notable_id');
+    }
+
+    /**
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_update_a_note()
+    {
+
+    }
+
+    /** @test */
+    public function users_can_not_update_notes()
+    {
+        $this->prepNormalEnv('retailer', 'create-notes', 0 , 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $user = Auth::user();
+        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        $this->patch($note->path())->assertForbidden();
+    }
+
+
+
 
     /** @test */
     public function user_can_see_all_notes_related_to_a_model()
@@ -101,9 +171,6 @@ class NoteManagementTest extends TestCase
         $this->assertInstanceOf(User::class, $note->user);
     }
 
-    /** @test
-     * one to many relationship
-     */
 
     /** all relationship related to Note model should be tested
      * Models that have a polymorphic relationship with Note are::

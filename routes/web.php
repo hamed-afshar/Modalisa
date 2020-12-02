@@ -99,6 +99,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/notes/{note}' , 'NoteController@index')->name('notes.index');
     Route::get('/notes/create', 'NoteController@create')->name('notes.create');
     Route::post('/notes', 'NoteController@store')->name('note.store');
+    Route::get('/notes/{note}/edit' , 'NoteController@edit')->name('note.edit');
+    Route::patch('/notes/{note}', 'NoteController@update')->name('notes.update');
 });
 
 
