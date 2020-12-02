@@ -128,7 +128,7 @@ class FinancialManagementTest extends TestCase
         $this->get($transaction->path())->assertSeeText($transaction->comment);
     }
 
-    /*
+    /**
      * this should be tested in VueJs
      */
     public function form_is_available_to_update_a_transaction()
