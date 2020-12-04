@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Generator\DefaultTimeGenerator;
 use Tests\TestCase;
 
-class NoteManagementTest extends TestCase
+class comNoteManagementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
@@ -32,7 +32,23 @@ class NoteManagementTest extends TestCase
         $note = factory('App\Note')->create(['user_id' => $user1->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
         $user2 = factory('App\User')->create();
         $this->actingAs($user2);
+        // user can not see others notes
         $this->get('/notes/' . $note->id)->assertForbidden();
+        // users can not delete other user's note
+        $this->delete('/notes/' . $note->id)->assertForbidden();
+    }
+
+    /** @test */
+    public function user_can_see_its_notes()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'see-notes', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $user = Auth::user();
+        $order = Order::find(1);
+        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
+        $this->get('/notes')->assertSeeText($note->body);
     }
 
     /**
@@ -105,6 +121,19 @@ class NoteManagementTest extends TestCase
         $this->post('/notes', $attributes)->assertSessionHasErrors('notable_id');
     }
 
+    /** @test */
+    public function users_can_see_a_single_note()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'see-notes', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $user = Auth::user();
+        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order' , 'notable_id' => $order->id]);
+        $this->get($note->path())->assertSeeText($note->body);
+    }
+
     /**
      * this should be tested in VueJs
      */
@@ -125,20 +154,18 @@ class NoteManagementTest extends TestCase
         $this->patch($note->path())->assertForbidden();
     }
 
-
-
-
     /** @test */
-    public function user_can_see_all_notes_related_to_a_model()
+    public function users_can_delete_a_note()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'see-notes', 0, 1);
+        $this->prepNormalEnv('retailer', 'delete-notes', 0 , 1);
         factory('App\Status')->create();
         $this->prepOrder();
-        $user = Auth::user();
         $order = Order::find(1);
-        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
-        $this->get('/notes/' . $note->id)->assertSeeText($note->body);
+        $user = Auth::user();
+        $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id'=> $order->id]);
+        $this->delete($note->path());
+        $this->assertDatabaseMissing('notes', ['id' => $note->id]);
     }
 
     /** @test
@@ -345,5 +372,17 @@ class NoteManagementTest extends TestCase
         factory('App\Cost')->create(['costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $note = factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Cost', 'notable_id' => 1]);
         $this->assertInstanceOf(Cost::class, $note->notable);
+    }
+
+    /** @test */
+    public function guests_can_not_access_note_management()
+    {
+        $this->get('/notes')->assertRedirect('login');
+        $this->get('/notes/create')->assertRedirect('login');
+        $this->post('/notes')->assertRedirect('login');
+        $this->get('/notes/1')->assertRedirect('login');
+        $this->get('/notes/1' . '/edit')->assertRedirect('login');
+        $this->patch('/notes/1')->assertRedirect('login');
+        $this->delete('/notes/1')->assertRedirect('login');
     }
 }

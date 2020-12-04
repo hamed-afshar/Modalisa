@@ -96,11 +96,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/customers/{customer}', 'CustomerController@update')->name('customers.update');
     Route::delete('/customers/{customer}', 'CustomerController@destroy')->name('customers.destroy');
 
-    Route::get('/notes/{note}' , 'NoteController@index')->name('notes.index');
+    Route::get('/notes' , 'NoteController@index')->name('notes.index');
     Route::get('/notes/create', 'NoteController@create')->name('notes.create');
     Route::post('/notes', 'NoteController@store')->name('note.store');
+    Route::get('/notes/{note}' , 'NoteController@show')->name('notes.show');
     Route::get('/notes/{note}/edit' , 'NoteController@edit')->name('note.edit');
     Route::patch('/notes/{note}', 'NoteController@update')->name('notes.update');
+    Route::delete('/notes/{note}', 'NoteController@destroy')->name('notes.destroy');
 });
 
 

@@ -14,7 +14,7 @@ class NoteController extends Controller
      */
     public function index(Note $note)
     {
-        $this->authorize('viewAny', $note);
+        $this->authorize('viewAny', Note::class);
         return Auth::user()->notes;
     }
 
@@ -43,6 +43,12 @@ class NoteController extends Controller
         $user->notes()->create($data);
     }
 
+    public function show(Note $note)
+    {
+        $this->authorize('view', $note);
+        return Auth::user()->notes->find($note);
+    }
+
     /**
      * edit form
      * VueJs generates this form
@@ -55,8 +61,17 @@ class NoteController extends Controller
     /**
      * update a note
      */
-    public function update($note)
+    public function update(Note $note)
     {
         $this->authorize('update', $note);
+    }
+
+    /**
+     * delete a note
+     */
+    public function destroy(Note $note)
+    {
+        $this->authorize('delete', $note);
+        $note->delete();
     }
 }

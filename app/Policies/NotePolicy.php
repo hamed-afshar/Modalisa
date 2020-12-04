@@ -27,15 +27,15 @@ class NotePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function viewAny(User $user, Note $note)
-    {
-        if($user->checkPermission('see-notes') && $note->notable->user_id == $user->id ) {
+    public function viewAny(User $user) {
+        if($user->checkPermission('see-notes')) {
             return true;
         }
     }
 
     /**
      * Determine whether the user can view the note.
+     * Use can only see its own notes
      *
      * @param  \App\User  $user
      * @param  \App\Note  $note
@@ -43,7 +43,10 @@ class NotePolicy
      */
     public function view(User $user, Note $note)
     {
-        //
+        if($user->checkPermission('see-notes') && $user->id == $note->user->id) {
+
+            return true;
+        }
     }
 
     /**
@@ -68,7 +71,7 @@ class NotePolicy
      */
     public function update(User $user, Note $note)
     {
-        return false
+        return false;
     }
 
     /**
@@ -80,7 +83,9 @@ class NotePolicy
      */
     public function delete(User $user, Note $note)
     {
-        //
+        if($user->checkPermission('delete-notes') && $note->notable->user_id == $user->id) {
+            return true;
+        }
     }
 
     /**
