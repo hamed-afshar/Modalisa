@@ -17,6 +17,7 @@ class CreateCostsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('amount');
             $table->string('description');
+            $table->string('image')->nullable();
             $table->morphs('costable');
             $table->timestamps();
         });

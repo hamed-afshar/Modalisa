@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('kargo_id')->nullable();
             $table->string('size');
             $table->string('color');
+            $table->string('image');
             $table->string('pic');
             $table->string('link');
             $table->string('price');

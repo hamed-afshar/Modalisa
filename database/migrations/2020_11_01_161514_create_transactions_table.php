@@ -19,7 +19,7 @@ class CreateTransactionsTable extends Migration
             $table->boolean('confirmed')->default(0);
             $table->string('currency');
             $table->string('amount');
-            $table->string('pic');
+            $table->string('image')->nullable();
             $table->string('comment')->nullable();
             $table->timestamps();
 
