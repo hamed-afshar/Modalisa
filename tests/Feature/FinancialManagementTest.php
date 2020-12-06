@@ -6,6 +6,7 @@ use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -93,7 +94,7 @@ class FinancialManagementTest extends TestCase
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id]);
         $this->post('/transactions', $attributes);
-        $this->assertDatabaseHas('transactions', $attributes);
+        $this->assertDatabaseHas('transactions', ['comment' => $attributes['comment']]);
     }
 
     /** @test */
@@ -113,11 +114,25 @@ class FinancialManagementTest extends TestCase
     }
 
     /** @test */
-    public function pic_is_required()
+    public function comment_is_required()
     {
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'pic' => '']);
-        $this->post('/transactions', $attributes)->assertSessionHasErrors('pic');
+        $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'comment' => '']);
+        $this->post('/transactions', $attributes)->assertSessionHasErrors('comment');
+    }
+
+    /** @test */
+    public function image_can_be_uploaded_for_transactions()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $attributes = factory('App\Transaction')->raw(
+            [
+                'user_id' => Auth::user()->id,
+                'image' => UploadedFile::fake()->create('pic.jpg')
+            ]);
+        $this->post('/transactions', $attributes);
+        $this->assertDatabaseHas('transactions', $attributes);
     }
 
     /** @test */

@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\uploadTrait;
 use App\Transaction;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Psy\Util\Str;
+
 
 class TransactionController extends Controller
 {
+    use uploadTrait;
+
     /**
      * index transactions
      */
@@ -29,17 +35,28 @@ class TransactionController extends Controller
 
     /**
      * store transactions
+     * @param Request $request
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function store()
+    public function store(Request $request)
     {
         $this->authorize('create', Transaction::class);
         $user = Auth::user();
-        $data = request()->validate([
+        $data = $request->validate([
             'currency' => 'required',
             'amount' => 'required',
-            'pic' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'comment' => 'required',
         ]);
+        if($request->has('image'))
+        {
+            $image = $request->file('image');
+            $name = date('mdYHis') . uniqid();
+            $folder = '/uploads/images/';
+            $filePath  = $folder . $name . '.' . $image->getClientOriginalExtension();
+            $this->uploadOne($image, $folder, 'public', $name);
+        }
+
         $user->transactions()->create($data);
     }
 
