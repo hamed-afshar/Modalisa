@@ -20,7 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->string('currency');
             $table->string('amount');
             $table->string('image')->nullable();
-            $table->string('comment')->nullable();
+            $table->string('comment');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
