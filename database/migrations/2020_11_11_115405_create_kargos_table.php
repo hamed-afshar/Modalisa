@@ -21,7 +21,7 @@ class CreateKargosTable extends Migration
             $table->string('receiver_tel');
             $table->string('receiver_address');
             $table->timestamp('sending_date');
-            $table->string('image')->nullable();
+            $table->string('image_name')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('SET NULL');

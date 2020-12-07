@@ -16,7 +16,7 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image_name')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
