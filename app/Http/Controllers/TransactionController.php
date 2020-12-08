@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\deleteTrait;
 use App\Traits\uploadTrait;
 use App\Transaction;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\Types\Null_;
 use Psy\Util\Str;
 
 
 class TransactionController extends Controller
 {
-    use uploadTrait;
+    use uploadTrait, deleteTrait;
 
     /**
      * index transactions
@@ -42,21 +44,32 @@ class TransactionController extends Controller
     {
         $this->authorize('create', Transaction::class);
         $user = Auth::user();
-        $data = $request->validate([
+        $request->validate([
             'currency' => 'required',
             'amount' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'comment' => 'required',
         ]);
-        if($request->has('image'))
-        {
+
+        /*
+         *  if request includes image then name will change
+         *  if request does not include image then name will be null
+         */
+        $imageName = null;
+
+        if ($request->has('image')) {
             $image = $request->file('image');
-            $name = date('mdYHis') . uniqid();
-            $folder = '/uploads/images/';
-            $filePath  = $folder . $name . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $name);
+            $imageName = date('mdYHis') . uniqid() . '.' . $image->getClientOriginalExtension();
+            $folder = '/images/';
+            $this->uploadOne($image, $folder, 'public', $imageName);
         }
 
+        $data = [
+            'currency' => $request->input('currency'),
+            'amount' => $request->input('amount'),
+            'image_name' => $imageName,
+            'comment' => $request->input('comment'),
+        ];
         $user->transactions()->create($data);
     }
 
@@ -82,15 +95,36 @@ class TransactionController extends Controller
     /**
      * update transactions
      */
-    public function update(Transaction $transaction)
+    public function update(Request $request, Transaction $transaction)
     {
         $this->authorize('update', $transaction);
-        $data = request()->validate([
+        request()->validate([
             'currency' => 'required',
             'amount' => 'required',
-            'pic' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'comment' => 'required'
         ]);
+
+        /*
+         *  if request includes image then name will change to the new name also delete the old file
+         *  if request does not include image then name will remain intact
+         */
+        $imageNewName = null;
+        if($request->has('image')) {
+            $image = $request->file('image');
+            $imageNewName = date('mdYHis') . uniqid() . '.' . $image->getClientOriginalExtension();
+            $folder = '/images/';
+            $this->uploadOne($image, $folder, 'public', $imageNewName);
+            $this->deleteOne($request->input('image_name'));
+        }
+
+        $data = [
+            'currency' => $request->input('currency'),
+            'amount' => $request->input('amount'),
+            'image_name' => !is_null($imageNewName) ? $imageNewName : $request->input('image_name'),
+            'comment' => $request->input('comment'),
+        ];
+
         $transaction->update($data);
     }
 
@@ -112,6 +146,27 @@ class TransactionController extends Controller
         $data = request()->validate([
             'confirmed' => 'required'
         ]);
+        $transaction->update($data);
+    }
+
+    /**
+     * upload image for transaction model
+     */
+    public function uploadImage(Request $request)
+    {
+//        $transaction = Transaction::find($request->input('id'));
+        dd($request);
+        $this->authorize('update', $transaction);
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+        $image = $request->file('image');
+        $name = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $this->uploadOne($image, $folder, 'public', $name);
+        $data = [
+          'image_name' => $name
+        ];
         $transaction->update($data);
     }
 }

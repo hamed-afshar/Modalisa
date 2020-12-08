@@ -10,7 +10,7 @@ $factory->define(Transaction::class, function (Faker $faker) {
         'confirmed' => 0,
         'currency' => 'Tl',
         'amount' => '1000',
-//        'image' => $faker->image(storage_path('images'), 640 , 480, null, false),
         'comment'=>'this is a test transaction'
     ];
 });
+

@@ -132,8 +132,11 @@ class FinancialManagementTest extends TestCase
                 'image' => UploadedFile::fake()->create('pic.jpg')
             ]);
         $this->post('/transactions', $attributes);
-        $this->assertDatabaseHas('transactions', $attributes);
+        $transaction = Transaction::find(1);
+        $image_name = $transaction->image_name;
+        $this->assertFileExists(public_path('storage\images\\' . $image_name));
     }
+
 
     /** @test */
     public function retailer_can_see_a_single_transaction()
@@ -157,14 +160,57 @@ class FinancialManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $oldImageName = $transaction->image_name;
+        $newPic = UploadedFile::fake()->create('newPic.jpg');
+        $newAttributesWithImage = [
+            'currency' => 'USD',
+            'amount' => '9999',
+            'comment' => 'new comment',
+            'image' => $newPic
+        ];
+        $newAttributesWithoutImage = [
+            'currency' => 'USD',
+            'amount' => '9999',
+            'comment' => 'new comment',
+        ];
+        $this->patch($transaction->path(), $newAttributesWithImage);
+        // assert transaction updated
+        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
+        // assert if image is included in the request then image name will change to new one and uploaded in to the server
+        $transaction = Transaction::find(1);
+
+        $this->assertFileExists(public_path('storage\images\\' . $transaction->image_name));
+        // assert if image is not included in the request then image name will remain same
+        $this->patch($transaction->path(), $newAttributesWithoutImage);
+        $this->assertDatabaseHas('transactions', ['image_name' => $oldImageName]);
+    }
+
+    /** @test */
+    public function old_image_deletes_after_updating_a_new_one()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $attributes = factory('App\Transaction')->raw(
+            [
+                'user_id' => Auth::user()->id,
+                'image' => UploadedFile::fake()->create('pic.jpg')
+            ]);
+        $this->post('/transactions', $attributes);
+        $transaction = Transaction::find(1);
+        $oldImageName = $transaction->image_name;
+        $this->assertFileExists(storage_path('images'), $oldImageName);
+
+        $newPic = UploadedFile::fake()->create('newPic.jpg');
         $newAttributes = [
             'currency' => 'USD',
             'amount' => '9999',
-            'pic' => 'new_link',
-            'comment' => 'new comment'
+            'comment' => 'new comment',
+            'image' => $newPic
         ];
         $this->patch($transaction->path(), $newAttributes);
-        $this->assertDatabaseHas('transactions', $newAttributes);
+        $this->assertDatabaseHas('transactions', ['comment' => $newAttributes['comment']]);
+        $this->assertFileNotExists(public_path('storage\images\\' . $oldImageName));
+
     }
 
     /** @test */
@@ -175,6 +221,8 @@ class FinancialManagementTest extends TestCase
         $this->delete($transaction->path());
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
     }
+
+
 
     /** @test */
     public function transaction_belongs_to_a_user()
