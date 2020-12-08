@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-trait uploadTrait
+trait UploadTrait
 {
     public function uploadOne(UploadedFile $uploadFile, $folder = null, $disk = 'public', $filename = null)
     {
