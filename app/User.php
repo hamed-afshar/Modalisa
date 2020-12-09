@@ -172,4 +172,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Note');
     }
+
+    /**
+     * each user has many images
+     */
+    public function images()
+    {
+        return $this->hasMany('App\Image');
+    }
 }
