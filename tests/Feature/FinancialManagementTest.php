@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class FinancialManagementTest extends TestCase
@@ -134,7 +135,7 @@ class FinancialManagementTest extends TestCase
         $this->post('/transactions', $attributes);
         $transaction = Transaction::find(1);
         $image_name = $transaction->image_name;
-        $this->assertFileExists(public_path('storage\images\\' . $image_name));
+        $this->assertFileExists(public_path('storage/' . $image_name));
     }
 
 
@@ -178,8 +179,7 @@ class FinancialManagementTest extends TestCase
         $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
         // assert if image is included in the request then image name will change to new one and uploaded in to the server
         $transaction = Transaction::find(1);
-
-        $this->assertFileExists(public_path('storage\images\\' . $transaction->image_name));
+        $this->assertFileExists(public_path('storage' . $transaction->image_name));
         // assert if image is not included in the request then image name will remain same
         $this->patch($transaction->path(), $newAttributesWithoutImage);
         $this->assertDatabaseHas('transactions', ['image_name' => $oldImageName]);
@@ -205,12 +205,12 @@ class FinancialManagementTest extends TestCase
             'currency' => 'USD',
             'amount' => '9999',
             'comment' => 'new comment',
+            'image_name' => $oldImageName,
             'image' => $newPic
         ];
         $this->patch($transaction->path(), $newAttributes);
         $this->assertDatabaseHas('transactions', ['comment' => $newAttributes['comment']]);
-        $this->assertFileNotExists(public_path('storage\images\\' . $oldImageName));
-
+        $this->assertFileNotExists(public_path('storage' . $oldImageName));
     }
 
     /** @test */
@@ -221,8 +221,6 @@ class FinancialManagementTest extends TestCase
         $this->delete($transaction->path());
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
     }
-
-
 
     /** @test */
     public function transaction_belongs_to_a_user()

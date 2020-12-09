@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Traits\deleteTrait;
-use App\Traits\uploadTrait;
+use App\Traits\ImageTrait;
 use App\Transaction;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Psy\Util\Str;
 
 class TransactionController extends Controller
 {
-    use uploadTrait, deleteTrait;
+    use ImageTrait;
 
     /**
      * index transactions
@@ -55,19 +55,20 @@ class TransactionController extends Controller
          *  if request includes image then name will change
          *  if request does not include image then name will be null
          */
-        $imageName = null;
+        $filePath = null;
 
         if ($request->has('image')) {
             $image = $request->file('image');
-            $imageName = date('mdYHis') . uniqid() . '.' . $image->getClientOriginalExtension();
+            $imageName = date('mdYHis') . uniqid();
             $folder = '/images/';
+            $filePath = $folder . $imageName . '.' .  $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageName);
         }
 
         $data = [
             'currency' => $request->input('currency'),
             'amount' => $request->input('amount'),
-            'image_name' => $imageName,
+            'image_name' => $filePath,
             'comment' => $request->input('comment'),
         ];
         $user->transactions()->create($data);
@@ -97,6 +98,7 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
+
         $this->authorize('update', $transaction);
         request()->validate([
             'currency' => 'required',
@@ -109,22 +111,21 @@ class TransactionController extends Controller
          *  if request includes image then name will change to the new name also delete the old file
          *  if request does not include image then name will remain intact
          */
-        $imageNewName = null;
+        $filePath = null;
         if($request->has('image')) {
             $image = $request->file('image');
-            $imageNewName = date('mdYHis') . uniqid() . '.' . $image->getClientOriginalExtension();
+            $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
+            $filePath = $folder . $imageNewName . '.' .  $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne($request->input('image_name'));
+            $this->deleteOne('public', $request->input('image_name'));
         }
-
         $data = [
             'currency' => $request->input('currency'),
             'amount' => $request->input('amount'),
-            'image_name' => !is_null($imageNewName) ? $imageNewName : $request->input('image_name'),
+            'image_name' => !is_null($filePath) ? $filePath : $request->input('image_name'),
             'comment' => $request->input('comment'),
         ];
-
         $transaction->update($data);
     }
 
