@@ -11,12 +11,55 @@ use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class ImageManagementTest extends TestCase
 {
     use  RefreshDatabase, WithFaker;
+
+    /** user is not supposed to index all of the uploaded pictures.
+     * it only needs to see pictures related to any model specifically
+     */
+    public function user_can_see_its_own_images_related_to_a_model()
+    {
+
+    }
+
+    /**
+     * this should be tested in VueJs
+     */
+    public function form_is_available_to_upload_an_image()
+    {
+
+    }
+
+    /** @test */
+    public function user_can_upload_and_store_pictures()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            $image = UploadedFile::fake()->create('image.jpg'),
+        ];
+        $this->post('/images', $attributes);
+//        $image_name = Image::find(1)->image_name;
+        $this->assertFileExists(public_path('storage/') . $image_name);
+    }
+
+
+    /** all relationship related to Note model should be tested
+     * Models that have normal relationship are:
+     * User
+     * Models that have a polymorphic relationship with Note are::
+     * Transaction, Cost, Order, Product, Kargo
+     */
 
     /** @test
      * for User model

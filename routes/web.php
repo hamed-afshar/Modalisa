@@ -103,6 +103,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/notes/{note}/edit' , 'NoteController@edit')->name('note.edit');
     Route::patch('/notes/{note}', 'NoteController@update')->name('notes.update');
     Route::delete('/notes/{note}', 'NoteController@destroy')->name('notes.destroy');
+
+    Route::get('/images' , 'ImageController@index')->name('images.index');
+    Route::get('/images/create', 'Imagecontroller@create')->name('image.create');
+    Route::post('/images' , 'ImageController@store')->name('image.store');
 });
 
 
