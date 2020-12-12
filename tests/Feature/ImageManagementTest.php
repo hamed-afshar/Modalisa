@@ -2,7 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Cost;
 use App\Image;
+use App\Kargo;
+use App\Order;
+use App\Product;
+use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -14,6 +19,7 @@ class ImageManagementTest extends TestCase
     use  RefreshDatabase, WithFaker;
 
     /** @test
+     * for User model
      * one to many relationship
      */
     public function each_user_have_many_images()
@@ -23,11 +29,10 @@ class ImageManagementTest extends TestCase
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id,
-            'image_name' => 'test.jpg'
         ]);
         factory('App\Image')->create([
             'user_id' => $user->id,
-            'image_name' => $transaction->image_name,
+            'image_name' => 'transaction1.jpg',
             'imagable_type' => 'App\Transaction',
             'imagable_id' => $transaction->id
         ]);
@@ -35,6 +40,7 @@ class ImageManagementTest extends TestCase
     }
 
     /** @test
+     * for User model
      * one to many relationship
      */
     public function each_image_belongs_to_a_user()
@@ -44,11 +50,10 @@ class ImageManagementTest extends TestCase
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id,
-            'image_name' => 'test.jpg'
         ]);
         $image = factory('App\Image')->create([
             'user_id' => $user->id,
-            'image_name' => $transaction->image_name,
+            'image_name' => 'transaction1.jpg',
             'imagable_type' => 'App\Transaction',
             'imagable_id' => $transaction->id
         ]);
@@ -56,10 +61,230 @@ class ImageManagementTest extends TestCase
     }
 
     /** @test
+     * for Transaction model
      * polymorphic one to many relationship
      */
     public function transactions_may_have_many_images()
     {
-
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        $transaction = factory('App\Transaction')->create([
+            'user_id' => $user->id,
+        ]);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'transaction1.jpg',
+            'imagable_type' => 'App\Transaction',
+            'imagable_id' => $transaction->id
+        ]);
+        $this->assertInstanceOf(Image::class, $transaction->images->find(1));
     }
+
+    /** @test
+     * for Transaction model
+     * polymorphic one to many relationship
+     */
+    public function each_image_may_belongs_to_a_transaction()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        $transaction = factory('App\Transaction')->create([
+            'user_id' => $user->id
+        ]);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'transaction1.jpg',
+            'imagable_type' => 'App\Transaction',
+            'imagable_id' => $transaction->id
+        ]);
+        $this->assertInstanceOf(Transaction::class, $image->imagable);
+    }
+
+    /** @test
+     * for Cost model
+     * polymorphic one to many relationship
+     */
+    public function cost_may_have_many_images()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $cost = factory('App\Cost')->create([
+            'user_id' => $user->id,
+            'costable_type' => 'App\Order',
+            'costable_id' => $order->id
+        ]);
+        factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'cost1.jpg',
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+        ]);
+        $this->assertInstanceOf(Image::class, $cost->images->find(1));
+    }
+
+    /** @test
+     * for Cost model
+     * polymorphic one to many relationship
+     */
+    public function each_image_may_belongs_to_a_cost()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $cost = factory('App\Cost')->create([
+            'user_id' => $user->id,
+            'costable_type' => 'App\Order',
+            'costable_id' => $order->id
+        ]);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'cost1.jpg',
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+        ]);
+        $this->assertInstanceOf(Cost::class, $image->imagable);
+    }
+
+    /** @test
+     * for Order model
+     * polymorphic one to many relationship
+     */
+    public function order_may_have_many_images()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'order1.jpg',
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+        ]);
+        $this->assertInstanceOf(Image::class, $order->images->find(1));
+    }
+
+    /** @test
+     * for Order model
+     * polymorphic one to many relationship
+     */
+    public function each_image_may_belongs_to_an_order()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'order1.jpg',
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+        ]);
+        $this->assertInstanceOf(Order::class, $image->imagable);
+    }
+
+    /** @test
+     *  for Product model
+     *  polymorphic one to many relationship
+     */
+    public function product_may_have_many_images()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $product = factory('App\Product')->create([
+            'order_id' => $order->id,
+        ]);
+        factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'product1.jpg',
+            'imagable_type' => 'App\Product',
+            'imagable_id' => $product->id,
+        ]);
+        $this->assertInstanceOf(Image::class, $product->images->find(1));
+    }
+
+    /** @test
+     *  for Product model
+     *  polymorphic one to many relationship
+     */
+    public function each_image_may_belong_to_a_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $product = factory('App\Product')->create([
+            'order_id' => $order->id,
+        ]);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'product1.jpg',
+            'imagable_type' => 'App\Product',
+            'imagable_id' => $product->id,
+        ]);
+        $this->assertInstanceOf(Product::class, $image->imagable);
+    }
+
+    /** @test
+     *  for Kargo model
+     *  polymorphic one to many relationship
+     */
+    public function kargo_may_have_many_images()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        $kargo = factory('App\Kargo')->create([
+            'user_id' => $user->id,
+        ]);
+        factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'kargo1.jpg',
+            'imagable_type' => 'App\Kargo',
+            'imagable_id' => $kargo->id,
+        ]);
+        $this->assertInstanceOf(Image::class, $kargo->images->find(1));
+    }
+
+    /** @test
+     *  for Kargo model
+     *  polymorphic one to many relationship
+     */
+    public function each_image_may_belongs_to_a_kargo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $user = Auth::user();
+        $kargo = factory('App\Kargo')->create([
+            'user_id' => $user->id,
+        ]);
+        $image = factory('App\Image')->create([
+            'user_id' => $user->id,
+            'image_name' => 'kargo1.jpg',
+            'imagable_type' => 'App\Kargo',
+            'imagable_id' => $kargo->id,
+        ]);
+        $this->assertInstanceOf(Kargo::class, $image->imagable);
+    }
+
+
 }
