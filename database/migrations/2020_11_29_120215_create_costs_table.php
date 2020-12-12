@@ -15,11 +15,13 @@ class CreateCostsTable extends Migration
     {
         Schema::create('costs', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->integer('amount');
             $table->string('description');
-            $table->string('image_name')->nullable();
             $table->morphs('costable');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade');
         });
     }
 
