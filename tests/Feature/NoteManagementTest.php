@@ -168,6 +168,13 @@ class comNoteManagementTest extends TestCase
         $this->assertDatabaseMissing('notes', ['id' => $note->id]);
     }
 
+    /** all relationship related to Note model should be tested
+     * models that have a normal relationship with Note are:
+     * User
+     * Models that have a polymorphic relationship with Note are:
+     * Order, Customer, Product, Transaction, Kargo, Cost
+     */
+
     /** @test
      * one to many relationship
      */
@@ -197,12 +204,6 @@ class comNoteManagementTest extends TestCase
         $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
         $this->assertInstanceOf(User::class, $note->user);
     }
-
-
-    /** all relationship related to Note model should be tested
-     * Models that have a polymorphic relationship with Note are::
-     * Order, Customer, Product, Transaction, Kargo, Cost
-     */
 
     /** @test
      * for Order model
