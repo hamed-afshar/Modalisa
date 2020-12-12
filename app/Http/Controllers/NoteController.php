@@ -20,7 +20,7 @@ class NoteController extends Controller
 
     /**
      * form to create a note
-     * VueJs modal geneates this form
+     * VueJs modal generates this form
      */
     public function create()
     {
