@@ -60,6 +60,7 @@ class NoteController extends Controller
 
     /**
      * update a note
+     * users are not allowed to update notes
      */
     public function update(Note $note)
     {
