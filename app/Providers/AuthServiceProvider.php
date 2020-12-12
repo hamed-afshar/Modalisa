@@ -23,7 +23,8 @@ class AuthServiceProvider extends ServiceProvider
         'App\Subscription' => 'App\Policies\SubscriptionPolicy',
         'App\Transaction' => 'App\Policies\TransactionPolicy',
         'App\Status' => 'App\Policies\StatusPolicy',
-        'App\Note' => 'App\Policies\NotePolicy'
+        'App\Note' => 'App\Policies\NotePolicy',
+        'App\Image' => 'App\Policies\ImagePolicy'
     ];
 
     /**
