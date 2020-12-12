@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\deleteTrait;
 use App\Traits\ImageTrait;
 use App\Transaction;
 use Illuminate\Foundation\Testing\WithFaker;
