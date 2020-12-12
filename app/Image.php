@@ -15,4 +15,12 @@ class Image extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    /**
+     * each image belongs to a model
+     */
+    public function imagable()
+    {
+        return $this->morphTo();
+    }
 }

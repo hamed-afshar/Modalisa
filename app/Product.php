@@ -53,4 +53,12 @@ class Product extends Model
     {
         return $this->belongsTo('App\Kargo');
     }
+
+    /**
+     * each product may have many images
+     */
+    public function images()
+    {
+        return $this->morphMany('App\Image', 'imagable');
+    }
 }

@@ -13,4 +13,12 @@ class Cost extends Model
     {
         return $this->morphMany('App\Note', 'notable');
     }
+
+    /**
+     * each cost may have many images
+     */
+    public function images()
+    {
+        return $this->morphMany('App\Image' , 'imagable');
+    }
 }
