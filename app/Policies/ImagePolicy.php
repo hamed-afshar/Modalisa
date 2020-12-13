@@ -45,7 +45,9 @@ class ImagePolicy
      */
     public function view(User $user, Image $image)
     {
-        //
+        if($user->checkPermission('see-images')) {
+            return true;
+        }
     }
 
     /**

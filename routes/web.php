@@ -105,8 +105,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/notes/{note}', 'NoteController@destroy')->name('notes.destroy');
 
     Route::get('/images' , 'ImageController@index')->name('images.index');
-    Route::get('/images/create', 'Imagecontroller@create')->name('image.create');
-    Route::post('/images' , 'ImageController@store')->name('image.store');
+    Route::get('/images/create', 'Imagecontroller@create')->name('images.create');
+    Route::post('/images' , 'ImageController@store')->name('images.store');
+    Route::get('/images/{image}', 'ImageController@show')->name('images.show');
+    Route::get('/images/{image}/edit', 'ImageController@edit')->name('images.edit');
+    Route::patch('/images/{image}', 'ImageController@update')->name('images.update');
 });
 
 

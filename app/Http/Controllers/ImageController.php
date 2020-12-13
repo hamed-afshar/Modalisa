@@ -33,16 +33,18 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->authorize('create', Image::class );
         $user = Auth::user();
         $request->validate([
             'imagable_type' => 'required',
-            'imagable_id' => 'required'
+            'imagable_id' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         if($request->has('image')) {
             $image = $request->file('image');
             $imageName = date('mdYHis') . uniqid();
-            $folder = '/images';
+            $folder = '/images/';
             $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageName);
             $data = [
@@ -50,7 +52,16 @@ class ImageController extends Controller
                 'imagable_type' => $request->input('imagable_type'),
                 'imagable_id' => $request->input('imagable_id')
             ];
-            $user->images->create($data);
+            $user->images()->create($data);
         }
+    }
+
+    /**
+     * show a single Image
+     */
+    public function show(Image $image)
+    {
+        $this->authorize('view', $image);
+        return Auth::user()->images->find($image);
     }
 }

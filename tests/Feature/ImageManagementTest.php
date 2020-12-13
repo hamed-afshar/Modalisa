@@ -46,11 +46,131 @@ class ImageManagementTest extends TestCase
         $attributes = [
             'imagable_type' => 'App\Order',
             'imagable_id' => $order->id,
-            $image = UploadedFile::fake()->create('image.jpg'),
+            'image' => UploadedFile::fake()->create('image.jpg'),
         ];
         $this->post('/images', $attributes);
-//        $image_name = Image::find(1)->image_name;
+        $image_name = Image::find(1)->image_name;
+        $this->assertDatabaseHas('images', ['imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
         $this->assertFileExists(public_path('storage/') . $image_name);
+    }
+
+    /** @test */
+    public function image_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image' => '',
+        ];
+        $this->post('/images', $attributes)->assertSessionHasErrors('image');
+    }
+
+    /** @test */
+    public function only_valid_extensions_for_images_are_acceptable()
+    {
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image' => UploadedFile::fake()->create('image.png'),
+        ];
+        $this->post('/images', $attributes)->assertSessionHasErrors('image');
+    }
+
+    /** @test */
+    public function imagable_type_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'user_id' => Auth::user()->id,
+            'imagable_type' => '',
+            'imagable_id' => $order->id,
+            'image' => UploadedFile::fake()->create('image.png'),
+        ];
+        $this->post('/images', $attributes)->assertSessionHasErrors('imagable_type');
+    }
+
+    /** @test */
+    public function imagable_id_is_required()
+    {
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'user_id' => Auth::user()->id,
+            'imagable_type' => '',
+            'imagable_id' => '',
+            'image' => UploadedFile::fake()->create('image.png'),
+        ];
+        $this->post('/images', $attributes)->assertSessionHasErrors('imagable_id');
+    }
+
+    /** @test */
+    public function user_can_see_a_single_photo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'see-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $image = factory('App\Image')->create([
+            'user_id' => Auth::user()->id,
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image_name' => 'test.jpg'
+        ]);
+        $this->get($image->path())->assertSeeText($image->image_name);
+    }
+
+    /**
+     * This should be tested in VueJs
+     */
+    public function form_is_available_to_update_a_photo()
+    {
+
+    }
+
+    /** @test */
+    public function user_can_update_a_photo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'user_id' => Auth::user()->id,
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image' => UploadedFile::fake()->create('image1.jpg'),
+        ];
+        $this->post('/images', $attributes);
+        $oldImage = Image::find(1);
+        $oldImageName = $oldImage->image_name;
+        $newImage = UploadedFile::fake()->create('image2.jpg');
+        $newAttributes = [
+            'user_id' => Auth::user()->id,
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image' => $newImage
+        ];
+        $this->patch($oldImage->path(), $newAttributes);
+        $newImageName = Image::find(1)->image_name;
+        //assert image updated in db
+        $this->assertDatabaseHas('images', $newAttributes);
+        //assert new image exist
+        $this->assertFileExists(public_path('storage/') . $newImageName);
     }
 
 

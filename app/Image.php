@@ -9,6 +9,14 @@ class Image extends Model
     protected $guarded=[];
 
     /**
+     * return path
+     */
+    public function path()
+    {
+        return "/images/{$this->id}";
+    }
+
+    /**
      * each image belongs to a user
      */
     public function user()
