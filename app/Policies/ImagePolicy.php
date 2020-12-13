@@ -72,7 +72,9 @@ class ImagePolicy
      */
     public function update(User $user, Image $image)
     {
-        //
+        if($user->checkPermission('create-images')) {
+            return true;
+        }
     }
 
     /**

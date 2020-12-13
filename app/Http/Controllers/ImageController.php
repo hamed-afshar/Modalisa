@@ -64,4 +64,31 @@ class ImageController extends Controller
         $this->authorize('view', $image);
         return Auth::user()->images->find($image);
     }
+
+    /**
+     * update photos
+     */
+    public function update(Request $request, Image $image)
+    {
+        $this->authorize('update', $image);
+        $request->validate([
+            'imagable_type' => 'required',
+            'imagable_id' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+        // get current image name from db and change it with new name
+            $oldImageName = $image->image_name;
+            $image = $request->file('image');
+            $imageNewName = date('mdYHis').uniqid();
+            $folder = '/images/';
+            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+            $this->uploadOne($image, $folder, 'public', $imageNewName);
+            $this->deleteOne('public', $request->input($oldImageName));
+            $data = [
+                'imagable_type' => $request->input('imagable_type'),
+                'imagable_id' => $request->input('imagable_id'),
+                'image_name' => $filePath
+            ];
+            Auth::user()->images()->update($data);
+    }
 }

@@ -168,9 +168,11 @@ class ImageManagementTest extends TestCase
         $this->patch($oldImage->path(), $newAttributes);
         $newImageName = Image::find(1)->image_name;
         //assert image updated in db
-        $this->assertDatabaseHas('images', $newAttributes);
-        //assert new image exist
-        $this->assertFileExists(public_path('storage/') . $newImageName);
+        $this->assertDatabaseHas('images', ['image_name' => $newImageName]);
+        //assert new image exist on server
+        $this->assertFileExists(public_path('storage') . $newImageName);
+        //assert old image deletes from server
+        $this->assertFileNotExists(public_path('storage') . $oldImageName);
     }
 
 
