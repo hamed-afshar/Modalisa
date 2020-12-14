@@ -161,13 +161,19 @@ class TransactionManagementTest extends TestCase
     }
 
     /** @test
-     * Users only are able to update  
+     * Users only are able to update not confirmed transactions
      */
     public function retailer_can_update_not_confirmed_transactions()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        factory('App\Image')->create([
+            'user_id'=>Auth::user()->id,
+            'imagable_type' => 'App\Transaction',
+            'imagable_id' => $transaction->id,
+            'image_name' => '/images/transaction1.jpg'
+        ]);
         $oldImageName = $transaction->image_name;
         $newPic = UploadedFile::fake()->create('newPic.jpg');
         $newAttributesWithImage = [
@@ -184,7 +190,7 @@ class TransactionManagementTest extends TestCase
         $this->patch($transaction->path(), $newAttributesWithImage);
         // assert transaction updated
         $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
-        // assert if image is included in the request then image name will change to new one and uploaded in to the server
+        // check file existence after updating a transaction
         $transaction = Transaction::find(1);
         $this->assertFileExists(public_path('storage' . $transaction->image_name));
         // assert if image is not included in the request then image name will remain same

@@ -99,20 +99,25 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-
         $this->authorize('update', $transaction);
+        $user = Auth::user();
         request()->validate([
             'currency' => 'required',
             'amount' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'comment' => 'required'
         ]);
-
-        /*
-         *  if request includes image then name will change to the new name also delete the old file
-         *  if request does not include image then name will remain intact
-         */
-        $filePath = null;
+        $transactionData = [
+            'currency' => $request->input('currency'),
+            'amount' => $request->input('amount'),
+            'comment' => $request->input('comment'),
+        ];
+        $transaction->update($transactionData);
+        $image = $transaction->images()->where('imagable_id', $transaction->id);
+        $filePath = $image->get('image_name');
+        dd("here");
+        // if request has image for update then new image name generates
+        // if request dose not have image then image name will not change
         if ($request->has('image')) {
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
@@ -120,13 +125,14 @@ class TransactionController extends Controller
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
             $this->deleteOne('public', $request->input('image_name'));
+            $imageData = [
+                // imagable_type always remains App\Transaction
+                'imagable_type' => 'App\Transaction',
+                'imagable_id' => $transaction->id,
+                'image_name' => $filePath
+            ];
+            $user->images()->update($imageData);
         }
-        $data = [
-            'currency' => $request->input('currency'),
-            'amount' => $request->input('amount'),
-            'comment' => $request->input('comment'),
-        ];
-        $transaction->update($data);
     }
 
     /**
