@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class FinancialManagementTest extends TestCase
+class TransactionManagementTest extends TestCase
 {
     use WithFaker,
         RefreshDatabase;
@@ -122,8 +122,10 @@ class FinancialManagementTest extends TestCase
         $this->post('/transactions', $attributes)->assertSessionHasErrors('comment');
     }
 
-    /** @test */
-    public function image_can_be_uploaded_for_transactions()
+    /** @test
+     * test image upload functionality on transaction creation time separately here
+     */
+    public function image_can_be_uploaded_on_transaction_creation()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
@@ -185,8 +187,10 @@ class FinancialManagementTest extends TestCase
         $this->assertDatabaseHas('transactions', ['image_name' => $oldImageName]);
     }
 
-    /** @test */
-    public function old_image_deletes_after_updating_a_new_one()
+    /** @test
+     * uploading a new image for a transaction on updating checks separately here.
+     */
+    public function old_image_deletes_after_updating_a_new_one_for_a_transaction()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
