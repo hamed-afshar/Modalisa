@@ -41,6 +41,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
+        // First transaction must be created and get transaction_id to be used in image creation model.
         $this->authorize('create', Transaction::class);
         $user = Auth::user();
         $request->validate([
@@ -49,28 +50,29 @@ class TransactionController extends Controller
             'image' => 'image|mimes:jpeg,png,jpg|max:2048',
             'comment' => 'required',
         ]);
-
-        /*
-         *  if request includes image then name will change
-         *  if request does not include image then name will be null
-         */
-        $filePath = null;
-
+        // Prepare transaction data
+        $transactionData = [
+            'currency' => $request->input('currency'),
+            'amount' => $request->input('amount'),
+            'comment' => $request->input('comment'),
+        ];
+        // Create a transaction
+        $transaction = $user->transactions()->create($transactionData);
+        // If image is included on transaction creation time, then image uploads and model be created in db
         if ($request->has('image')) {
             $image = $request->file('image');
             $imageName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageName);
+            $imageData = [
+                // imagable_type always remains App\Transaction
+                'imagable_type' => 'App\Transaction',
+                'imagable_id' => $transaction->id,
+                'image_name' => $filePath
+            ];
+            $user->images()->create($imageData);
         }
-
-        $data = [
-            'currency' => $request->input('currency'),
-            'amount' => $request->input('amount'),
-            'image_name' => $filePath,
-            'comment' => $request->input('comment'),
-        ];
-        $user->transactions()->create($data);
     }
 
     /**
@@ -122,7 +124,6 @@ class TransactionController extends Controller
         $data = [
             'currency' => $request->input('currency'),
             'amount' => $request->input('amount'),
-            'image_name' => !is_null($filePath) ? $filePath : $request->input('image_name'),
             'comment' => $request->input('comment'),
         ];
         $transaction->update($data);

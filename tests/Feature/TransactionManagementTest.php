@@ -22,7 +22,7 @@ class TransactionManagementTest extends TestCase
      */
     public function retailers_only_can_access_to_their_own_resources()
     {
-        $subscription = factory('App\Subscription')->create();
+        factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => 'retailer']);
         $permission = factory('App\Permission')->create(['name' => 'make-payment']);
         $user = factory('App\User')->create(['confirmed' => 1, 'locked' => 0]);
@@ -137,7 +137,10 @@ class TransactionManagementTest extends TestCase
         $this->post('/transactions', $attributes);
         $transaction = Transaction::find(1);
         $image_name = $transaction->image_name;
-        $this->assertFileExists(public_path('storage/' . $image_name));
+        // Assert file exist on server
+        $this->assertFileExists(public_path('storage' . $image_name));
+        // Assert database has image which has a imagable_id for created transaction
+        $this->assertDatabaseHas('images', ['imagable_id' => $transaction->id]);
     }
 
 
@@ -157,7 +160,9 @@ class TransactionManagementTest extends TestCase
 
     }
 
-    /** @test */
+    /** @test
+     * Users only are able to update  
+     */
     public function retailer_can_update_not_confirmed_transactions()
     {
         $this->withoutExceptionHandling();
