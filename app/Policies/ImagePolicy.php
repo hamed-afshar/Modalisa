@@ -86,7 +86,9 @@ class ImagePolicy
      */
     public function delete(User $user, Image $image)
     {
-        //
+        if($user->checkPermission('delete-images')) {
+            return true;
+        }
     }
 
     /**

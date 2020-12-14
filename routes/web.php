@@ -110,6 +110,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/images/{image}', 'ImageController@show')->name('images.show');
     Route::get('/images/{image}/edit', 'ImageController@edit')->name('images.edit');
     Route::patch('/images/{image}', 'ImageController@update')->name('images.update');
+    Route::delete('/images/{image}', 'ImageController@destroy')->name('images.destroy');
 });
 
 

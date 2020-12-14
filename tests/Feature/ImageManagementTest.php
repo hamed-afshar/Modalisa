@@ -79,7 +79,7 @@ class ImageManagementTest extends TestCase
         $attributes = [
             'imagable_type' => 'App\Order',
             'imagable_id' => $order->id,
-            'image' => UploadedFile::fake()->create('image.png'),
+            'image' => UploadedFile::fake()->create('image.pnghj'),
         ];
         $this->post('/images', $attributes)->assertSessionHasErrors('image');
     }
@@ -172,7 +172,32 @@ class ImageManagementTest extends TestCase
         //assert new image exist on server
         $this->assertFileExists(public_path('storage') . $newImageName);
         //assert old image deletes from server
-        $this->assertFileNotExists(public_path('storage') . $oldImageName);
+        $this->assertFileNotExists(public_path('storage' . $oldImageName));
+    }
+
+    /** @test */
+    public function user_can_delete_a_photo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $order = Order::find(1);
+        $attributes = [
+            'user_id' => Auth::user()->id,
+            'imagable_type' => 'App\Order',
+            'imagable_id' => $order->id,
+            'image' => UploadedFile::fake()->create('image1.jpg'),
+        ];
+        // first create image then try to delete it
+        $this->post('/images', $attributes);
+        // user can deletes a image
+        $this->prepNormalEnv('user', 'delete-images', 0, 1);
+        $image = Image::find(1);
+        $imageName = $image->image_name;
+        $this->delete($image->path());
+        $this->assertDatabaseMissing('images', ['id', $image->id]);
+        $this->assertFileNotExists(public_path('storage' . $imageName));
     }
 
 

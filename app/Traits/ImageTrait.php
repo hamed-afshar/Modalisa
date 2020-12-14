@@ -21,6 +21,7 @@ trait ImageTrait
 
     public function deleteOne($disk = 'public', $imageName = null)
     {
+
         Storage::disk($disk)->delete($imageName);
     }
 
