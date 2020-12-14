@@ -60,7 +60,7 @@ class TransactionController extends Controller
             $image = $request->file('image');
             $imageName = date('mdYHis') . uniqid();
             $folder = '/images/';
-            $filePath = $folder . $imageName . '.' .  $image->getClientOriginalExtension();
+            $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageName);
         }
 
@@ -111,11 +111,11 @@ class TransactionController extends Controller
          *  if request does not include image then name will remain intact
          */
         $filePath = null;
-        if($request->has('image')) {
+        if ($request->has('image')) {
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
-            $filePath = $folder . $imageNewName . '.' .  $image->getClientOriginalExtension();
+            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
             $this->deleteOne('public', $request->input('image_name'));
         }
@@ -165,7 +165,7 @@ class TransactionController extends Controller
         $folder = '/images/';
         $this->uploadOne($image, $folder, 'public', $name);
         $data = [
-          'image_name' => $name
+            'image_name' => $name
         ];
         $transaction->update($data);
     }
