@@ -167,64 +167,41 @@ class TransactionManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        // create a transaction
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        // create image for this transaction
         factory('App\Image')->create([
             'user_id'=>Auth::user()->id,
             'imagable_type' => 'App\Transaction',
             'imagable_id' => $transaction->id,
             'image_name' => '/images/transaction1.jpg'
         ]);
-        $oldImageName = $transaction->image_name;
+        // save old image name
+        $imageName = $transaction->images()->where('imagable_id', $transaction->id);
+        $oldImageName = $imageName->get('image_name');
+        // create a fake image to be added to updating attributes
         $newPic = UploadedFile::fake()->create('newPic.jpg');
+        // creating two types of attributes to test updates with or without images
         $newAttributesWithImage = [
             'currency' => 'USD',
             'amount' => '9999',
-            'comment' => 'new comment',
+            'comment' => 'new comment1',
             'image' => $newPic
         ];
         $newAttributesWithoutImage = [
             'currency' => 'USD',
-            'amount' => '9999',
-            'comment' => 'new comment',
+            'amount' => '5555',
+            'comment' => 'new comment2',
         ];
+        // update with new image and assert to see new image file existence on server and record in db
         $this->patch($transaction->path(), $newAttributesWithImage);
-        // assert transaction updated
         $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
-        // check file existence after updating a transaction
         $transaction = Transaction::find(1);
         $this->assertFileExists(public_path('storage' . $transaction->image_name));
-        // assert if image is not included in the request then image name will remain same
+        // update without new image and assert to see new image file existence on server and record in db
+        // old image also must be deleted
         $this->patch($transaction->path(), $newAttributesWithoutImage);
-        $this->assertDatabaseHas('transactions', ['image_name' => $oldImageName]);
-    }
-
-    /** @test
-     * uploading a new image for a transaction on updating checks separately here.
-     */
-    public function old_image_deletes_after_updating_a_new_one_for_a_transaction()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $attributes = factory('App\Transaction')->raw(
-            [
-                'user_id' => Auth::user()->id,
-                'image' => UploadedFile::fake()->create('pic.jpg')
-            ]);
-        $this->post('/transactions', $attributes);
-        $transaction = Transaction::find(1);
-        $oldImageName = $transaction->image_name;
-        $this->assertFileExists(storage_path('images'), $oldImageName);
-
-        $newPic = UploadedFile::fake()->create('newPic.jpg');
-        $newAttributes = [
-            'currency' => 'USD',
-            'amount' => '9999',
-            'comment' => 'new comment',
-            'image_name' => $oldImageName,
-            'image' => $newPic
-        ];
-        $this->patch($transaction->path(), $newAttributes);
-        $this->assertDatabaseHas('transactions', ['comment' => $newAttributes['comment']]);
+        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithoutImage['comment']]);
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
     }
 

@@ -113,18 +113,19 @@ class TransactionController extends Controller
             'comment' => $request->input('comment'),
         ];
         $transaction->update($transactionData);
-        $image = $transaction->images()->where('imagable_id', $transaction->id);
-        $filePath = $image->get('image_name');
-        dd("here");
-        // if request has image for update then new image name generates
+
+        // if request has image for update then new image name generates and old image deletes
         // if request dose not have image then image name will not change
+        $image = $transaction->images()->where('imagable_id', $transaction->id);
+        $oldImageName = $image->get('image_name');
         if ($request->has('image')) {
+
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', $request->input('image_name'));
+            $this->deleteOne('public', $oldImageName);
             $imageData = [
                 // imagable_type always remains App\Transaction
                 'imagable_type' => 'App\Transaction',
