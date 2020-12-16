@@ -41,7 +41,7 @@ class CustomerManagementTest extends TestCase
         $this->get('/customers')->assertSeeText($customer->name);
     }
 
-    /** @test */
+    /** this should be tested in VueJs */
     public function form_is_available_to_create_a_customer()
     {
 

@@ -74,6 +74,7 @@ class UserManagementTest extends TestCase
             'name' => $newDetails['name'],
             'email' => $newDetails['email'],
             'password' => $newDetails['password'],
+            'password_confirmation' => $newDetails['password'],
             'language' => $newDetails['language'],
             'tel' => $newDetails['tel'],
             'country' => $newDetails['country'],

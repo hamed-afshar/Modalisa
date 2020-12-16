@@ -353,7 +353,7 @@ class comNoteManagementTest extends TestCase
         factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
-        $cost = factory('App\Cost')->create(['costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        $cost = factory('App\Cost')->create(['user_id' => Auth::user()->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Cost', 'notable_id' => 1]);
         $this->assertInstanceOf(Note::class, $cost->notes->find(1));
     }
@@ -370,7 +370,7 @@ class comNoteManagementTest extends TestCase
         factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
-        factory('App\Cost')->create(['costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        factory('App\Cost')->create(['user_id' => Auth::user()->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $note = factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Cost', 'notable_id' => 1]);
         $this->assertInstanceOf(Cost::class, $note->notable);
     }

@@ -95,12 +95,10 @@ class HistoryManagementTest extends TestCase
     public function each_status_has_many_histories()
     {
         $this->withoutExceptionHandling();
-        $product = factory('App\Product')->create();
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
         $status = factory('App\Status')->create();
-        $history = factory('App\History')->create([
-            'product_id' => $product->id,
-            'status_id' => $status->id
-        ]);
+        $this->prepOrder();
+        // History automatically is always created on order creation
         $this->assertInstanceOf(History::class, $status->histories->find(1));
     }
 
@@ -110,12 +108,11 @@ class HistoryManagementTest extends TestCase
     public function each_history_belongs_to_status()
     {
         $this->withoutExceptionHandling();
-        $product = factory('App\Product')->create();
-        $status = factory('App\Status')->create();
-        $history = factory('App\History')->create([
-            'product_id' => $product->id,
-            'status_id' => $status->id
-        ]);
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        // History automatically is always created on order creation
+        $history = History::find(1);
         $this->assertInstanceOf(Status::class, $history->status);
     }
 
@@ -125,12 +122,10 @@ class HistoryManagementTest extends TestCase
     public function each_product_has_many_histories()
     {
         $this->withoutExceptionHandling();
-        $product = factory('App\Product')->create();
-        $status = factory('App\Status')->create();
-        $history = factory('App\History')->create([
-            'product_id' => $product->id,
-            'status_id' => $status->id
-        ]);
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $product = Product::find(1);
         $this->assertInstanceOf(History::class, $product->histories->find(1));
     }
 
@@ -140,12 +135,10 @@ class HistoryManagementTest extends TestCase
     public function each_history_belongs_to_product()
     {
         $this->withoutExceptionHandling();
-        $product = factory('App\Product')->create();
-        $status = factory('App\Status')->create();
-        $history = factory('App\History')->create([
-            'product_id' => $product->id,
-            'status_id' => $status->id
-        ]);
+        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        factory('App\Status')->create();
+        $this->prepOrder();
+        $history = History::find(1);
         $this->assertInstanceOf(Product::class, $history->product);
     }
 
