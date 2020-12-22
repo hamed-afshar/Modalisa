@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Cost extends Model
 {
     /**
+     * each cost belongs to a user
+     */
+    public function user()
+    {
+        return $this->belongsTo('APP\User');
+    }
+    /**
      * each cost may have many notes
      */
     public function notes()

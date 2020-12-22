@@ -180,4 +180,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Image');
     }
+
+    /**
+     * each user has many costs
+     */
+    public function costs()
+    {
+        return $this->hasMany('App\Cost');
+    }
 }
