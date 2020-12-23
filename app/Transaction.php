@@ -41,4 +41,11 @@ class Transaction extends Model
         return $this->morphMany('App\Image', 'imagable');
     }
 
+    /**
+     * each transaction may have many costs
+     */
+    public function costs()
+    {
+        return $this->morphMany('App\Cost', 'costable');
+    }
 }

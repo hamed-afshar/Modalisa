@@ -29,4 +29,12 @@ class Kargo extends Model
     {
         return $this->morphMany('App\Image', 'imagable');
     }
+
+    /**
+     * each kargo may have many costs
+     */
+    public function costs()
+    {
+        return $this->morphMany('App\Cost', 'costable');
+    }
 }

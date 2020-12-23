@@ -28,4 +28,12 @@ class Cost extends Model
     {
         return $this->morphMany('App\Image' , 'imagable');
     }
+
+    /**
+     * each cost belongs to a model
+     */
+    public function costable()
+    {
+        return $this->morphTo();
+    }
 }

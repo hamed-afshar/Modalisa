@@ -111,6 +111,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/images/{image}/edit', 'ImageController@edit')->name('images.edit');
     Route::patch('/images/{image}', 'ImageController@update')->name('images.update');
     Route::delete('/images/{image}', 'ImageController@destroy')->name('images.destroy');
+
+    Route::get('costs', 'CostController@index')->name('costs.index');
+    Route::get('costs/create', 'CostController@create')->name('costs.create');
+    Route::post('costs', 'CostController@store')->name('costs.store');
 });
 
 

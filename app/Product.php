@@ -61,4 +61,12 @@ class Product extends Model
     {
         return $this->morphMany('App\Image', 'imagable');
     }
+
+    /**
+     * each product may have many costs
+     */
+    public function costs()
+    {
+        return $this->morphMany('App\Cost', 'costable');
+    }
 }
