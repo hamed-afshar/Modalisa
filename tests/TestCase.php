@@ -29,17 +29,30 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * prepare normal user environment
+     * @param $role
+     * @param $permissions[]
+     * @param $locked
+     * @param $confirmed
      */
 
-    protected function prepNormalEnv($role, $permission, $locked, $confirmed)
+    protected function prepNormalEnv($role, $permissions, $locked, $confirmed)
     {
-        $subscription = factory('App\Subscription')->create();
+        //get all existing permissions from db
+        $currentPermissions = Permission::all();
+        factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => $role]);
-        $permission = factory('App\Permission')->create(['name' => $permission]);
         $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
         $role->changeRole($user);
-        $role->allowTo($permission);
+        foreach($permissions as $permission) {
+            if(in_array($permission, $currentPermissions->toArray())) {
+
+            } else {
+                $permission = factory('App\Permission')->create(['name' => $permission]);
+                $role->allowTo($permission);
+            }
+        }
         $this->actingAs($user);
+
     }
 
     /**
@@ -48,13 +61,14 @@ abstract class TestCase extends BaseTestCase
 
     protected function prepOrder()
     {
+        factory('App\Status')->create();
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $order = factory('App\Order')->create([
             'user_id' => Auth::user()->id,
             'customer_id' => $customer->id
         ]);
         $kargo = factory('App\Kargo')->create(['user_id' => Auth::user()->id]);
-        $product = factory('App\Product')->create([
+        factory('App\Product')->create([
             'order_id' => $order->id,
             'kargo_id' => $kargo->id
         ]);
