@@ -136,7 +136,8 @@ class TransactionManagementTest extends TestCase
             ]);
         $this->post('/transactions', $attributes);
         $transaction = Transaction::find(1);
-        $image_name = $transaction->image_name;
+        $image = $transaction->images()->find($transaction->id);
+        $image_name = $image->image_name;
         // Assert file exist on server
         $this->assertFileExists(public_path('storage' . $image_name));
         // Assert database has image which has a imagable_id for created transaction
