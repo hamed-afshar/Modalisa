@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cost extends Model
 {
+    protected $guarded = [];
     /**
      * each cost belongs to a user
      */
