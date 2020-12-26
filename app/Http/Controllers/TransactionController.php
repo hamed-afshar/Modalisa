@@ -50,15 +50,15 @@ class TransactionController extends Controller
             'image' => 'image|mimes:jpeg,png,jpg|max:2048',
             'comment' => 'required',
         ]);
-        // Prepare transaction data
+        // prepare transaction data
         $transactionData = [
             'currency' => $request->input('currency'),
             'amount' => $request->input('amount'),
             'comment' => $request->input('comment'),
         ];
-        // Create a transaction
+        // create a transaction
         $transaction = $user->transactions()->create($transactionData);
-        // If image is included on transaction creation time, then image uploads and model be created in db
+        // if image is included on transaction creation time, then uploading image and model will be created in db
         if ($request->has('image')) {
             $image = $request->file('image');
             $imageName = date('mdYHis') . uniqid();
