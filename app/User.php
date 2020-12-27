@@ -81,13 +81,15 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function checkPermission($permission): bool
     {
+        // if user has the given permission then true flag will return, otherwise false will be the return value
         $permissions = $this->permissions();
+        $flag = false;
         foreach ($permissions as $per) {
             if ($per->name === $permission) {
-                return true;
+                $flag = true;
             }
-            return false;
         }
+        return $flag;
     }
 
     /**
