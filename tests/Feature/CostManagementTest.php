@@ -19,37 +19,53 @@ class CostManagementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function only_buyeradmins_can_create_costs()
-    {
-
-    }
-
     /** @test
-     * first buyer admin should create a cost for a specific user
+     * first BuyerAdmin should create a cost for a specific user
      * then that user will be able to see all costs created for him
      */
-    public function BuyerAdmins_can_see_costs()
+    public function retailers_can_see_all_costs()
     {
         $this->withoutExceptionHandling();
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
-        $array = Permission::all();
-        $array->get('name');
-        dd($array);
-        if($array->contains('create-costs')){
-            dd("yes");
-        };
         //create a retailer user with permission only to see costs
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         $retailer = Auth::user();
         $this->prepOrder();
         $product = Product::find(1);
-        dd($product);
-        // acting as BuyerAdmin to create a cost for retailer and assert to see this created cost details.
+        // acting as BuyerAdmin to create a cost for retailer.
         $this->actingAs($BuyerAdmin);
         $cost = factory('App\Cost')->create(['user_id' => $retailer->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        // acting as a retailer to  check created cost existence
+        $this->actingAs($retailer);
         $this->get('/costs')->assertSeeText($cost->description);
+    }
+
+    /** @test
+     * retailer can see all costs related to a specific model.
+     * first BuyerAdmin should create a cost for a specific user and model
+     * then that user will be able to see created cost for him related to that model
+     * here we use product model for testing. Using any other model is also possible
+     */
+    public function retailer_can_see_all_costs_related_to_a_specific_model()
+    {
+        $this->withoutExceptionHandling();
+        //create a BuyerAdmin user with permissions to see and create costs
+        $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //create a retailer user with permission only to see costs
+        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepOrder();
+        $product = Product::find(1);
+        // acting as BuyerAdmin to create a cost for retailer.
+        $this->actingAs($BuyerAdmin);
+        $cost = factory('App\Cost')->create(['user_id' => $retailer->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        // acting as a retailer to  check created cost existence
+        $this->actingAs($retailer);
+        $model = 'App\Product';
+        $this->get('/costs/' . $model)->assertSeeText($cost->description);
     }
 
     /**

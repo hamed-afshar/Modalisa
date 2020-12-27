@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Cost;
 use App\Traits\ImageTrait;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CostController extends Controller
 {
     use ImageTrait;
+
     /**
-     * index costs
+     * index costs by retailers
+     * to index, retailers must have see-costs permission
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -20,8 +24,23 @@ class CostController extends Controller
     }
 
     /**
+     * index all costs for a specific model
+     * to index, retailers must have see-costs permission
+     * @param $model
+     * @return
+     * @throws AuthorizationException
+     */
+    public function indexModel($model)
+    {
+        $this->authorize('viewAny', Cost::class);
+        return Auth::user()->costs()->where('costable_type', $model)->get();
+    }
+
+    /**
      * form to create cost
      * VueJs modal generates this form
+     * only BuyerAdmin or maybe other admins with create-costs permission can store cost in db
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -30,7 +49,9 @@ class CostController extends Controller
 
     /**
      * store costs
+     * only BuyerAdmin or maybe other admins with create-costs permission can store cost in db
      * @param Request $request
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
