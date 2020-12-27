@@ -30,29 +30,31 @@ abstract class TestCase extends BaseTestCase
     /**
      * prepare normal user environment
      * @param $role
-     * @param $permissions[]
-     * @param $locked
+     * @param $permissions []
+     * @param $lockedc
      * @param $confirmed
      */
 
-    protected function prepNormalEnv($role, $permissions, $locked, $confirmed)
+    protected function prepNormalEnv($role, $permissionArrays, $locked, $confirmed)
     {
-        //get all existing permissions from db
-        $currentPermissions = Permission::all();
         factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => $role]);
         $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
         $role->changeRole($user);
-        foreach($permissions as $permission) {
-            if(in_array($permission, $currentPermissions->toArray())) {
-
-            } else {
-                $permission = factory('App\Permission')->create(['name' => $permission]);
+        foreach ($permissionArrays as $permissionName) {
+            // if permission already has existed in db then permission will not be created and assign to the role
+            if (Permission::where('name', '=', $permissionName)->count() > 0)
+            {
+                $permission = Permission::where('name', '=', $permissionName)->get();
+                $role->allowTo($permission);
+            }
+            //if permission has not existed in db then new permission will be created and assign to the role
+            else {
+                $permission = factory('App\Permission')->create(['name' => $permissionName]);
                 $role->allowTo($permission);
             }
         }
         $this->actingAs($user);
-
     }
 
     /**
