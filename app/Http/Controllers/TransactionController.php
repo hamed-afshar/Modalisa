@@ -114,12 +114,11 @@ class TransactionController extends Controller
         ];
         $transaction->update($transactionData);
 
-        // if request has image for update then new image name generates and old image deletes
-        // if request dose not have image then image name will not change
-        $image = $transaction->images()->where('imagable_id', $transaction->id);
-        $oldImageName = $image->get('image_name');
+        // if request has image for update then new image name will be generated and old image be deleted
+        // if request dose not have image, then image name will not change
         if ($request->has('image')) {
-
+            $image = $transaction->images()->where('imagable_id', $transaction->id);
+            $oldImageName = $image->get('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
