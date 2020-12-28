@@ -167,7 +167,7 @@ class TransactionManagementTest extends TestCase
     public function retailer_can_update_not_confirmed_transactions()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['make-payment'], 0, 1);
         // create a transaction
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         // create image for this transaction
