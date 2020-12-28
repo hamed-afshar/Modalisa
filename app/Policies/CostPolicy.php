@@ -43,7 +43,10 @@ class CostPolicy
      */
     public function view(User $user, Cost $cost)
     {
-        //
+        if($user->checkPermission('see-costs') && $user->id == $cost->user->id) {
+            return true;
+        }
+
     }
 
     /**
@@ -68,7 +71,10 @@ class CostPolicy
      */
     public function update(User $user, Cost $cost)
     {
-        //
+        if($user->checkPermission('create-costs'))
+        {
+            return true;
+        }
     }
 
     /**

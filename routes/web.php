@@ -115,8 +115,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/costs', 'CostController@index')->name('costs.index');
     Route::get('/costs/create', 'CostController@create')->name('costs.create');
     Route::post('/costs', 'CostController@store')->name('costs.store');
+    Route::get('/costs/{cost}', 'CostController@show')->name('costs.show');
+    Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
+    Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
+    Route::get('/costs-model/{model}', 'CostController@indexModel')->name('cost.indexModel');
 
-    Route::get('/costs/{model}', 'CostController@indexModel')->name('cost.indexModel');
 });
 
 

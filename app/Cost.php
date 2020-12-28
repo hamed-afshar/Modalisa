@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Cost extends Model
 {
     protected $guarded = [];
+
+    /** return path */
+    public function path()
+    {
+        return "/costs/{$this->id}";
+    }
+
     /**
      * each cost belongs to a user
      */
