@@ -100,7 +100,7 @@ class RoleManagementTest extends TestCase
 
     }
 
-    /*
+    /**
      * this should be tested in VueJs
      */
     public function form_is_available_to_edit_a_role()
