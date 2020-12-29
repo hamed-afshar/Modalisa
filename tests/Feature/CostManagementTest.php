@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CostManagementTest extends TestCase
@@ -329,23 +330,34 @@ class CostManagementTest extends TestCase
         $this->prepOrder();
         $product = Product::find(1);
 
-        //attributes to create a cost record for the product
-        $attributes = [
-            'user' => $retailer,
+        // create a cost record for the product
+        factory('App\Cost')->create([
+            'user_id' => $retailer->id,
             'amount' => 1000,
             'description' => 'cost for product',
             'costable_type' => 'App\Product',
             'costable_id' => $product->id,
-            'image' => UploadedFile::fake()->create('pic.jpg')
-        ];
-
-        //acting as BuyerAdmin to create cost and assert to see this record in db
-        $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes);
-        $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        ]);
+        $cost = Cost::find(1);
+        // create an image record for the created cost
+        factory('App\Image')->create([
+           'user_id' => $retailer->id,
+           'imagable_type' => 'App\Cost',
+           'imagable_id' => $cost->id,
+           'image_name' => '/images/cost1.jpg'
+        ]);
+        // create image file for cost record in the images folder
+        Storage::disk('public')->put('/images/cost1.jpg', 'Contents');
         //get uploaded image name for created cost record
         $cost = Cost::find(1);
         $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
+        $newAttributesWithoutImage = [
+            'user' => $retailer,
+            'amount' => 2000,
+            'description' => 'new cost for product',
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id,
+        ];
         $newAttributesWithImage = [
             'user' => $retailer,
             'amount' => 2000,
@@ -354,13 +366,8 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id,
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $newAttributesWithoutImage = [
-            'user' => $retailer,
-            'amount' => 2000,
-            'description' => 'new cost for product',
-            'costable_type' => 'App\Product',
-            'costable_id' => $product->id,
-        ];
+        // acting as BuyerAdmin to have permission for update costs records
+        $this->actingAs($BuyerAdmin);
         // update the cost record without new image
         $this->patch('/costs/' . $cost->id, $newAttributesWithoutImage);
         $this->assertDatabaseHas('costs', ['amount' => 2000, 'description' => 'new cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
@@ -370,7 +377,6 @@ class CostManagementTest extends TestCase
         $this->patch('/costs/' . $cost->id, $newAttributesWithImage);
         $this->assertDatabaseHas('costs', ['amount' => 2000, 'description' => 'new cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
-
     }
 
 

@@ -140,10 +140,10 @@ class CostController extends Controller
         ];
         //update the cost record
         $cost->update($costData);
-        // if request has image for update then new image name will be generated and old image be deleted
+        // if request has image for update then new image name will be generated and old image will be deleted
         // if request does not have image, then image will not change
         if($request->has('image')) {
-            $oldImageName = $cost->images()->where('imagable_id', $cost->id)->get('image_name');
+            $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images';
