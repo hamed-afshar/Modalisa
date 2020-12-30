@@ -379,6 +379,59 @@ class CostManagementTest extends TestCase
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
     }
 
+    /** @test
+     * BuyerAdmin first create a cost for a product.
+     * image record and image file also must be deleted
+     */
+    public function only_BuyerAdmin_can_delete_costs()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('BuyerAdmin', ['delete-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
+        // cost will be created for this user
+        $retailer = Auth::user();
+        $this->prepOrder();
+        $product = Product::find(1);
+        // create a cost record for the product
+        factory('App\Cost')->create([
+            'user_id' => $retailer->id,
+            'amount' => 1000,
+            'description' => 'cost for product',
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id,
+        ]);
+        $cost = Cost::find(1);
+        // create two image record for the created cost
+        $image1 = factory('App\Image')->create([
+            'user_id' => $retailer->id,
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+            'image_name' => '/images/cost1.jpg'
+        ]);
+        $image2 = factory('App\Image')->create([
+           'user_id' => $retailer->id,
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+            'image_name' => '/images/cost2.jpg'
+        ]);
+        // create image files for cost record in the images folder
+        Storage::disk('public')->put('/images/cost1.jpg', 'Contents');
+        Storage::disk('public')->put('/images/cost2.jpg', 'Contents');
+        $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
+        //acting as BuyerAdmin to delete cost
+        $this->actingAs($BuyerAdmin);
+        $this->delete($cost->path());
+        //cost record must be deleted
+        $this->assertDatabaseMissing('costs', ['id' => $cost->id]);
+        //cost's image records also must be deleted
+        $this->assertDatabaseMissing('images', ['id' => $cost->id, 'imagable_id' => $image1]);
+        $this->assertDatabaseMissing('images', ['id' => $cost->id, 'imagable_id' => $image2]);
+        //cost's images also must be deleted
+        $this->assertFileNotExists(public_path('storage' . $imageNameArray[0]));
+        $this->assertFileNotExists(public_path('storage' . $imageNameArray[1]));
+    }
+
 
     /** @test
      * for user model

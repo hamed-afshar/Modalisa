@@ -118,8 +118,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/costs/{cost}', 'CostController@show')->name('costs.show');
     Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
     Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
+    Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
     Route::get('/costs-model/{model}', 'CostController@indexModel')->name('cost.indexModel');
-
 });
 
 

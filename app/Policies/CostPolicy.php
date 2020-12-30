@@ -86,7 +86,9 @@ class CostPolicy
      */
     public function delete(User $user, Cost $cost)
     {
-        //
+        if($user->checkPermission('delete-costs')) {
+            return true;
+        }
     }
 
     /**

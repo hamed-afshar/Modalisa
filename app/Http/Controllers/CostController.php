@@ -7,6 +7,7 @@ use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CostController extends Controller
 {
@@ -67,15 +68,15 @@ class CostController extends Controller
             'costable_id' => 'required'
         ]);
         $costData = [
-          'amount' => $request->input('amount'),
-          'description' => $request->input('description'),
-          'costable_type' => $request->input('costable_type'),
-          'costable_id' => $request->input('costable_id')
+            'amount' => $request->input('amount'),
+            'description' => $request->input('description'),
+            'costable_type' => $request->input('costable_type'),
+            'costable_id' => $request->input('costable_id')
         ];
         // create a cost record for the given user
         $cost = $user->costs()->create($costData);
         // if image is included on cost creation time, then uploading image and model will be created in db
-        if($request->has('image')) {
+        if ($request->has('image')) {
             $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
@@ -129,9 +130,9 @@ class CostController extends Controller
     {
         $this->authorize('update', $cost);
         $request->validate([
-           'user' => 'required',
-           'amount' => 'required',
-           'description' => 'required',
+            'user' => 'required',
+            'amount' => 'required',
+            'description' => 'required',
         ]);
         $user = $request->input('user');
         $costData = [
@@ -142,7 +143,7 @@ class CostController extends Controller
         $cost->update($costData);
         // if request has image for update then new image name will be generated and old image will be deleted
         // if request does not have image, then image will not change
-        if($request->has('image')) {
+        if ($request->has('image')) {
             $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
@@ -161,5 +162,25 @@ class CostController extends Controller
         }
     }
 
-
+    /**
+     * delete costs
+     * only BuyerAdmin with delete-costs permission will be able to delete costs
+     * image file and record also must be deleted accordingly.
+     * @param Cost $cost
+     * @throws AuthorizationException
+     * @throws \Exception
+     */
+    public function destroy(Cost $cost)
+    {
+        $this->authorize('delete', $cost);
+        $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
+        DB::transaction(function () use ($cost, $imageNameArray){
+            //delete the given cost record
+            $cost->delete();
+            //delete the cost's image record
+            $cost->images()->delete();
+            //delete the cost's image file from directory
+            $this->deleteOne('public', $imageNameArray);
+        }, 1);
+    }
 }
