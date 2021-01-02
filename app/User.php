@@ -93,12 +93,32 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * check to see if user is a systemadmin
+     * check to see if user is a SystemAdmin
      */
     public function isAdmin()
     {
         if ($this->role()->pluck('name')->contains('SystemAdmin')) {
             return true;
+        }
+    }
+
+    /**
+     * check to see if user has supper privilege rolls
+     * @return bool
+     */
+    public function checkPrivilegeRole()
+    {
+        $privilegeRoleArray=['BuyerAdmin', 'SystemAdmin'];
+        $userRoles = $this->role()->pluck('name');
+        foreach ($privilegeRoleArray as $privilegeRole)
+        {
+            foreach ($userRoles as $role)
+            {
+                if($privilegeRole == $role)
+                {
+                    return true;
+                }
+            }
         }
     }
 
