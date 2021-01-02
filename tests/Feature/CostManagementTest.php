@@ -28,8 +28,10 @@ class CostManagementTest extends TestCase
 
     public function only_buyer_admin_can_create_update_and_delete_costs()
     {
+        $this->prepNormalEnv('BuyerAdmin', ['delete-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        Auth::user();
+        $retailer = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
@@ -39,57 +41,104 @@ class CostManagementTest extends TestCase
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
-
+        //only BuyerAdmins with delete-costs permission can create costs and other users are not allowed
+        $this->actingAs($retailer);
         $this->post('/costs', $attributes)->assertForbidden();
     }
 
     /** @test
-     * first BuyerAdmin should create a cost for a specific user
-     * then that user will be able to see all costs created for him
+     * first BuyerAdmin should create a cost for a specific retailer
+     * then that retailer will be able to see all costs created for him
+     * retailer are not able to see created costs for other retailers.
      */
-    public function retailers_can_see_all_costs()
+    public function retailers_only_can_see_all_costs_created_just_for_them()
     {
         $this->withoutExceptionHandling();
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
-        //create a retailer user with permission only to see costs
-        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        $retailer = Auth::user();
+        //create a retailer with just see-costs permission
+        $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
+        $retailer1 = Auth::user();
         $this->prepOrder();
         $product = Product::find(1);
-        // acting as BuyerAdmin to create a cost for retailer.
+        //acting as the BuyerAdmin to create a cost for retailer.
         $this->actingAs($BuyerAdmin);
-        $cost = factory('App\Cost')->create(['user_id' => $retailer->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
-        // acting as a retailer to  check created cost existence
-        $this->actingAs($retailer);
+        $cost = factory('App\Cost')->create([
+            'user_id' => $retailer1->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
+        //acting as the retailer to check created costs existence
+        $this->actingAs($retailer1);
         $this->get('/costs')->assertSeeText($cost->description);
+        //retailers are only able to see costs created just for them
+        $this->prepNormalEnv('retailer2', ['see-costs'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->get('/costs')->assertDontSeeText($cost->description);
     }
 
     /** @test
      * retailer can see all costs related to a specific model.
      * first BuyerAdmin should create a cost for a specific user and model
      * then that user will be able to see created cost for him related to that model
-     * here we use product model for testing. Using any other model is also possible
+     * here we use product model for testing, using any other model is also possible
      */
     public function retailer_can_see_all_costs_related_to_a_specific_model()
     {
         $this->withoutExceptionHandling();
-        //create a BuyerAdmin user with permissions to see and create costs
+        //create BuyerAdmin with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
-        //create a retailer user with permission only to see costs
+        //create retailer with permission only to see costs
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        $retailer = Auth::user();
+        $retailer1 = Auth::user();
         $this->prepOrder();
         $product = Product::find(1);
         // acting as BuyerAdmin to create a cost for retailer.
         $this->actingAs($BuyerAdmin);
-        $cost = factory('App\Cost')->create(['user_id' => $retailer->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
-        // acting as a retailer to  check created cost existence
-        $this->actingAs($retailer);
+        $cost = factory('App\Cost')->create([
+            'user_id' => $retailer1->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
+        // acting as a retailer to check created cost existence for the product record
+        $this->actingAs($retailer1);
         $model = 'App\Product';
         $this->get('/costs-model/' . $model)->assertSeeText($cost->description);
+        // all retailers are only able to see their own records
+        $this->prepNormalEnv('retailer2', ['see-costs'], 0 , 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->get('/costs-model/' . $model)->assertDontSeeText($cost->description);
+    }
+
+    /** @test
+     * All super privilege users are able to see all costs created for a specific user
+     */
+    public function super_privilege_users_can_see_all_costs_related_to_any_user()
+    {
+        //create a BuyerAdmin user with permissions to see and create costs
+        $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //create a retailer with just see-costs permission
+        $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepOrder();
+        $product = Product::find(1);
+        //acting as the BuyerAdmin to create a cost for retailer.
+        $this->actingAs($BuyerAdmin);
+        $cost = factory('App\Cost')->create([
+            'user_id' => $retailer->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
+        //assert to see the cost's description created for the retailer
+        $this->get('/admin-index-costs/' . $retailer->id)->assertSeeText($cost->description);
+        //other users are not allowed to index costs for a specific user
+        $this->actingAs($retailer);
+        $this->get('/admin-index-costs/' . $retailer->id)->assertForbidden();
     }
 
     /**
@@ -102,16 +151,15 @@ class CostManagementTest extends TestCase
 
     /** @test
      * BuyerAdmin can create cost for a specific user
+     * BuyerAdmin must have create-costs permission to be allowed
      */
     public function BuyerAdmins_can_create_costs()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
         $attributes = [
@@ -125,6 +173,9 @@ class CostManagementTest extends TestCase
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        // other users are not allowed to create costs
+        $this->actingAs($retailer);
+        $this->post('/costs', $attributes)->assertForbidden();
     }
 
     /** @test */
@@ -145,7 +196,7 @@ class CostManagementTest extends TestCase
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
-        // acting as a BuyerAdmin to create cost for retailer
+        // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes)->assertSessionHasErrors('user');
     }
@@ -168,7 +219,7 @@ class CostManagementTest extends TestCase
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
-        // acting as a BuyerAdmin to create cost for retailer
+        // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes)->assertSessionHasErrors('amount');
     }
@@ -191,7 +242,7 @@ class CostManagementTest extends TestCase
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
-        // acting as a BuyerAdmin to create cost for retailer
+        // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes)->assertSessionHasErrors('description');
     }
@@ -214,7 +265,7 @@ class CostManagementTest extends TestCase
             'costable_type' => '',
             'costable_id' => $product->id
         ];
-        // acting as a BuyerAdmin to create cost for retailer
+        // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes)->assertSessionHasErrors('costable_type');
     }
@@ -229,7 +280,7 @@ class CostManagementTest extends TestCase
         $retailer = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
-        $product = Product::find(1);
+        Product::find(1);
         $attributes = [
             'user' => $retailer,
             'amount' => 1000,
@@ -237,7 +288,7 @@ class CostManagementTest extends TestCase
             'costable_type' => 'App\Product',
             'costable_id' => ''
         ];
-        // acting as a BuyerAdmin to create cost for retailer
+        // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
         $this->post('/costs', $attributes)->assertSessionHasErrors('costable_id');
     }
@@ -253,7 +304,6 @@ class CostManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
         $attributes = [
@@ -270,9 +320,9 @@ class CostManagementTest extends TestCase
         $cost = Cost::find(1);
         $image = $cost->images()->find($cost->id);
         $image_name = $image->image_name;
-        // Assert file exist on server
+        // Assert file existence on the server
         $this->assertFileExists(public_path('storage' . $image_name));
-        // Assert database has image which has a imagable_id for created transaction
+        // Assert database has image record for the created cost
         $this->assertDatabaseHas('images', ['imagable_id' => $cost->id]);
     }
 
@@ -282,16 +332,15 @@ class CostManagementTest extends TestCase
      */
     public function retailers_can_see_a_single_cost()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        $retailer = Auth::user();
+        $retailer1 = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
         $attributes = [
-            'user' => $retailer,
+            'user' => $retailer1,
             'amount' => 1000,
             'description' => 'cost for product',
             'costable_type' => 'App\Product',
@@ -302,9 +351,42 @@ class CostManagementTest extends TestCase
         $this->post('/costs', $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         // acting as a retailer to check single record for the created cost
-        $this->actingAs($retailer);
+        $this->actingAs($retailer1);
         $cost = Cost::find(1);
         $this->get($cost->path())->assertSeeText($cost->description);
+        // retailers are not allowed to see other retailer's costs
+        $this->prepNormalEnv('retailer2', ['see-costs'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->get($cost->path())->assertForbidden();
+    }
+
+    /** @test
+     * All super privilege users are able to see a single cost for a specific user
+     */
+    public function super_privilege_users_can_see_a_single_cost_for_a_specific_user()
+    {
+        //create a BuyerAdmin user with permissions to see and create costs
+        $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //create a retailer with just see-costs permission
+        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepOrder();
+        $product = Product::find(1);
+        //acting as the BuyerAdmin to create a cost for retailer.
+        $this->actingAs($BuyerAdmin);
+        factory('App\Cost')->create([
+            'user_id' => $retailer->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
+        $cost = Cost::find(1);
+        //assert to see the cost's description created for the retailer
+        $this->get('/admin-index-single-cost/' . $retailer->id . '/' . $cost->id)->assertSeeText($cost->description);
+        //other users are not allowed to see costs for a specific user
+        $this->actingAs($retailer);
+        $this->get('/admin-index-single-cost/' . $retailer->id . '/' . $cost->id)->assertForbidden();
     }
 
     /**
@@ -326,10 +408,8 @@ class CostManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        factory('App\Status')->create();
         $this->prepOrder();
         $product = Product::find(1);
-
         // create a cost record for the product
         factory('App\Cost')->create([
             'user_id' => $retailer->id,
@@ -341,15 +421,14 @@ class CostManagementTest extends TestCase
         $cost = Cost::find(1);
         // create an image record for the created cost
         factory('App\Image')->create([
-           'user_id' => $retailer->id,
-           'imagable_type' => 'App\Cost',
-           'imagable_id' => $cost->id,
-           'image_name' => '/images/cost1.jpg'
+            'user_id' => $retailer->id,
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+            'image_name' => '/images/cost1.jpg'
         ]);
         // create image file for cost record in the images folder
         Storage::disk('public')->put('/images/cost1.jpg', 'Contents');
         //get uploaded image name for created cost record
-        $cost = Cost::find(1);
         $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
         $newAttributesWithoutImage = [
             'user' => $retailer,
@@ -370,13 +449,26 @@ class CostManagementTest extends TestCase
         $this->actingAs($BuyerAdmin);
         // update the cost record without new image
         $this->patch('/costs/' . $cost->id, $newAttributesWithoutImage);
-        $this->assertDatabaseHas('costs', ['amount' => 2000, 'description' => 'new cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        $this->assertDatabaseHas('costs', [
+            'amount' => 2000,
+            'description' => 'new cost for product',
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
         // old image should remain intact
         $this->assertFileExists(public_path('storage' . $oldImageName));
         // update cost record with new image
         $this->patch('/costs/' . $cost->id, $newAttributesWithImage);
-        $this->assertDatabaseHas('costs', ['amount' => 2000, 'description' => 'new cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
+        $this->assertDatabaseHas('costs', [
+            'amount' => 2000,
+            'description' => 'new cost for product',
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id
+        ]);
+        //old image should be deleted and new image should be uploaded
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        $newImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
+        $this->assertFileExists(public_path('storage' . $newImageName));
     }
 
     /** @test
@@ -410,7 +502,7 @@ class CostManagementTest extends TestCase
             'image_name' => '/images/cost1.jpg'
         ]);
         $image2 = factory('App\Image')->create([
-           'user_id' => $retailer->id,
+            'user_id' => $retailer->id,
             'imagable_type' => 'App\Cost',
             'imagable_id' => $cost->id,
             'image_name' => '/images/cost2.jpg'

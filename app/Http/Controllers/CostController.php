@@ -14,19 +14,22 @@ class CostController extends Controller
     use ImageTrait;
 
     /**
-     * index costs by retailers
+     * index costs created for retailers
      * to index, retailers must have see-costs permission
+     * retailers can only see costs created for them
      * @throws AuthorizationException
      */
     public function index()
     {
         $this->authorize('viewAny', Cost::class);
+        //users can only index costs belongs to them
         return Auth::user()->costs;
     }
 
     /**
-     * index all costs for a specific model
+     * index all costs for the given model
      * to index, retailers must have see-costs permission
+     * retailers can only see its own records
      * @param $model
      * @return
      * @throws AuthorizationException
@@ -49,17 +52,18 @@ class CostController extends Controller
     }
 
     /**
-     * store costs
-     * only BuyerAdmin or maybe other admins with create-costs permission can store cost in db
+     * store costs for the given user by BuyerAdmin
+     * only BuyerAdmin or other admins with create-costs permission can store cost in db
      * @param Request $request
      * @throws AuthorizationException
      */
     public function store(Request $request)
     {
-        // first cost must be created and get cost_id to be used in image creation model
         $this->authorize('create', Cost::class);
+        // first cost record must be created and get cost_id to be used in image creation model
+        // cost will be created for this user
         $user = $request->input('user');
-        // prepare cost data
+        // prepare cost's data to create record in db
         $request->validate([
             'user' => 'required',
             'amount' => 'required',
@@ -75,22 +79,23 @@ class CostController extends Controller
         ];
         // create a cost record for the given user
         $cost = $user->costs()->create($costData);
-        // if image is included on cost creation time, then uploading image and model will be created in db
+        // if image is included, then image should be uploaded and associated record will be created in db
         if ($request->has('image')) {
+            // first upload image
             $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', $oldImageName);
+            $this->deleteOne('public', [$oldImageName]);
+            // create record for the uploaded image
             $imageData = [
                 // imagable_type always remains App\Cost
                 'imagable_type' => 'App\Cost',
                 'imagable_id' => $cost->id,
                 'image_name' => $filePath
             ];
-            // create a image record for the given user
             $user->images()->create($imageData);
         }
     }
@@ -150,7 +155,7 @@ class CostController extends Controller
             $folder = '/images';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', $oldImageName);
+            $this->deleteOne('public', [$oldImageName]);
             $imageData = [
                 // imagable_type always remains App\\Cost
                 'imagable_type' => 'App\Cost',
