@@ -7,13 +7,17 @@ use App\Permission;
 use App\Role;
 use App\RolePermission;
 use App\User;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 
 class RoleController extends Controller
 {
-    /*
+    /**
      * index roles
+     * only SystemAdmin is able to see roles
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -21,30 +25,42 @@ class RoleController extends Controller
         return Role::all();
     }
 
-    /*
+    /**
      * form to create roles
      * vue-js modal generates this form
+     * @throws AuthorizationException
      */
     public function create()
     {
         $this->authorize('create', Role::class);
     }
 
-    /*
+    /**
      * store roles
+     * only SystemAdmin is able to create roles
+     * @param Request $request
+     * @throws AuthorizationException
      */
-    public function store()
+    public function store(Request $request)
     {
         $this->authorize('create', Role::class);
-        Role::create(request()->validate([
+        $request->validate([
             'name' => 'required',
             'label' => 'required'
-        ]));
+        ]);
+        $roleData = [
+          'name' => $request->input('name'),
+          'label' => $request->input('label')
+        ];
+        Role::create($roleData);
     }
 
-    /*
-     * show a single role
+    /**
+     * show a single role with all assigned permissions
      * vue-js shows single role
+     * @param Role $role
+     * @return mixed
+     * @throws AuthorizationException
      */
     public function show(Role $role)
     {
@@ -52,17 +68,22 @@ class RoleController extends Controller
         return $role->permissions;
     }
 
-    /*
+    /**
      * edit form
      * vue-js generates this form
+     * @param Role $role
+     * @throws AuthorizationException
      */
     public function edit(Role $role)
     {
         $this->authorize('update', $role);
     }
 
-    /*
+    /**
      * update roles
+     * only SystemAdmin can update role
+     * @param Role $role
+     * @throws AuthorizationException
      */
     public function update(Role $role)
     {
@@ -74,8 +95,12 @@ class RoleController extends Controller
         $role->update($data);
     }
 
-    /*
+    /**
      * delete roles
+     * only SystemAdmin can delete roles
+     * @param Role $role
+     * @throws AuthorizationException
+     * @throws Exception
      */
     public function destroy(Role $role)
     {
@@ -83,8 +108,13 @@ class RoleController extends Controller
         $role->delete();
     }
 
-    /*
-     * allow roles for permissions
+    /**
+     * assign permissions to the given role
+     * only SystemAdmin can assign permission to roles
+     * @param Role $role
+     * @param Permission $permission
+     * @return mixed
+     * @throws AuthorizationException
      */
     public function allowToPermission(Role $role, Permission $permission)
     {

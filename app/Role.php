@@ -8,23 +8,31 @@ class Role extends Model
 {
     protected $guarded = [];
 
-    /*
-     * Role has many users
+    /**
+     * return role path
+     */
+    public function path()
+    {
+        return "/roles/{$this->id}";
+    }
+
+    /**
+     * each role has many users
      */
     public function users()
     {
         return $this->hasMany('App\User');
     }
 
-    /*
-     * Role might belongs to many permissions
+    /**
+     * each role might belongs to many permissions
      */
     public function permissions()
     {
         return $this->belongsToMany('App\Permission', 'role_permissions');
     }
 
-    /*
+    /**
      * allow permission for roles
      */
     public function allowTo($permission)
@@ -32,7 +40,7 @@ class Role extends Model
         $this->permissions()->attach($permission);
     }
 
-    /*
+    /**
      * disallow permissions for roles
      */
     public function  disAllowTo($permission)
@@ -40,7 +48,7 @@ class Role extends Model
         $this->permissions()->detach($permission);
     }
 
-    /*
+    /**
      * change user's role
     */
     public function changeRole($user)
@@ -48,12 +56,6 @@ class Role extends Model
         $this->users()->save($user);
     }
 
-    /*
-     * return role path
-     */
-    public function path()
-    {
-        return "/roles/{$this->id}";
-    }
+
 
 }
