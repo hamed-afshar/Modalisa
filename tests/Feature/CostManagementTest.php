@@ -3,12 +3,9 @@
 namespace Tests\Feature;
 
 use App\Cost;
-use App\Image;
 use App\Kargo;
 use App\Order;
-use App\Permission;
 use App\Product;
-use App\Traits\ImageTrait;
 use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,30 +18,6 @@ use Tests\TestCase;
 class CostManagementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
-
-    /** @test
-     * only BuyerAdmins have create-costs permission for creating a cost record
-     */
-
-    public function only_buyer_admin_can_create_update_and_delete_costs()
-    {
-        $this->prepNormalEnv('BuyerAdmin', ['delete-costs'], 0, 1);
-        $BuyerAdmin = Auth::user();
-        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        $retailer = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
-        $product = Product::find(1);
-        $attributes = [
-            'amount' => 1000,
-            'description' => 'cost for product',
-            'costable_type' => 'App\Product',
-            'costable_id' => $product->id
-        ];
-        //only BuyerAdmins with delete-costs permission can create costs and other users are not allowed
-        $this->actingAs($retailer);
-        $this->post('/costs', $attributes)->assertForbidden();
-    }
 
     /** @test
      * first BuyerAdmin should create a cost for a specific retailer
@@ -685,5 +658,17 @@ class CostManagementTest extends TestCase
         $this->assertInstanceOf(Kargo::class, $cost->costable);
     }
 
-
+    /** @test */
+    public function guests_can_not_access_زخسف_management()
+    {
+        $this->get('/costs')->assertRedirect('login');
+        $this->get('/costs/create')->assertRedirect('login');
+        $this->post('/costs')->assertRedirect('login');
+        $this->get('/costs/1')->assertRedirect('login');
+        $this->get('/costs/1' . '/edit')->assertRedirect('login');
+        $this->patch('/costs/1')->assertRedirect('login');
+        $this->delete('/costs/1')->assertRedirect('login');
+        $this->get('/admin-index-costs/1')->assertRedirect('login');
+        $this->get('/admin-index-single-cost/1/1')->assertRedirect('login');
+    }
 }

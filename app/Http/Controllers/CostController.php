@@ -152,7 +152,7 @@ class CostController extends Controller
             $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
-            $folder = '/images';
+            $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
             $this->deleteOne('public', [$oldImageName]);
