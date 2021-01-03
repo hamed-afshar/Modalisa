@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\RolePermission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use App\Permission;
 use App\Role;
@@ -13,38 +13,18 @@ class PermissionManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    /** @test
-     * only SystemAdmin can make changes to the permissions
-     * other users are not allowed to make any changes including
-     * index, create, store, show, update and delete
-     */
-
-    public function other_users_can_not_make_changes_to_the_permissions()
-    {
-
-        $this->prepNormalEnv('retailer', 'make-payment', 0,1);
-        $permission = factory('App\Permission')->create();
-        $newAttributes = factory('App\Permission')->raw();
-        $this->get($permission->path())->assertForbidden();
-        $this->get('permissions/create')->assertForbidden();
-        $this->post('/permissions', $newAttributes)->assertForbidden();
-        $this->get($permission->path())->assertForbidden();
-        $this->get($permission->path() . '/edit')->assertForbidden();
-        $this->patch($permission->path(), $newAttributes)->assertForbidden();
-        $this->delete($permission->path())->assertForbidden();
-
-    }
-
     /** @test */
     public function only_SystemAdmin_can_see_permissions()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $permission = factory('App\Permission')->create();
         $this->get('/permissions')->assertSeeText($permission->name);
+        //other users are not allowed to see permissions
+        $this->prepNormalEnv('retailer', ['create-orders', 'create-transactions'] , 0,1);
+        $this->get('/permissions')->assertForbidden();
     }
 
-    /*
+    /**
      * this should be tested in VueJs
      */
     public function form_is_available_to_create_permission()
@@ -59,6 +39,9 @@ class PermissionManagementTest extends TestCase
         $attributes = factory('App\Permission')->raw();
         $this->post('/permissions', $attributes);
         $this->assertDatabaseHas('permissions', $attributes);
+        //other users are not allowed to see permissions
+        $this->prepNormalEnv('retailer', ['create-orders', 'create-transactions'] , 0,1);
+        $this->post('/permissions', $attributes)->assertForbidden();
     }
 
     /** @test */
@@ -77,7 +60,7 @@ class PermissionManagementTest extends TestCase
         $this->post('/permissions', $attributes)->assertSessionHasErrors('label');
     }
 
-    /*
+    /**
      * This test is not necessary
      */
     public function only_SystemAdmin_can_view_a_single_permission()
@@ -85,7 +68,7 @@ class PermissionManagementTest extends TestCase
 
     }
 
-    /*
+    /**
      * this should be tested in VueJs
      */
     public function form_is_available_to_update_a_permission()
@@ -104,13 +87,23 @@ class PermissionManagementTest extends TestCase
         ];
         $this->patch($permission->path(), $newAttributes);
         $this->assertDatabaseHas('permissions', $newAttributes);
+        //other users are not allowed to update permissions
+        $this->prepNormalEnv('retailer', ['create-orders', 'create-transactions'] , 0,1);
+        $this->patch($permission->path())->assertForbidden();
     }
 
     /** @test */
     public function only_SystemAdmin_can_delete_a_permission()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->prepNormalEnv('retailer', ['create-orders', 'create-transactions'] , 0,1);
+        //other users are not allowed to delete permissions
+        $retailer = Auth::user();
         $permission = factory('App\Permission')->create();
+        $this->delete($permission->path())->assertForbidden();
+        //only SystemAdmin can delete permissions
+        $this->actingAs($SystemAdmin);
         $this->delete($permission->path());
         $this->assertDatabaseMissing('permissions', ['id' => $permission->id]);
     }
@@ -118,7 +111,7 @@ class PermissionManagementTest extends TestCase
     /** @test
      * many to many relationship
      */
-    public function role_belongs_to_many_permissions()
+    public function each_role_belongs_to_many_permissions()
     {
         $this->withoutExceptionHandling();
         $role = factory('App\Role')->create();
@@ -130,7 +123,7 @@ class PermissionManagementTest extends TestCase
     /** @test
      * many to many relationship
      */
-    public function permission_belongs_to_many_roles()
+    public function each_permission_belongs_to_many_roles()
     {
         $role = factory('App\Role')->create();
         $permission = factory('App\Permission')->create();
