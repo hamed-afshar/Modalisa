@@ -17,10 +17,6 @@ abstract class TestCase extends BaseTestCase
 
     protected function prepAdminEnv($role, $locked, $confirmed)
     {
-        factory('App\Subscription')->create([
-            'plan' => 'Basic',
-            'cost_percentage' => 30
-        ]);
         $role = factory('App\Role')->create(['name' => $role]);
         $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
         $role->changeRole($user);
