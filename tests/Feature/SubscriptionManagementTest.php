@@ -2,61 +2,32 @@
 
 namespace Tests\Feature;
 
-use App\Permission;
-use App\Role;
 use App\Subscription;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
-use App\UserSubscription;
 
-class SubscriptionManagmentTest extends TestCase
+class SubscriptionManagementTest extends TestCase
 {
-
     use WithFaker,
         RefreshDatabase;
-
-    /** @test */
-    public function other_users_can_not_make_changes_to_the_subscriptions()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $subscription = factory('App\Subscription')->create();
-        $newAttributes = factory('App\Subscription')->raw();
-        $this->get($subscription->path())->assertForbidden();
-        $this->get($subscription->path() . '/create')->status(404);
-        $this->post('/subscriptions', $newAttributes)->assertForbidden();
-        $this->get($subscription->path())->assertForbidden();
-        $this->get($subscription->path() . '/edit')->status(404);
-        $this->patch($subscription->path(), $newAttributes)->assertForbidden();
-        $this->delete($subscription->path())->assertForbidden();
-
-    }
-
-    /** @test */
-    public function SystemAdmin_can_change_user_subscription()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $newUser = factory('App\User')->create();
-        $newSubscription = factory('App\Subscription')->create(['plan' => 'Gold']);
-        $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
-        $this->assertDatabaseHas('users', ['subscription_id' => $newSubscription->id]);
-
-    }
 
     /** @test */
     public function only_SystemAdmin_can_see_subscriptions()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $subscription = factory('App\Subscription')->create(['plan' => 'Gold']);
+        $subscription = factory('App\Subscription')->create(['plan' => 'test-plan']);
         $this->get('/subscriptions')->assertSeeText($subscription->plan);
+        //other users are not allowed to see subscriptions
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
+        $this->get('/subscriptions')->assertForbidden();
     }
 
-    /*
-      * this should be tested in VueJs
-      */
+    /**
+     * this should be tested in VueJs
+     */
     public function form_is_available_to_create_roles()
     {
     }
@@ -68,6 +39,9 @@ class SubscriptionManagmentTest extends TestCase
         $attributes = factory('App\Subscription')->raw();
         $this->post('/subscriptions', $attributes);
         $this->assertDatabaseHas('subscriptions', $attributes);
+        //other users are not allowed to create subscriptions
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
+        $this->post('/subscriptions', $attributes)->assertForbidden();
     }
 
     /** @test */
@@ -86,17 +60,17 @@ class SubscriptionManagmentTest extends TestCase
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('cost_percentage');
     }
 
-    /*
-      * This test is not necessary
-      */
+    /**
+     * This test is not necessary
+     */
     public function only_SystemAdmin_can_vew_a_single_subscription()
     {
 
     }
 
-    /*
-    * this should be tested in VueJs
-    */
+    /**
+     * this should be tested in VueJs
+     */
     public function form_is_available_to_update_a_subscription()
     {
 
@@ -106,32 +80,56 @@ class SubscriptionManagmentTest extends TestCase
     public function only_SystemAdmin_can_update_a_subscription()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $subscription = factory('App\Subscription')->create();
-        $this->patch($subscription->path(), [
+        $subscription = factory('App\Subscription')->create(['plan' => 'test-plan']);
+        $newAttributes = [
             'plan' => 'Gold',
             'cost_percentage' => 20,
-        ]);
+        ];
+        $this->patch($subscription->path(), $newAttributes);
         $this->assertDatabaseHas('subscriptions', ['id' => $subscription->id]);
+        //other users are not allowed to update subscriptions
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
+        $this->patch($subscription->path(), $newAttributes)->assertForbidden();
     }
 
     /** @test */
     public function only_SystemAdmin_can_delete_a_subscription()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
         factory('App\Subscription')->create();
         $subscription = Subscription::find(1);
+        //other users are not allowed to delete subscriptions
+        $this->actingAs($retailer);
+        $this->delete($subscription->path())->assertForbidden();
+        //only SystemAdmin can delete subscriptions
+        $this->actingAs($SystemAdmin);
         $this->delete($subscription->path());
         $this->assertDatabaseMissing('subscriptions', ['id' => $subscription->id]);
+    }
+
+    /** @test */
+    public function SystemAdmin_can_change_user_subscription()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $newUser = factory('App\User')->create();
+        $newSubscription = factory('App\Subscription')->create(['plan' => 'Gold']);
+        $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
+        $this->assertDatabaseHas('users', ['subscription_id' => $newSubscription->id]);
+        //other users are not allowed to change subscriptions
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
+        $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id)->assertForbidden();
     }
 
     /** @test
      * one to many relationship
      */
-    public function subscriptions_have_many_users()
+    public function each_subscription_has_many_users()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $subscription = Subscription::find(1);
+        $subscription = factory('App\Subscription')->create();
         $user = User::find(1);
         $subscription->changeSubscription($user);
         $this->assertInstanceOf(User::class, $subscription->users->find(1));
@@ -140,15 +138,14 @@ class SubscriptionManagmentTest extends TestCase
     /** @test
      * one to many relationship
      */
-    public function users_belongs_to_one_subscription()
+    public function each_user_belongs_to_one_subscription()
     {
-        $this->prepAdminEnv('SystemAdmin', 0 , 1);
-        $subscription = Subscription::find(1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $subscription = factory('App\Subscription')->create();
         $user = User::find(1);
         $subscription->changeSubscription($user);
         $this->assertInstanceOf(Subscription::class, $user->subscription->find(1));
     }
-
 
     /** @test */
     public function guests_can_not_access_subscriptions_system()

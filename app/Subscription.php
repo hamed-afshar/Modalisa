@@ -8,29 +8,30 @@ class Subscription extends Model
 
 {
     protected $guarded = [];
+    /**
+     * return path
+     */
+    public function path()
+    {
+        return "/subscriptions/{$this->id}";
+    }
 
-    /*
-     * subscription may belongs to many users
+    /**
+     * each subscription may have many users
      */
     public function users()
     {
         return $this->hasMany('App\User');
     }
 
-    /*
+    /**
      * change user's subscription
+     * @param $user
+     * @return false|Model
      */
     public function changeSubscription($user)
     {
         return $this->users()->save($user);
-    }
-
-    /*
-     * return permissions path
-     */
-    public function path()
-    {
-        return "/subscriptions/{$this->id}";
     }
 
 }
