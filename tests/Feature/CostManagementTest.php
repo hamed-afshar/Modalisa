@@ -375,7 +375,6 @@ class CostManagementTest extends TestCase
      */
     public function only_BuyerAdmin_can_update_a_cost()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
@@ -442,6 +441,9 @@ class CostManagementTest extends TestCase
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
         $newImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
         $this->assertFileExists(public_path('storage' . $newImageName));
+        // only BuyerAdmin is allowed to update cost records
+        $this->actingAs($retailer);
+        $this->patch('/costs/' . $cost->id, $newAttributesWithImage)->assertForbidden();
     }
 
     /** @test
@@ -490,8 +492,8 @@ class CostManagementTest extends TestCase
         //cost record must be deleted
         $this->assertDatabaseMissing('costs', ['id' => $cost->id]);
         //cost's image records also must be deleted
-        $this->assertDatabaseMissing('images', ['id' => $cost->id, 'imagable_id' => $image1]);
-        $this->assertDatabaseMissing('images', ['id' => $cost->id, 'imagable_id' => $image2]);
+        $this->assertDatabaseMissing('images', ['id' => $image1->id]);
+        $this->assertDatabaseMissing('images', ['id' => $image2->id]);
         //cost's images also must be deleted
         $this->assertFileNotExists(public_path('storage' . $imageNameArray[0]));
         $this->assertFileNotExists(public_path('storage' . $imageNameArray[1]));

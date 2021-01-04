@@ -68,6 +68,7 @@ class CostController extends Controller
             'user' => 'required',
             'amount' => 'required',
             'description' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
             'costable_type' => 'required',
             'costable_id' => 'required'
         ]);
@@ -138,6 +139,7 @@ class CostController extends Controller
             'user' => 'required',
             'amount' => 'required',
             'description' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
         $user = $request->input('user');
         $costData = [
@@ -180,12 +182,12 @@ class CostController extends Controller
         $this->authorize('delete', $cost);
         $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
         DB::transaction(function () use ($cost, $imageNameArray){
-            //delete the given cost record
-            $cost->delete();
-            //delete the cost's image record
-            $cost->images()->delete();
             //delete the cost's image file from directory
             $this->deleteOne('public', $imageNameArray);
+            //delete the cost image records
+            $cost->images()->delete();
+            //delete the given cost records
+            $cost->delete();
         }, 1);
     }
 }

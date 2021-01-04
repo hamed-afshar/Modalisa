@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Traits\ImageTrait;
 use App\Transaction;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Null_;
 use Psy\Util\Str;
 
@@ -18,16 +20,21 @@ class TransactionController extends Controller
 
     /**
      * index transactions
+     * users with see-transactions permission can see transactions
+     * users can only see transaction records belong to them
+     * @throws AuthorizationException
      */
     public function index()
     {
         $this->authorize('viewAny', Transaction::class);
+        //users can only index transactions belongs to them
         return Auth::user()->transactions;
     }
 
     /**
      * form to create transaction
      * VueJS modal generates this form
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -36,8 +43,9 @@ class TransactionController extends Controller
 
     /**
      * store transactions
+     * user should have create-transactions to be allowed
      * @param Request $request
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function store(Request $request)
     {
@@ -58,13 +66,15 @@ class TransactionController extends Controller
         ];
         // create a transaction
         $transaction = $user->transactions()->create($transactionData);
-        // if image is included on transaction creation time, then uploading image and model will be created in db
+        // if image is included on transaction creation time, then image should be uploaded and associated record will be created in db
         if ($request->has('image')) {
+            // first upload image
             $image = $request->file('image');
             $imageName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageName);
+            // create record for the uploaded image
             $imageData = [
                 // imagable_type always remains App\Transaction
                 'imagable_type' => 'App\Transaction',
@@ -77,7 +87,11 @@ class TransactionController extends Controller
 
     /**
      * show a single transaction
+     * user should have see-transaction permission to be allowed
      * VueJs shows this single transaction
+     * @param Transaction $transaction
+     * @return
+     * @throws AuthorizationException
      */
     public function show(Transaction $transaction)
     {
@@ -87,7 +101,10 @@ class TransactionController extends Controller
 
     /**
      * edit form
+     * users should have create-transactions permission to be allowed
      * VueJs generates this form
+     * @param Transaction $transaction
+     * @throws AuthorizationException
      */
     public function edit(Transaction $transaction)
     {
@@ -96,6 +113,11 @@ class TransactionController extends Controller
 
     /**
      * update transactions
+     * users should have create-transactions permission to be allowed
+     * users can only update their own transaction records
+     * @param Request $request
+     * @param Transaction $transaction
+     * @throws AuthorizationException
      */
     public function update(Request $request, Transaction $transaction)
     {
@@ -113,67 +135,58 @@ class TransactionController extends Controller
             'comment' => $request->input('comment'),
         ];
         $transaction->update($transactionData);
-
         // if request has image for update then new image name will be generated and old image be deleted
         // if request dose not have image, then image name will not change
         if ($request->has('image')) {
-            $image = $transaction->images()->where('imagable_id', $transaction->id);
-            $oldImageName = $image->get('image_name');
+            $oldImageName = $transaction->images()->where('imagable_id', $transaction->id)->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', $oldImageName);
+            $this->deleteOne('public', [$oldImageName]);
             $imageData = [
                 // imagable_type always remains App\Transaction
                 'imagable_type' => 'App\Transaction',
                 'imagable_id' => $transaction->id,
                 'image_name' => $filePath
             ];
+            // update image record for the given user
             $user->images()->update($imageData);
         }
     }
 
     /**
      * delete transactions
+     * @param Transaction $transaction
+     * @throws AuthorizationException
      */
     public function destroy(Transaction $transaction)
     {
         $this->authorize('delete', $transaction);
-        $transaction->delete();
+        $imageNameArray = $transaction->images()->where('imagable_id', $transaction->id)->pluck('image_name');
+        DB::transaction(function () use ($transaction, $imageNameArray) {
+            //delete the transaction's images
+            $this->deleteOne('public', $imageNameArray);
+            //delete the transaction image records
+            $transaction->images()->delete();
+            //delete the given transaction record
+            $transaction->delete();
+        }, 1);
     }
 
     /**
      * confirm transactions
+     * only System admin can confirm transactions
+     * @param Transaction $transaction
+     * @throws AuthorizationException
      */
     public function confirm(Transaction $transaction)
     {
-        $this->authorize('confirm', $transaction);
+        $this->authorize('confirm', Transaction::class);
         $data = request()->validate([
             'confirmed' => 'required'
         ]);
-        $transaction->update($data);
-    }
-
-    /**
-     * upload image for transaction model
-     */
-    public function uploadImage(Request $request)
-    {
-//        $transaction = Transaction::find($request->input('id'));
-        dd($request);
-        $this->authorize('update', $transaction);
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-        $image = $request->file('image');
-        $name = date('mdYHis') . uniqid();
-        $folder = '/images/';
-        $this->uploadOne($image, $folder, 'public', $name);
-        $data = [
-            'image_name' => $name
-        ];
         $transaction->update($data);
     }
 }
