@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Image;
 use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,92 +17,45 @@ class TransactionManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    /** @test
-     * make sure that retailers can not change or access other retailers transactions
-     * for all actions including update,delete
-     */
-    public function retailers_only_can_access_to_their_own_resources()
-    {
-        factory('App\Subscription')->create();
-        $role = factory('App\Role')->create(['name' => 'retailer']);
-        $permission = factory('App\Permission')->create(['name' => 'make-payment']);
-        $user = factory('App\User')->create(['confirmed' => 1, 'locked' => 0]);
-        $newUser = factory('App\User')->create(['confirmed' => 1, 'locked' => 0]);
-        $role->changeRole($user);
-        $role->changeRole($newUser);
-        $role->allowTo($permission);
-        $transaction1 = factory('App\Transaction')->create(['user_id' => $user->id]);
-        $newAttributes = [
-            'currency' => 'USD',
-            'amount' => '9999',
-            'pic' => 'new_link',
-            'comment' => 'new comment'
-        ];
-        $this->actingAs($newUser);
-        $this->get($transaction1->path())->assertForbidden();
-        $this->patch($transaction1->path(), $newAttributes)->assertForbidden();
-        $this->delete($transaction1->path(), $newAttributes)->assertForbidden();
-    }
-
-    /** @test
-     * retailers can not make any changes to confirmed transactions
-     * including edit and delete
-     */
-    public function retailer_can_not_delete_or_update_confirmed_transactions()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id, 'confirmed' => 1]);
-        $this->patch($transaction->path())->assertForbidden();
-        $this->delete($transaction->path())->assertForbidden();
-    }
-
-    /** @test
-     * retailers can not confirm the transactions
-     * only SystemAdmin is able to confirm transactions
-     */
-    public function retailers_can_not_confirm_transactions()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
-        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
-        $newAttributes = [
-            'confirmed' => 1
-        ];
-        $this->patch('/transactions/confirm/' . $transaction->id, $newAttributes)->assertForbidden();
-    }
 
     /** @test */
-    public function retailers_can_see_their_transactions()
+    public function retailers_can_see_their_own_transactions()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer1', ['see-transactions', 'see-costs'], 0, 1);
+        $retailer1 = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
-        $this->get('/transactions')->assertSeeText($transaction->pic);
+        $this->get('/transactions')->assertSeeText($transaction->comment);
+        //users are only able to see their own transactions
+        $this->prepNormalEnv('retailer2', ['see-transactions', 'see-costs'], 0, 1);
+        $this->get('/transactions')->assertDontSeeText($transaction->comment);
     }
 
 
     /**
      * this should be tested in VueJs
      */
-
     public function form_is_available_to_create_a_transaction()
     {
 
     }
 
-    /** @test */
+    /** @test
+     * user should have create-transactions permission to be allowed
+     */
     public function retailers_can_create_transaction()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id]);
         $this->post('/transactions', $attributes);
-        $this->assertDatabaseHas('transactions', ['comment' => $attributes['comment']]);
+        $this->assertDatabaseHas('transactions', $attributes);
     }
 
     /** @test */
     public function currency_is_required()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'currency' => '']);
         $this->post('/transactions', $attributes)->assertSessionHasErrors('currency');
     }
@@ -109,7 +63,7 @@ class TransactionManagementTest extends TestCase
     /** @test */
     public function amount_is_required()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'amount' => '']);
         $this->post('/transactions', $attributes)->assertSessionHasErrors('amount');
     }
@@ -117,7 +71,7 @@ class TransactionManagementTest extends TestCase
     /** @test */
     public function comment_is_required()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id, 'comment' => '']);
         $this->post('/transactions', $attributes)->assertSessionHasErrors('comment');
     }
@@ -128,7 +82,7 @@ class TransactionManagementTest extends TestCase
     public function image_can_be_uploaded_on_transaction_creation()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
         $attributes = factory('App\Transaction')->raw(
             [
                 'user_id' => Auth::user()->id,
@@ -145,12 +99,18 @@ class TransactionManagementTest extends TestCase
     }
 
 
-    /** @test */
+    /** @test
+     * users should have see-transaction permission to be allowed
+     * users can only see their own transactions
+     */
     public function retailer_can_see_a_single_transaction()
     {
-        $this->prepNormalEnv('retailers', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer1', ['see-transactions', 'see-costs'], 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         $this->get($transaction->path())->assertSeeText($transaction->comment);
+        // users are not allowed to see other retailers transaction records
+        $this->prepNormalEnv('retailer2', ['see-transactions', 'see-costs'], 0, 1);
+        $this->get($transaction->path())->assertForbidden();
     }
 
     /**
@@ -162,12 +122,11 @@ class TransactionManagementTest extends TestCase
     }
 
     /** @test
-     * Users only are able to update not confirmed transactions
+     * Users are only able to update not confirmed transactions
      */
     public function retailer_can_update_not_confirmed_transactions()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['make-payment'], 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
         // create a transaction
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         // create image for this transaction
@@ -177,61 +136,118 @@ class TransactionManagementTest extends TestCase
             'imagable_id' => $transaction->id,
             'image_name' => '/images/transaction1.jpg'
         ]);
+        // create image file for transaction record in the image folder
+        Storage::disk('public')->put('/images/transaction1.jpg', 'Contents');
         // save old image name
-        $imageName = $transaction->images()->where('imagable_id', $transaction->id);
-        $oldImageName = $imageName->get('image_name');
-        // create a fake image to be added to updating attributes
-        $newPic = UploadedFile::fake()->create('newPic.jpg');
+        $oldImageName = $transaction->images()->where('imagable_id', $transaction->id)->value('image_name');
         // creating two types of attributes to test updates with or without images
         $newAttributesWithImage = [
             'currency' => 'USD',
             'amount' => '9999',
             'comment' => 'new comment1',
-            'image' => $newPic
+            'image' => UploadedFile::fake()->create('newPic.jpg')
         ];
         $newAttributesWithoutImage = [
             'currency' => 'USD',
             'amount' => '5555',
             'comment' => 'new comment2',
         ];
-        // update with new image and assert to see new image file existence on server and record in db
+        // update record without new image
+        $this->patch($transaction->path(), $newAttributesWithoutImage);
+        // updated image record should be available on the server
+        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithoutImage['comment']]);
+        // old image file should remain intact
+        $this->assertFileExists(public_path('storage' . $oldImageName));
+        //update record with new image
         $this->patch($transaction->path(), $newAttributesWithImage);
+        // updated image record should be available on the server
         $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
+        // new image file should be uploaded on the server
         $transaction = Transaction::find(1);
         $this->assertFileExists(public_path('storage' . $transaction->image_name));
-        // update without new image and assert to see new image file existence on server and record in db
-        // old image also must be deleted
-        $this->patch($transaction->path(), $newAttributesWithoutImage);
-        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithoutImage['comment']]);
+        // old image file should be deleted from the server
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        //users can only update their own transactions
+        $this->prepNormalEnv('retailer2', ['create-transactions'], 0, 1);
+        $this->patch($transaction->path(), $newAttributesWithImage)->assertForbidden();
     }
 
-    /** @test */
+    /** @test
+     * retailers can not make any changes to confirmed transactions
+     * including edit and delete
+     */
+    public function retailer_can_not_delete_or_update_confirmed_transactions()
+    {
+        $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id, 'confirmed' => 1]);
+        $this->patch($transaction->path())->assertForbidden();
+        $this->delete($transaction->path())->assertForbidden();
+    }
+
+
+    /** @test
+     * users should have delete-transactions to be allowed
+     * transaction record and image file also must be deleted
+     */
     public function retailer_can_delete_not_confirmed_transactions()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer1', ['create-transactions', 'delete-transactions'], 0, 1);
+        $retailer1 = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $image = factory('App\Image')->create([
+           'user_id' => $retailer1->id,
+           'imagable_type' => 'App\Transaction',
+           'imagable_id' => $transaction->id,
+           'image_name' => '/images/transaction1.jpg'
+        ]);
+        Storage::disk('public')->put('/images/transaction1.jpg', 'contents');
+        $imageName = $image->image_name;
+        //users are only able to delete their own transactions
+        $this->prepNormalEnv('retailer2', ['create-transactions', 'delete-transactions'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->delete($transaction->path())->assertForbidden();
+        // users can delete their own transactions which has not yet been confirmed
+        $this->actingAs($retailer1);
         $this->delete($transaction->path());
+        // transaction record must be deleted
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+        // transaction's image record must be deleted
+        $this->assertDatabaseMissing('images', ['id' => $image->id ]);
+        // transaction's image file must be deleted
+        $this->assertFileNotExists(public_path('storage' . $imageName));
+    }
+
+    /** @test
+     * retailers can not confirm transactions
+     * only SystemAdmin is able to confirm transactions
+     */
+    public function retailers_can_not_confirm_transactions()
+    {
+        $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
+        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $newAttributes = [
+            'confirmed' => 1
+        ];
+        $this->patch('/transactions/confirm/' . $transaction->id, $newAttributes)->assertForbidden();
     }
 
     /** @test */
-    public function transaction_belongs_to_a_user()
+    public function each_transaction_belongs_to_a_user()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
         $this->assertInstanceOf(User::class, $transaction->user);
     }
 
     /** @test */
-    public function user_can_have_many_transactions()
+    public function each_user_can_have_many_transactions()
     {
-        $this->prepNormalEnv('retailer', 'make-payment', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
         $user = Auth::user();
         factory('App\Transaction')->create(['user_id' => $user->id]);
-        $transaction = $user->transactions->find(1);
-        $this->assertInstanceOf(Transaction::class, $transaction);
+        $this->assertInstanceOf(Transaction::class, $user->transactions->find(1));
     }
 
     /** @test */

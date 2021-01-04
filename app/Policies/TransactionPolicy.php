@@ -26,81 +26,83 @@ class TransactionPolicy
 
     /**
      * Determine whether the user can view any transactions.
-     * User should have make-payment permission to be allowed
+     * User should have see-transactions permission to be allowed
      * @param User $user
      * @return mixed
      */
     public function viewAny(User $user)
     {
-        if($user->checkPermission('make-payment')) {
+        if($user->checkPermission('see-transactions')) {
             return true;
         }
     }
 
     /**
-     * Determine whether the user can view the transactions.
-     * User should have make-payment permission to be allowed
+     * Determine whether the users can view all of their transactions.
+     * User should have see-transactions permission to be allowed
      * @param User $user
      * @param  \App\Transaction  $transaction
      * @return mixed
      */
     public function view(User $user, Transaction $transaction)
     {
-        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
+        if($user->checkPermission('see-transactions') && $user->id == $transaction->user->id) {
             return true;
         }
     }
 
     /**
      * Determine whether the user can create transactions.
-     * User should have make-payment permission to be allowed
+     * User should have create-transaction permission to be allowed
      * @param User $user
      * @return mixed
      */
     public function create(User $user)
     {
-        if($user->checkPermission('make-payment')) {
+        if($user->checkPermission('create-transactions')) {
             return true;
         }
     }
 
     /**
      * Determine whether the user can update the transactions.
-     * User should have make-payment permission to be allowed
-     * user also can only update its own records
+     * User should have create-transactions permission to be allowed
+     * users are only able to update their own records
+     * users are not allowed to update confirmed transactions
      * @param User $user
      * @param Transaction $transaction
      * @return mixed
      */
     public function update(User $user, Transaction $transaction)
     {
-        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
+        if($user->checkPermission('create-transactions') && $user->id == $transaction->user->id) {
             return $transaction->confirmed ? Response::deny('deny') : Response::allow();
         }
     }
 
     /**
      * Determine whether the user can delete the transactions.
-     *
+     * users should have delete-transactions permission to be allowed
+     * users are not allowed to delete confirmed transactions
+     * users can only delete their own transactions
      * @param User $user
      * @param Transaction $transaction
      * @return mixed
      */
     public function delete(User $user, Transaction $transaction)
     {
-        if($user->checkPermission('make-payment') && $user->id == $transaction->user->id) {
+        if($user->checkPermission('delete-transactions') && $user->id == $transaction->user->id) {
             return $transaction->confirmed ? Response::deny('deny') : Response::allow();
         }
     }
 
     /**
-     * Determine whether user can confirm the transactions.
+     * Determine whether user can confirm transactions.
      * only SystemAdmin is able to confirm transactions
      * @param  User $user
-     * @param  Transaction $transaction
      * @return mixed
      */
-    public function confirm(User $user, Transaction $transaction)
+    public function confirm(User $user)
     {
         if($user->isAdmin()) {
             return true;
@@ -108,7 +110,7 @@ class TransactionPolicy
     }
 
     /**
-     * Determine whether the user can restore the transactions.
+     * Determine whether the user can restore transactions.
      *
      * @param User $user
      * @param Transaction $transaction
