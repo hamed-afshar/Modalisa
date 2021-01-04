@@ -69,7 +69,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/transactions/{transaction}', 'TransactionController@show')->name('transactions.show');
     Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
     Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
-    Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.delete');
+    Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
     Route::patch('/transactions/confirm/{transaction}', 'TransactionController@confirm')->name('transaction.confirm');
 
     Route::get('/statuses', 'StatusController@index')->name('status.index');
@@ -78,11 +78,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/statuses/{status}', 'StatusController@show')->name('status.show');
     Route::get('/statuses/{status}/edit', 'StatusController@edit')->name('status.edit');
     Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
-    Route::delete('/statuses/{status}', 'StatusController@delete')->name('status.delete');
+    Route::delete('/statuses/{status}', 'StatusController@destroy')->name('status.destroy');
 
     Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
     Route::post('/change-history/{product}/{status}', 'HistoryController@store')->name('history.store');
-    Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.delete');
+    Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.destroy');
 
     Route::get('/orders', 'OrdersController@index');
     Route::get('/orders/{order}', 'OrdersController@show');
