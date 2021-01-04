@@ -6,7 +6,6 @@ use App\Events\UserRegisteredEvent;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use phpDocumentor\Reflection\Types\True_;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -57,13 +56,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return "/users/{$this->id}";
     }
 
-    /**
-     * user belongs to one role
-     */
-    public function role()
-    {
-        return $this->belongsTo('App\Role');
-    }
 
     /**
      * get user's permissions
@@ -144,6 +136,14 @@ class User extends Authenticatable implements MustVerifyEmail
         } else {
             return false;
         }
+    }
+
+    /**
+     * user belongs to one role
+     */
+    public function role()
+    {
+        return $this->belongsTo('App\Role');
     }
 
     /**

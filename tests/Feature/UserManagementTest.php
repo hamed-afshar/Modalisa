@@ -2,16 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Permission;
-use App\Role;
-use App\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use App\User;
-use Carbon\Carbon;
 
 class UserManagementTest extends TestCase
 {
