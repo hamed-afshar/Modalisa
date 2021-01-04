@@ -89,10 +89,14 @@ class UserPolicy
 
     /**
      * Determine whether user can update it's profile
-     * users only can update their own profiles
+     * users can only update their own profiles
+     * @param User $user
+     * @param User $modal
+     * @return bool
      */
     public function profile(User $user, User $modal)
     {
+        //check to see if user is requesting to update its own record
         if($user->id == $modal->id) {
             return true;
         }

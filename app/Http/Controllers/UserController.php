@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,17 +12,24 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    /*
+    /**
      * index users
+     * only SystemAdmin can see users
+     * @throws AuthorizationException
      */
     public function index()
     {
         $this->authorize('viewAny', User::class);
+        //return user with subscriptions and roles
         return User::with(['subscription', 'role'])->get();
     }
 
-    /*
+    /**
      * SystemAdmin can see a single user
+     * only SystemAdmin can view a single user
+     * @param User $user
+     * @return User
+     * @throws AuthorizationException
      */
     public function show(User $user)
     {
@@ -29,16 +37,20 @@ class UserController extends Controller
         return $user;
     }
 
-    /*
-     * edit form is available to edit a user
+    /**
+     * form is available to edit a user
+     * @param User $user
+     * @throws AuthorizationException
      */
     public function edit(User $user)
     {
         $this->authorize('update', $user);
     }
 
-    /*
+    /**
      * update user's information by SystemAdmin
+     * @param User $user
+     * @throws AuthorizationException
      */
     public function update(User $user)
     {
@@ -47,16 +59,11 @@ class UserController extends Controller
         $user->update($data);
     }
 
-    /*
-     * delete user
-     */
-    public function destroy(User $user)
-    {
-        $this->authorize('delete', $user);
-    }
-
-    /*
-     * edit profile by user
+    /**
+     * users can update their profile
+     * users can not update other user's profile
+     * @param User $user
+     * @throws AuthorizationException
      */
     public function editProfile(User $user)
     {
@@ -72,4 +79,17 @@ class UserController extends Controller
         ]);
         $user->update($data);
     }
+
+    /**
+     * delete user
+     * users can not be deleted from the system
+     * @param User $user
+     * @throws AuthorizationException
+     */
+    public function destroy(User $user)
+    {
+        $this->authorize('delete', $user);
+    }
+
+
 }
