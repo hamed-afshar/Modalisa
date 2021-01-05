@@ -13,6 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ImageManagementTest extends TestCase
@@ -21,6 +22,7 @@ class ImageManagementTest extends TestCase
 
     /** user is not supposed to index all of the uploaded pictures.
      * it only needs to see pictures related to any model specifically
+     * so this test is not neccessary
      */
     public function user_can_see_its_own_images_related_to_a_model()
     {
@@ -35,12 +37,13 @@ class ImageManagementTest extends TestCase
 
     }
 
-    /** @test */
-    public function user_can_upload_and_store_pictures()
+    /** @test
+     * users should have see-images permission to be allowed
+     */
+    public function user_can_upload_and_store_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
         $attributes = [
@@ -51,14 +54,13 @@ class ImageManagementTest extends TestCase
         $this->post('/images', $attributes);
         $image_name = Image::find(1)->image_name;
         $this->assertDatabaseHas('images', ['imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
-        $this->assertFileExists(public_path('storage/') . $image_name);
+        $this->assertFileExists(public_path('storage') . $image_name);
     }
 
     /** @test */
     public function image_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
         $attributes = [
@@ -72,7 +74,7 @@ class ImageManagementTest extends TestCase
     /** @test */
     public function only_valid_extensions_for_images_are_acceptable()
     {
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         factory('App\Status')->create();
         $this->prepOrder();
         $order = Order::find(1);
@@ -87,8 +89,7 @@ class ImageManagementTest extends TestCase
     /** @test */
     public function imagable_type_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
         $attributes = [
@@ -103,34 +104,37 @@ class ImageManagementTest extends TestCase
     /** @test */
     public function imagable_id_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         $this->prepOrder();
-        $order = Order::find(1);
         $attributes = [
             'user_id' => Auth::user()->id,
-            'imagable_type' => '',
+            'imagable_type' => 'App\Order',
             'imagable_id' => '',
             'image' => UploadedFile::fake()->create('image.png'),
         ];
         $this->post('/images', $attributes)->assertSessionHasErrors('imagable_id');
     }
 
-    /** @test */
+    /** @test
+     * users should have see-images permission to be allowed
+     * users can only see their own records
+     */
     public function user_can_see_a_single_photo()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'see-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
+        $retailer1 = Auth::user();
         $this->prepOrder();
         $order = Order::find(1);
         $image = factory('App\Image')->create([
-            'user_id' => Auth::user()->id,
+            'user_id' => $retailer1->id,
             'imagable_type' => 'App\Order',
             'imagable_id' => $order->id,
             'image_name' => 'test.jpg'
         ]);
         $this->get($image->path())->assertSeeText($image->image_name);
+        // users can only see their own images
+        $this->prepNormalEnv('retailer2', ['create-images', 'see-images'], 0, 1);
+        $this->get($image->path())->assertForbidden();
     }
 
     /**
@@ -141,12 +145,14 @@ class ImageManagementTest extends TestCase
 
     }
 
-    /** @test */
+    /** @test
+     * users should have create-images to be allowed
+     * users can only update their own records
+     * old image file should be deleted after uploading a new one
+     */
     public function user_can_update_a_photo()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
         $attributes = [
@@ -173,26 +179,30 @@ class ImageManagementTest extends TestCase
         $this->assertFileExists(public_path('storage') . $newImageName);
         //assert old image deletes from server
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        // users can only update their own records
+        $this->prepNormalEnv('retailer2', ['create-images', 'see-images'], 0, 1);
+        $this->patch($oldImage->path(), $newAttributes)->assertForbidden();
+
     }
 
-    /** @test */
+    /** @test
+     * users should have delete-images permission to be allowed
+     * users can only delete their own images
+     */
     public function user_can_delete_a_photo()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'create-images', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
-        $attributes = [
+        factory('App\Image')->create([
             'user_id' => Auth::user()->id,
             'imagable_type' => 'App\Order',
             'imagable_id' => $order->id,
-            'image' => UploadedFile::fake()->create('image1.jpg'),
-        ];
+            'image_name' => 'images/image1.jpg',
+        ]);
+        Storage::disk('public')->put('/images/image1.jpg', 'contents');
         // first create image then try to delete it
-        $this->post('/images', $attributes);
-        // user can deletes a image
-        $this->prepNormalEnv('user', 'delete-images', 0, 1);
         $image = Image::find(1);
         $imageName = $image->image_name;
         $this->delete($image->path());
@@ -201,10 +211,9 @@ class ImageManagementTest extends TestCase
     }
 
 
-    /** all relationship related to Note model should be tested
-     * Models that have normal relationship are:
-     * User
-     * Models that have a polymorphic relationship with Note are::
+    /** all relationship related to Image model should be tested
+     * Model that has normal relationship is: User
+     * Models that have a polymorphic relationship with Image model are:
      * Transaction, Cost, Order, Product, Kargo
      */
 
@@ -215,7 +224,7 @@ class ImageManagementTest extends TestCase
     public function each_user_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id,
@@ -236,7 +245,7 @@ class ImageManagementTest extends TestCase
     public function each_image_belongs_to_a_user()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id,
@@ -257,7 +266,7 @@ class ImageManagementTest extends TestCase
     public function transactions_may_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id,
@@ -278,7 +287,7 @@ class ImageManagementTest extends TestCase
     public function each_image_may_belongs_to_a_transaction()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $transaction = factory('App\Transaction')->create([
             'user_id' => $user->id
@@ -299,7 +308,7 @@ class ImageManagementTest extends TestCase
     public function cost_may_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -325,7 +334,7 @@ class ImageManagementTest extends TestCase
     public function each_image_may_belongs_to_a_cost()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -351,7 +360,7 @@ class ImageManagementTest extends TestCase
     public function order_may_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -372,7 +381,7 @@ class ImageManagementTest extends TestCase
     public function each_image_may_belongs_to_an_order()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -393,7 +402,7 @@ class ImageManagementTest extends TestCase
     public function product_may_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -417,7 +426,7 @@ class ImageManagementTest extends TestCase
     public function each_image_may_belong_to_a_product()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
         $this->prepOrder();
@@ -441,7 +450,7 @@ class ImageManagementTest extends TestCase
     public function kargo_may_have_many_images()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $kargo = factory('App\Kargo')->create([
             'user_id' => $user->id,
@@ -462,7 +471,7 @@ class ImageManagementTest extends TestCase
     public function each_image_may_belongs_to_a_kargo()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         $kargo = factory('App\Kargo')->create([
             'user_id' => $user->id,
@@ -475,6 +484,4 @@ class ImageManagementTest extends TestCase
         ]);
         $this->assertInstanceOf(Kargo::class, $image->imagable);
     }
-
-
 }
