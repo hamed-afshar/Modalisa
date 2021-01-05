@@ -5,14 +5,9 @@ namespace App\Http\Controllers;
 use App\Traits\ImageTrait;
 use App\Transaction;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\Null_;
-use Psy\Util\Str;
-
 
 class TransactionController extends Controller
 {
@@ -177,16 +172,13 @@ class TransactionController extends Controller
 
     /**
      * confirm transactions
-     * only System admin can confirm transactions
+     * only Systemadmin can confirm transactions
      * @param Transaction $transaction
      * @throws AuthorizationException
      */
     public function confirm(Transaction $transaction)
     {
         $this->authorize('confirm', Transaction::class);
-        $data = request()->validate([
-            'confirmed' => 'required'
-        ]);
-        $transaction->update($data);
+        $transaction->update(['confirmed' => 1]) ;
     }
 }

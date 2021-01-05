@@ -70,7 +70,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
     Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
     Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
-    Route::patch('/transactions/confirm/{transaction}', 'TransactionController@confirm')->name('transaction.confirm');
+    Route::get('/transactions/confirm/{transaction}', 'TransactionController@confirm')->name('transaction.confirm');
 
     Route::get('/statuses', 'StatusController@index')->name('status.index');
     Route::get('/statuses/create', 'StatusController@create')->name('status.create');

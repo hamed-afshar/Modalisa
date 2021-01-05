@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Image;
 use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -226,10 +225,7 @@ class TransactionManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
-        $newAttributes = [
-            'confirmed' => 1
-        ];
-        $this->patch('/transactions/confirm/' . $transaction->id, $newAttributes)->assertForbidden();
+        $this->get('/transactions/confirm/' . $transaction->id)->assertForbidden();
     }
 
     /** @test */

@@ -2,10 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\AccessProvider;
-use App\Permission;
-use App\Role;
-use App\Subscription;
 use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,17 +12,18 @@ class AdminFunctionsTest extends TestCase
 {
     use WithFaker,
         RefreshDatabase;
+
     /** @test */
     public function SystemAdmin_can_access_to_admin_dashboard()
     {
-        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $this->get('/system-admin')->assertOk();
     }
 
     /** @test */
     public function SystemAdmin_can_access_to_security_center()
     {
-        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $this->get('/security-center')->assertStatus(200);
     }
 
@@ -34,7 +31,7 @@ class AdminFunctionsTest extends TestCase
     public function SystemAdmin_can_access_user_center()
     {
         $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $this->get('user-center')->assertStatus(200);
     }
 
@@ -73,14 +70,14 @@ class AdminFunctionsTest extends TestCase
         $subscription->assignUser($user);
         $this->assertDatabaseHas('users', ['subscription_id' => $subscription->id]);
     }
-    
+
 
     /** @test */
     public function SystemAdmin_can_confirm_and_unlock_users()
     {
-        $this->prepAdminEnv('SystemAdmin',0,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $newUser = factory('App\User')->create();
-        $this->patch($newUser->path() ,[
+        $this->patch($newUser->path(), [
             'confirmed' => 1,
             'locked' => 0
         ]);;
@@ -93,14 +90,11 @@ class AdminFunctionsTest extends TestCase
     public function only_SystemAdmin_can_confirm_transactions()
     {
         $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin', 0 ,1);
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
         $newUser = factory('App\User')->create();
         $transaction = factory('App\Transaction')->create(['user_id' => $newUser->id]);
-        $confirmationAttributes = [
-            'confirmed' => 1
-        ];
-        $this->patch('/transactions/confirm/' . $transaction->id, $confirmationAttributes );
-        $this->assertEquals($confirmationAttributes['confirmed'], Transaction::where('id', $transaction->id)->value('confirmed'));
+        $this->get('/transactions/confirm/' . $transaction->id);
+        $this->assertEquals(1, Transaction::where('id', $transaction->id)->value('confirmed'));
     }
 
 }
