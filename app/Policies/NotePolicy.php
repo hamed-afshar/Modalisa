@@ -24,7 +24,7 @@ class NotePolicy
     /**
      * Determine whether the user can view any notes.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function viewAny(User $user) {
@@ -37,14 +37,13 @@ class NotePolicy
      * Determine whether the user can view the note.
      * Use can only see its own notes
      *
-     * @param  \App\User  $user
-     * @param  \App\Note  $note
+     * @param User $user
+     * @param Note $note
      * @return mixed
      */
     public function view(User $user, Note $note)
     {
         if($user->checkPermission('see-notes') && $user->id == $note->user->id) {
-
             return true;
         }
     }
@@ -52,7 +51,7 @@ class NotePolicy
     /**
      * Determine whether the user can create notes.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function create(User $user)
@@ -65,8 +64,8 @@ class NotePolicy
     /**
      * Determine whether the user can update the note.
      *
-     * @param  \App\User  $user
-     * @param  \App\Note  $note
+     * @param User $user
+     * @param Note $note
      * @return mixed
      */
     public function update(User $user, Note $note)
@@ -77,8 +76,8 @@ class NotePolicy
     /**
      * Determine whether the user can delete the note.
      *
-     * @param  \App\User  $user
-     * @param  \App\Note  $note
+     * @param User $user
+     * @param Note $note
      * @return mixed
      */
     public function delete(User $user, Note $note)
@@ -91,8 +90,8 @@ class NotePolicy
     /**
      * Determine whether the user can restore the note.
      *
-     * @param  \App\User  $user
-     * @param  \App\Note  $note
+     * @param User $user
+     * @param Note $note
      * @return mixed
      */
     public function restore(User $user, Note $note)
@@ -103,8 +102,8 @@ class NotePolicy
     /**
      * Determine whether the user can permanently delete the note.
      *
-     * @param  \App\User  $user
-     * @param  \App\Note  $note
+     * @param User $user
+     * @param Note $note
      * @return mixed
      */
     public function forceDelete(User $user, Note $note)
