@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Status;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class StatusController extends Controller
 {
-    /*
+    /**
+     * only SystemAdmin can index statuses
      * index all statuses
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -17,49 +19,68 @@ class StatusController extends Controller
         return Status::all();
     }
 
-    /*
-     * status create form
+    /**
+     * form to create status
      * VueJs Modal
+     * @throws AuthorizationException
      */
     public function create()
     {
         $this->authorize('create', Status::class);
     }
 
-    /*
+    /**
+     * only SystemAdmin can create statuses
      * store status
+     * @param Request $request
+     * @throws AuthorizationException
      */
-    public function store()
+    public function store(Request $request)
     {
         $this->authorize('create', Status::class);
-        Status::create(request()->validate([
+        $request->validate([
             'priority' =>'required',
             'name' => 'required',
             'description' => 'required'
-        ]));
+        ]);
+      $statusData = [
+          'priority' =>$request->input('priority'),
+          'name' => $request->input('name'),
+          'description' => $request->input('description'),
+      ];
+      Status::create($statusData);
     }
 
-    /*
+    /**
      * show a single status
      * VueJs show this single status
+     * @param Status $status
+     * @return Status
+     * @throws AuthorizationException
      */
     public function show(Status $status)
     {
-        $this->authorize('vies', $status);
+
+        $this->authorize('view', $status);
         return $status;
     }
 
-    /*
-     * Status update form
+    /**
+     * Form to update status
      * VueJs Modal
+     * @param Status $status
+     * @throws AuthorizationException
      */
     public function edit(Status $status)
     {
         $this->authorize('update', $status);
     }
 
-    /*
+    /**
+     * only SystemAdmin can update statuses
      * update status
+     * @param Status $status
+     * @throws AuthorizationException
      */
     public function update(Status $status)
     {
@@ -72,10 +93,13 @@ class StatusController extends Controller
         $status->update($data);
     }
 
-    /*
+    /**
+     * only SystemAdmin can delete statuses
      * delete status
+     * @param Status $status
+     * @throws AuthorizationException
      */
-    public function delete(Status $status)
+    public function destroy(Status $status)
     {
         $this->authorize('delete', $status);
         $status->delete();

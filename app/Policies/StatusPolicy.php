@@ -25,7 +25,7 @@ class StatusPolicy
     /**
      * Determine whether the user can view any statuses.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function viewAny(User $user)
@@ -36,11 +36,11 @@ class StatusPolicy
     /**
      * Determine whether the user can view the status.
      *
-     * @param  \App\User  $user
-     * @param  \App\Status  $status
+     * @param User $user
+     * @param Status $status
      * @return mixed
      */
-    public function view(User $user, Status $status)
+    public function view(User $user)
     {
         return true;
     }
@@ -48,7 +48,7 @@ class StatusPolicy
     /**
      * Determine whether the user can create statuses.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function create(User $user)
@@ -59,8 +59,8 @@ class StatusPolicy
     /**
      * Determine whether the user can update the status.
      *
-     * @param  \App\User  $user
-     * @param  \App\Status  $status
+     * @param User $user
+     * @param Status $status
      * @return mixed
      */
     public function update(User $user, Status $status)
@@ -71,8 +71,8 @@ class StatusPolicy
     /**
      * Determine whether the user can delete the status.
      *
-     * @param  \App\User  $user
-     * @param  \App\Status  $status
+     * @param User $user
+     * @param Status $status
      * @return mixed
      */
     public function delete(User $user, Status $status)
@@ -83,8 +83,8 @@ class StatusPolicy
     /**
      * Determine whether the user can restore the status.
      *
-     * @param  \App\User  $user
-     * @param  \App\Status  $status
+     * @param User $user
+     * @param Status $status
      * @return mixed
      */
     public function restore(User $user, Status $status)
@@ -95,8 +95,8 @@ class StatusPolicy
     /**
      * Determine whether the user can permanently delete the status.
      *
-     * @param  \App\User  $user
-     * @param  \App\Status  $status
+     * @param User $user
+     * @param Status $status
      * @return mixed
      */
     public function forceDelete(User $user, Status $status)

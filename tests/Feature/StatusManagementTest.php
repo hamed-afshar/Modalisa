@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\History;
-use App\Product;
-use App\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class StatusManagementTest extends TestCase
@@ -14,36 +12,18 @@ class StatusManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-    /** @test
-     * only SystemAdmin can make changes to the statuses
-     * other users are not allowed to make any changes including
-     * index, create, store, show, update and delete
-     */
-    public function other_users_can_not_make_changes_to_the_statuses()
-    {
-        $this->prepNormalEnv('retailer', 'make-payment', 0 , 1);
-        $status = factory('App\Status')->create();
-        $newAttributes = factory('App\Status')->raw();
-        $this->get('/statuses')->assertForbidden();
-        $this->get('/statuses/create')->assertForbidden();
-        $this->post('/statuses', $newAttributes)->assertForbidden();
-        $this->get($status->path())->assertForbidden();
-        $this->get($status->path() . '/edit')->assertForbidden();
-        $this->patch($status->path(), $newAttributes)->assertForbidden();
-        $this->delete($status->path())->assertForbidden();
-    }
-
-    /** @test */
+    /** @test  */
     public function onlySystemAdmin_can_see_all_statuses()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $status = factory('App\Status')->create();
         $this->get('/statuses')->assertSeeText($status->name);
-
+        //other users can not see statuses
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $this->get('/statuses')->assertForbidden();
     }
 
-    /*
+    /**
      * This should be tested in VueJs
      */
     public function form_is_available_to_create_status()
@@ -54,11 +34,13 @@ class StatusManagementTest extends TestCase
     /** @test */
     public function SystemAdmin_can_create_status()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0,1);
         $newAttributes = factory('App\Status')->raw();
         $this->post('/statuses', $newAttributes);
         $this->assertDatabaseHas('statuses', $newAttributes);
+        //other users are not allowed to create statuses
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $this->post('/statuses', $newAttributes)->assertForbidden();
     }
 
     /** @test  */
@@ -85,15 +67,18 @@ class StatusManagementTest extends TestCase
         $this->post('/statuses', $newAttributes)->assertSessionHasErrors('priority');
     }
 
-    /*
-     * This test is not necessary
-     */
+    /** @test */
     public function only_SystemAdmin_can_view_a_single_status()
     {
-
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $status = factory('App\Status')->create();
+        $this->get($status->path())->assertSeeText($status->description);
+        //other users are not allowed to see a single status
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $this->get($status->path())->assertForbidden();
     }
 
-    /*
+    /**
      * This should be tested in VueJs
      */
     public function form_is_available_to_update_status()
@@ -104,7 +89,6 @@ class StatusManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_update_status()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0 , 1);
         $status = factory('App\Status')->create();
         $newAttributes = [
@@ -114,14 +98,23 @@ class StatusManagementTest extends TestCase
         ];
         $this->patch($status->path(), $newAttributes);
         $this->assertDatabaseHas('statuses', $newAttributes);
+        //other users are not allowed to update statuses
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $this->patch($status->path(), $newAttributes)->assertForbidden();
     }
 
     /** @test */
     public function only_SystemAdmin_can_delete_status()
     {
-        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
         $status = factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        //other users can not delete statuses
+        $retailer = Auth::user();
+        $this->delete($status->path())->assertForbidden();
+        //SystemAdmin can delete statuses
+        $this->actingAs($SystemAdmin);
         $this->delete($status->path());
         $this->assertDatabaseMissing('statuses', ['id' => $status->id]);
     }
