@@ -420,7 +420,7 @@ class NoteManagementTest extends TestCase
     /** @test */
     public function guests_can_not_access_note_management()
     {
-        $this->get('/notes')->assertRedirect('login');
+        $this->get('/notes/1/2')->assertRedirect('login');
         $this->get('/notes/create')->assertRedirect('login');
         $this->post('/notes')->assertRedirect('login');
         $this->get('/notes/1')->assertRedirect('login');
