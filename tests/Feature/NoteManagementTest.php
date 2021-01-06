@@ -22,7 +22,7 @@ class NoteManagementTest extends TestCase
 
     /** @test
      * it is not necessary for users to see all notes
-     * users should only see notes related to a specific object
+     * users should only see notes related to a specific record
      */
     public function user_can_see_all_notes_related_to_a_specific_object()
     {
@@ -30,15 +30,27 @@ class NoteManagementTest extends TestCase
         $this->prepOrder();
         $user = Auth::user();
         $order = Order::find(1);
-        factory('App\Note')->create([
+        $note1 = factory('App\Note')->create([
             'user_id' => $user->id,
             'notable_type' => 'App\Order',
-            'notable_id' => $order->id
+            'notable_id' => $order->id,
+            'body' => 'first note'
+        ]);
+        //
+        $note2 = factory('App\Note')->create([
+            'user_id' => $user->id,
+            'notable_type' => 'App\Order',
+            'notable_id' => $order->id,
+            'body' => 'second note'
         ]);
         $model = 'App\Order';
         $id = $order->id;
-        $this->get('/notes/' . $id . '/' . $model);
-
+        $this->get('/notes/' . $id . '/' . $model)->assertSeeText($note1->body);
+        $this->get('/notes/' . $id . '/' . $model)->assertSeeText($note2->body);
+        //users can only index their own records
+        $this->prepNormalEnv('retailer2', ['create-notes', 'see-notes'], 0 , 1);
+        $this->get('/notes/' . $id . '/' . $model)->assertDontSeeText($note1->body);
+        $this->get('/notes/' . $id . '/' . $model)->assertDontSeeText($note2->body);
     }
 
 

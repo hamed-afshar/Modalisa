@@ -11,14 +11,18 @@ use Illuminate\Support\Facades\Auth;
 class NoteController extends Controller
 {
     /**
-     * index all notes for the given object
+     * index all notes for the given record
      * users should have see-notes permission to be allowed
+     * @param $id
+     * @param $model
+     * @return Cost
      * @throws AuthorizationException
      */
     public function index($id, $model)
     {
-        dd('here');
         $this->authorize('viewAny', Note::class);
+        //return all notes related to the model for the given id
+        return Auth::user()->notes()->where(['notable_type' =>  $model, 'notable_id' => $id])->get();
     }
 
     /**
