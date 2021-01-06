@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\History;
+use App\Product;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -20,13 +21,15 @@ class HistoryPolicy
 
     /**
      * Determine whether the user can view any histories.
+     * user should have see-histories permission to be allowed
+     * users can only see their own records
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function viewAny(User $user)
     {
-        if($user->checkPermission('check-history'))
+        if($user->checkPermission('see-histories') )
         {
             return true;
         }
@@ -34,8 +37,8 @@ class HistoryPolicy
 
     /**
      * Determine whether the user can view the history.
-     *
-     * @param  \App\User  $user
+     * user should have see-histories permission to be allowed
+     * @param User $user
      * @param  \App\History  $history
      * @return mixed
      */
@@ -46,13 +49,13 @@ class HistoryPolicy
 
     /**
      * Determine whether the user can create histories.
-     *
-     * @param  \App\User  $user
+     * user should have creat-histories permission to be allowed
+     * @param User $user
      * @return mixed
      */
     public function create(User $user)
     {
-        if($user->checkPermission('change-history'))
+        if($user->checkPermission('create-histories'))
         {
             return true;
         }
@@ -61,7 +64,7 @@ class HistoryPolicy
     /**
      * Determine whether the user can update the history.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @param  \App\History  $history
      * @return mixed
      */
@@ -73,7 +76,7 @@ class HistoryPolicy
     /**
      * Determine whether the user can delete the history.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @param  \App\History  $history
      * @return mixed
      */
@@ -88,7 +91,7 @@ class HistoryPolicy
     /**
      * Determine whether the user can restore the history.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @param  \App\History  $history
      * @return mixed
      */
@@ -100,7 +103,7 @@ class HistoryPolicy
     /**
      * Determine whether the user can permanently delete the history.
      *
-     * @param  \App\User  $user
+     * @param User $user
      * @param  \App\History  $history
      * @return mixed
      */

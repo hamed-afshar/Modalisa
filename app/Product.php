@@ -28,6 +28,7 @@ class Product extends Model
 
     /**
      * change history for product
+     * @param $status
      */
     public function changeHistory($status)
     {

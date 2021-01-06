@@ -10,7 +10,7 @@ class ProductObserver
     /**
      * Handle the product "created" event.
      *
-     * @param  \App\Product  $product
+     * @param Product $product
      * @return void
      */
     public function created(Product $product)
@@ -24,7 +24,7 @@ class ProductObserver
     /**
      * Handle the product "updated" event.
      *
-     * @param  \App\Product  $product
+     * @param Product $product
      * @return void
      */
     public function updated(Product $product)
@@ -35,7 +35,7 @@ class ProductObserver
     /**
      * Handle the product "deleted" event.
      *
-     * @param  \App\Product  $product
+     * @param Product $product
      * @return void
      */
     public function deleted(Product $product)
@@ -46,7 +46,7 @@ class ProductObserver
     /**
      * Handle the product "restored" event.
      *
-     * @param  \App\Product  $product
+     * @param Product $product
      * @return void
      */
     public function restored(Product $product)
@@ -57,7 +57,7 @@ class ProductObserver
     /**
      * Handle the product "force deleted" event.
      *
-     * @param  \App\Product  $product
+     * @param Product $product
      * @return void
      */
     public function forceDeleted(Product $product)
