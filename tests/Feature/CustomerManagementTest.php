@@ -14,31 +14,17 @@ class CustomerManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    /** @test */
-    public function retailers_only_can_access_to_their_own_resources()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer1', 'see-customers', 0 , 1);
-        $this->prepNormalEnv('retailer2', 'make-order', 0, 1);
-        $user1 = User::find(1);
-        $user2 = User::find(2);
-        $customer1 = factory('App\Customer')->create(['user_id'=>$user1->id]);
-        $customer2 = factory('App\Customer')->create(['user_id'=>$user2->id , 'name'=>'john doe']);
-        $this->actingAs($user1);
-        // retailers can only index their own customers
-        $this->get('/customers')->assertSeeText($customer1->name);
-        $this->get('/customers')->assertDontSeeText($customer2->name);
-        //retailers can not update others customers
-        //retailers can only delete their own customers
-    }
-
-    /** @test */
+    /** @test
+     * users should have see-customers permission to be allowed
+     */
     public function retailers_can_see_its_own_customers()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'see-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $this->get('/customers')->assertSeeText($customer->name);
+        // users can only see their own records
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $this->get('/customers')->assertDontSeeText($customer->name);
     }
 
     /** this should be tested in VueJs */
@@ -47,11 +33,13 @@ class CustomerManagementTest extends TestCase
 
     }
 
-    /** @test */
+    /** @test
+     * users should have create-customers permission to be allowed
+     */
     public function retailers_can_create_customer()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $attributes = factory('App\Customer')->raw(['user_id' => Auth::user()->id]);
         $this->post('/customers', $attributes);
         $this->assertDatabaseHas('customers', ['name' => $attributes['name']]);
@@ -60,7 +48,7 @@ class CustomerManagementTest extends TestCase
     /** @test */
     public function name_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'name' => '']);
         $this->post('/customers', $attributes)->assertSessionHasErrors('name');
     }
@@ -68,7 +56,7 @@ class CustomerManagementTest extends TestCase
     /** @test */
     public function tel_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'tel' => '']);
         $this->post('/customers', $attributes)->assertSessionHasErrors('tel');
     }
@@ -76,7 +64,7 @@ class CustomerManagementTest extends TestCase
     /** @test */
     public function communication_media_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'communication_media' => '']);
         $this->post('/customers', $attributes)->assertSessionHasErrors('communication_media');
     }
@@ -84,7 +72,7 @@ class CustomerManagementTest extends TestCase
     /** @test */
     public function communication_id_is_required()
     {
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'communication_id' => '']);
         $this->post('/customers', $attributes)->assertSessionHasErrors('communication_id');
     }
@@ -92,10 +80,12 @@ class CustomerManagementTest extends TestCase
     /** @test */
     public function retailer_can_see_a_single_customer()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'see-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $this->get($customer->path())->assertSeeText($customer->name);
+        // users can only see their own records
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $this->get($customer->path())->assertForbidden();
     }
 
     /**
@@ -106,11 +96,12 @@ class CustomerManagementTest extends TestCase
 
     }
 
-    /** @test */
+    /** @test
+     * users should have create-customers permission to be allowed
+     */
     public function retailers_can_update_customers()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'create-customers', 0 , 1);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $newAttributes = [
             'name' => 'new Name',
@@ -121,20 +112,30 @@ class CustomerManagementTest extends TestCase
             'email' => 'new email'
         ];
         $this->patch($customer->path(), $newAttributes);
-        $this->assertDatabaseHas('customers', ['name'=>$newAttributes['name']]);
+        $this->assertDatabaseHas('customers', $newAttributes);
+        //users can only update their own records
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $this->patch($customer->path(), $newAttributes)->assertForbidden();
     }
 
-    /** @test */
+    /** @test
+     * users should have delete-customers permission to be allowed
+     * users can only delete their own records
+     */
     public function retailers_can_delete_customers()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'delete-customers', 0 ,1);
-        $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
+        $this->prepNormalEnv('retailer', ['see-customers', 'create-customers', 'delete-customers'], 0 , 1);
+        $retailer1 = Auth::user();
+        $customer = factory('App\Customer')->create(['user_id' => $retailer1->id]);
+        // users can not delete records belong to others
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers', 'delete-customers'], 0 , 1);
+        $retailer2 = Auth::user();
+        $this->delete($customer->path())->assertForbidden();
+        // users can delete their own records
+        $this->actingAs($retailer1);
         $this->delete($customer->path());
         $this->assertDatabaseMissing('customers', ['id'=>$customer->id]);
-
     }
-
 
     /** @test
      * one to many relationship
@@ -142,7 +143,7 @@ class CustomerManagementTest extends TestCase
     public function each_user_has_many_customers()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
         $user = Auth::user();
         factory('App\Customer')->create(['user_id' => $user->id]);
         $this->assertInstanceOf(Customer::class, $user->customers->find(1));
@@ -154,7 +155,7 @@ class CustomerManagementTest extends TestCase
     public function each_customer_belongs_to_a_user()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
         $user = Auth::user();
         $customer = factory('App\Customer')->create(['user_id' => $user->id]);
         $this->assertInstanceOf(User::class, $customer->user);
@@ -166,7 +167,7 @@ class CustomerManagementTest extends TestCase
     public function each_customer_has_many_orders()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
         factory('App\Status')->create();
         $this->prepOrder();
         $customer = Customer::find(1);
@@ -179,7 +180,7 @@ class CustomerManagementTest extends TestCase
     public function each_order_belongs_to_a_customer()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0 , 1);
+        $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
         factory('App\Status')->create();
         $this->prepOrder();
         $order = Order::find(1);

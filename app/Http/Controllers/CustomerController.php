@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,6 +11,8 @@ class CustomerController extends Controller
 {
     /**
      * index customers
+     * users should have see-customers permission to be allowed
+     * @throws AuthorizationException
      */
     public function index()
     {
@@ -20,6 +23,7 @@ class CustomerController extends Controller
     /**
      * form to create customer
      * VueJs modal generates this form
+     * @throws AuthorizationException
      */
     public function create()
     {
@@ -28,23 +32,38 @@ class CustomerController extends Controller
 
     /**
      * store customers
+     * users should have create-customers permission to be allowed
+     * @param Request $request
+     * @throws AuthorizationException
      */
-    public function store()
+    public function store(Request $request)
     {
         $this->authorize('create', Customer::class);
         $user = Auth::user();
-        $data = request()->validate([
+        $request->validate([
             'name' => 'required',
             'tel' => 'required',
             'communication_media' => 'required',
             'communication_id' => 'required',
         ]);
-        $user->customers()->create($data);
+        $customerData = [
+            'name' => $request->input('name'),
+            'tel' => $request->input('tel'),
+            'communication_media' => $request->input('communication_media'),
+            'communication_id' => $request->input('communication_id'),
+            'address' => $request->input('address'),
+            'email' => $request->input('email'),
+        ];
+        $user->customers()->create($customerData);
     }
 
     /**
      * show a single customer
+     * users should have see-customers permission to be allowed
      * VueJs shows this customer
+     * @param Customer $customer
+     * @return Customer
+     * @throws AuthorizationException
      */
     public function show(Customer $customer)
     {
@@ -55,6 +74,8 @@ class CustomerController extends Controller
     /**
      * edit form
      * VueJs generates this form
+     * @param Customer $customer
+     * @throws AuthorizationException
      */
     public function edit(Customer $customer)
     {
@@ -63,21 +84,38 @@ class CustomerController extends Controller
 
     /**
      * update customers
+     * users should have create-customers permission to be allowed
+     * users can only update their own records
+     * @param Request $request
+     * @param Customer $customer
+     * @throws AuthorizationException
      */
-    public function update(Customer $customer)
+    public function update(Request $request, Customer $customer)
     {
         $this->authorize('update', $customer);
-        $data = request()->validate([
+        request()->validate([
             'name' => 'required',
             'tel' => 'required',
             'communication_media' => 'required',
             'communication_id' => 'required',
         ]);
+        $data = [
+            'name' => $request->input('name'),
+            'tel' => $request->input('tel'),
+            'communication_media' => $request->input('communication_media'),
+            'communication_id' => $request->input('communication_id'),
+            'address' => $request->input('address'),
+            'email' => $request->input('email'),
+        ];
         $customer->update($data);
     }
 
     /**
      * delete customers
+     * users should have delete-customers permission to be allowed
+     * users can o nly delete their own records
+     * @param Customer $customer
+     * @throws AuthorizationException
      */
     public function destroy(Customer $customer)
     {
