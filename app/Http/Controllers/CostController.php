@@ -27,17 +27,18 @@ class CostController extends Controller
     }
 
     /**
-     * index all costs for the given model
+     * index all costs for the given object
      * to index, retailers must have see-costs permission
      * retailers can only see its own records
+     * @param $id
      * @param $model
-     * @return
+     * @return Cost
      * @throws AuthorizationException
      */
-    public function indexModel($model)
+    public function indexModel($id, $model)
     {
         $this->authorize('viewAny', Cost::class);
-        return Auth::user()->costs()->where('costable_type', $model)->get();
+        return Auth::user()->costs()->where(['costable_type' => $model, 'costable_id' => $id])->get();
     }
 
     /**

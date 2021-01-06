@@ -119,7 +119,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
     Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
     Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
-    Route::get('/costs-model/{model}', 'CostController@indexModel')->name('cost.indexModel');
+    Route::get('/costs-model/{id}/{model}', 'CostController@indexModel')->name('cost.indexModel');
 
     Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
     Route::get('/admin-index-single-cost/{user}/{cost}', 'AdminController@showCost' )->name('admin.show-cost');

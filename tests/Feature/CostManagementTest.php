@@ -53,9 +53,9 @@ class CostManagementTest extends TestCase
     }
 
     /** @test
-     * retailer can see all costs related to a specific model.
+     * retailer can see all costs related to a specific record
      * first BuyerAdmin should create a cost for a specific user and model
-     * then that user will be able to see created cost for him related to that model
+     * then that user will be able to see created cost for him related to that record
      * here we use product model for testing, using any other model is also possible
      */
     public function retailer_can_see_all_costs_related_to_a_specific_model()
@@ -69,22 +69,32 @@ class CostManagementTest extends TestCase
         $retailer1 = Auth::user();
         $this->prepOrder();
         $product = Product::find(1);
-        // acting as BuyerAdmin to create a cost for retailer.
+        // acting as BuyerAdmin to create a costs for retailer.
         $this->actingAs($BuyerAdmin);
-        $cost = factory('App\Cost')->create([
+        $cost1 = factory('App\Cost')->create([
             'user_id' => $retailer1->id,
             'costable_type' => 'App\Product',
-            'costable_id' => $product->id
+            'costable_id' => $product->id,
+            'description' => 'cost1'
+        ]);
+        $cost2 = $cost1 = factory('App\Cost')->create([
+            'user_id' => $retailer1->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id,
+            'description' => 'cost2'
         ]);
         // acting as a retailer to check created cost existence for the product record
         $this->actingAs($retailer1);
         $model = 'App\Product';
-        $this->get('/costs-model/' . $model)->assertSeeText($cost->description);
+        $id = $product->id;
+        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
+        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
         // all retailers are only able to see their own records
         $this->prepNormalEnv('retailer2', ['see-costs'], 0 , 1);
         $retailer2 = Auth::user();
         $this->actingAs($retailer2);
-        $this->get('/costs-model/' . $model)->assertDontSeeText($cost->description);
+        $this->get('/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost1->description);
+        $this->get('/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost2->description);
     }
 
     /** @test
