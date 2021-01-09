@@ -19,7 +19,7 @@ class Cost extends Model
      */
     public function user()
     {
-        return $this->belongsTo('APP\User');
+        return $this->belongsTo('App\User');
     }
     /**
      * each cost may have many notes
