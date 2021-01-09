@@ -6,8 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kargo extends Model
 {
+    protected $guarded = [];
+
     /**
-     * each kargo have many products
+     * return path
+     */
+    public function path()
+    {
+        return "/kargos/{$this->id}";
+    }
+
+    /**
+     * each kargo may have many products
      */
     public function products()
     {
@@ -37,4 +47,12 @@ class Kargo extends Model
     {
         return $this->morphMany('App\Cost', 'costable');
     }
+
+    /** each kargo belongs to a user */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+
 }

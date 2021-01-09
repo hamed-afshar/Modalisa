@@ -210,4 +210,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Cost');
     }
+
+    /**
+     * each user has many kargos
+     */
+    public function kargos()
+    {
+        return $this->hasMany('App\Kargo');
+    }
 }
