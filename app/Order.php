@@ -37,4 +37,20 @@ class Order extends Model
     {
         return $this->morphMany('App\Cost', 'costable');
     }
+
+    /**
+     * each order may have many products
+     */
+    public function products()
+    {
+        return $this->hasMany('App\Product');
+    }
+
+    /**
+     * each order belongs to a user
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

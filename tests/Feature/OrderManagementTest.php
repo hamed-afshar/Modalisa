@@ -129,7 +129,7 @@ class ProjectTests extends TestCase
     public function each_order_belongs_to_a_user()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-orders'], 0, 1);
         $this->prepOrder();
         $order = Order::find(1);
         $this->assertInstanceOf(User::class, $order->user);
@@ -166,7 +166,7 @@ class ProjectTests extends TestCase
     public function each_user_has_many_products()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
         $this->assertInstanceOf(Product::class, Auth::user()->products->find(1));
     }
