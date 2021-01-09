@@ -39,7 +39,7 @@ class HistoryPolicy
      * Determine whether the user can view the history.
      * user should have see-histories permission to be allowed
      * @param User $user
-     * @param  \App\History  $history
+     * @param History $history
      * @return mixed
      */
     public function view(User $user, History $history)
@@ -49,13 +49,13 @@ class HistoryPolicy
 
     /**
      * Determine whether the user can create histories.
-     * user should have creat-histories permission to be allowed
+     * Only BuyerAdmin and other users with privilege permissions are allowed
      * @param User $user
      * @return mixed
      */
     public function create(User $user)
     {
-        if($user->checkPermission('create-histories'))
+        if($user->checkPermission('create-histories') && $user->checkPrivilegeRole())
         {
             return true;
         }
@@ -65,7 +65,7 @@ class HistoryPolicy
      * Determine whether the user can update the history.
      *
      * @param User $user
-     * @param  \App\History  $history
+     * @param History $history
      * @return mixed
      */
     public function update(User $user, History $history)
@@ -75,14 +75,14 @@ class HistoryPolicy
 
     /**
      * Determine whether the user can delete the history.
-     *
+     * Only BuyerAdmin and other users with privilege permissions are allowed
      * @param User $user
-     * @param  \App\History  $history
+     * @param History $history
      * @return mixed
      */
     public function delete(User $user, History $history)
     {
-        if($user->checkPermission('delete-history'))
+        if($user->checkPermission('delete-histories') && $user->checkPrivilegeRole())
         {
             return true;
         }
@@ -92,7 +92,7 @@ class HistoryPolicy
      * Determine whether the user can restore the history.
      *
      * @param User $user
-     * @param  \App\History  $history
+     * @param History $history
      * @return mixed
      */
     public function restore(User $user, History $history)
@@ -104,7 +104,7 @@ class HistoryPolicy
      * Determine whether the user can permanently delete the history.
      *
      * @param User $user
-     * @param  \App\History  $history
+     * @param History $history
      * @return mixed
      */
     public function forceDelete(User $user, History $history)

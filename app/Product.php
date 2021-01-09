@@ -27,19 +27,6 @@ class Product extends Model
     }
 
     /**
-     * change history for product
-     * @param $status
-     */
-    public function changeHistory($status)
-    {
-        $data = [
-            'product_id' => $this->id,
-            'status_id' => $status->id
-        ];
-        $this->histories()->create($data);
-    }
-
-    /**
      * each product may have many notes
      */
     public function notes()
@@ -70,4 +57,13 @@ class Product extends Model
     {
         return $this->morphMany('App\Cost', 'costable');
     }
+
+    /**
+     * each product belongs to an order
+     */
+    public function order()
+    {
+        return $this->belongsTo('App\Order');
+    }
+
 }

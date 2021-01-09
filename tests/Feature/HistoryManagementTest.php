@@ -7,6 +7,7 @@ use App\Product;
 use App\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class HistoryManagementTest extends TestCase
@@ -14,17 +15,15 @@ class HistoryManagementTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test
-     * users can see histories for a product record
-     * history will be created on product creation time.
-     * ProductObserver will handle history creation
+     * users can see histories for the given product
+     * users should have see-histories permission to be allowed
      */
     public function retailers_can_check_their_product_histories()
     {
-        dd('here');
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-histories','create-orders'], 0, 1);
-        $status1 = factory('App\Status')->create();
         $this->prepOrder();
+        $status1 = Status::find(1);
         $product = Product::find(1);
         $status2 = factory('App\Status')->create([
             'name' => 'arrived',
@@ -42,45 +41,63 @@ class HistoryManagementTest extends TestCase
             ->assertSeeText($history2->created_at);
         // users can only see their own records
         $this->prepNormalEnv('retailer2', ['see-histories','create-orders'], 0, 1);
-        $this->get('/histories/' . $product->id)->assertForbidden();
+        $this->get('/histories/' . $product->id)->assertDontSeeText($history1->created_at)
+        ->assertDontSeeText($history2->created_at);
     }
 
     /** @test
-     * history created on product creation
+     * ProductObserver is responsible to create history on order creation time
      */
-    public function product_model_observe_to_create_history_on_product_creation()
+    public function product_model_observes_to_create_history_on_product_creation()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
-        $status = factory('App\Status')->create();
-        $this->prepOrder();
-        $this->assertDatabaseHas('histories', ['product_id' => Product::find(1)->id, 'status_id' => $status->id]);
-    }
-
-    /** @test
-     * history created on story changes
-     */
-    public function only_BuyerAdmin_can_change_product_history()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('BuyerAdmin', 'change-history', 0, 1);
-        $status = factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
         $product = Product::find(1);
-        $this->post('/change-history/' . $product->id . '/' . $status->id);
-        $this->assertDatabaseHas('histories', ['product_Id' => $product->id, 'status_id' => $status->id]);
+        $status = Status::find(1);
+        $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => $status->id]);
     }
 
-    /** @test */
+    /** @test
+     * only BuyerAdmins and users with privilege permissions are allowed to create histories
+     */
+    public function only_BuyerAdmin_can_create_history()
+    {
+        $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories'], 0, 1);
+        $this->prepOrder();
+        $status = factory('App\Status')->create([
+                'description' => 'in-office'
+        ]);
+
+        $product = Product::find(1);
+        $attributes = [
+          'status_id' => $status->id,
+          'product_id' => $product->id
+        ];
+        $this->post('/histories', $attributes );
+        $this->assertDatabaseHas('histories', $attributes);
+        //other users are not allowed to create history
+        $this->prepNormalEnv('retailer', ['create-transactions', 'see-histories'], 0, 1);
+        $this->post('/histories' , $attributes)->assertForbidden();
+    }
+
+    /** @test
+     * only BuyerAdmins and users with privilege permissions are allowed to delete histories
+     */
     public function only_BuyerAdmin_can_delete_histories()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('BuyerAdmin', 'delete-history', 0, 1);
-        $status = factory('App\Status')->create();
+        $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories', 'delete-histories'], 0, 1);
+        $BuyerAdmin = Auth::user();
         $this->prepOrder();
         $history = History::find(1);
-        $this->delete('/histories/' . $history->id);
+        //other users are not allowed to delete records
+        $this->prepNormalEnv('retailer', ['create-histories', 'see-histories', 'delete-histories'], 0, 1);
+        $this->delete($history->path())->assertForbidden();
+        //BuyerAdmin can delete histories
+        $this->actingAs($BuyerAdmin);
+        $this->delete($history->path());
         $this->assertDatabaseMissing('histories', ['id' => $history->id]);
+
     }
 
     /** @test
@@ -89,9 +106,9 @@ class HistoryManagementTest extends TestCase
     public function each_status_has_many_histories()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
-        $status = factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
+        $status = Status::find(1);
         // History automatically is always created on order creation
         $this->assertInstanceOf(History::class, $status->histories->find(1));
     }
@@ -99,12 +116,12 @@ class HistoryManagementTest extends TestCase
     /** @test
      * one to many relationship
      */
-    public function each_history_belongs_to_status()
+    public function each_history_belongs_to_a_status()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
+        $status = Status::find(1);
         // History automatically is always created on order creation
         $history = History::find(1);
         $this->assertInstanceOf(Status::class, $history->status);
@@ -116,8 +133,7 @@ class HistoryManagementTest extends TestCase
     public function each_product_has_many_histories()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
         $product = Product::find(1);
         $this->assertInstanceOf(History::class, $product->histories->find(1));
@@ -126,11 +142,10 @@ class HistoryManagementTest extends TestCase
     /** @test
      * one to many relationship
      */
-    public function each_history_belongs_to_product()
+    public function each_history_belongs_to_a_product()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', 'make-order', 0, 1);
-        factory('App\Status')->create();
+        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
         $this->prepOrder();
         $history = History::find(1);
         $this->assertInstanceOf(Product::class, $history->product);
@@ -140,7 +155,7 @@ class HistoryManagementTest extends TestCase
     public function guests_can_not_access_history_management()
     {
         $this->get('/histories/1')->assertRedirect('login');
-        $this->post('/change-history/1/1')->assertRedirect('login');
+        $this->post('/histories/')->assertRedirect('login');
         $this->delete('/histories/1')->assertRedirect('login');
     }
 
