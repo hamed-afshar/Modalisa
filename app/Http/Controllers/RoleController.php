@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\AccessProvider;
 use App\Permission;
 use App\Role;
-use App\RolePermission;
 use App\User;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -49,8 +47,8 @@ class RoleController extends Controller
             'label' => 'required'
         ]);
         $roleData = [
-          'name' => $request->input('name'),
-          'label' => $request->input('label')
+            'name' => $request->input('name'),
+            'label' => $request->input('label')
         ];
         Role::create($roleData);
     }
@@ -123,19 +121,26 @@ class RoleController extends Controller
         return $role->permissions;
     }
 
-    /*
+    /**
      * disallow roles for permissions
+     * @param Role $role
+     * @param Permission $permission
+     * @return mixed
+     * @throws AuthorizationException
      */
-    public function disallowToPermission(Role $role , Permission $permission)
+    public function disallowToPermission(Role $role, Permission $permission)
     {
         $this->authorize('update', $role);
         $role->disAllowTo($permission);
         return $role->permissions;
     }
 
-    /*
-    * change user's role
-    */
+    /**
+     * change user's role
+     * @param Role $role
+     * @param User $user
+     * @throws AuthorizationException
+     */
     public function changeRole(Role $role, User $user)
     {
         $this->authorize('update', $role);
