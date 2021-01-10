@@ -46,4 +46,39 @@ class AdminPolicy
         }
     }
 
+    /**
+     * Determine whether admin can create kargo
+     */
+    public function createKargo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether admin can index all kargos
+     * @param User $user
+     * @return bool
+     */
+    public function indexKargos(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether admin can view a single cost
+     * @param User $user
+     * @return bool
+     */
+    public function indexSingleKargo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+
 }

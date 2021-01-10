@@ -11,6 +11,6 @@ $factory->define(Kargo::class, function (Faker $faker) {
         'receiver_name' => 'Ramin Bey',
         'receiver_tel' => '00905332020',
         'receiver_address' => 'Turkey, Istanbul, Sisli',
-        'sending_date' => $faker->dateTimeThisMonth
+        'sending_date' => $faker->date('Y-m-d')
     ];
 });
