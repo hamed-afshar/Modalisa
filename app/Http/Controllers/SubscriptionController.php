@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Subscription;
 use App\User;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -97,7 +98,7 @@ class SubscriptionController extends Controller
      * delete a subscription
      * @param Subscription $subscription
      * @throws AuthorizationException
-     * @throws \Exception
+     * @throws Exception
      */
     public function destroy(Subscription $subscription)
     {
