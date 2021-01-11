@@ -17,6 +17,7 @@ class CreateSubscriptionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('plan')->unique();
             $table->integer('cost_percentage');
+            $table->integer('kargo_limit');
             $table->timestamps();
         });
 

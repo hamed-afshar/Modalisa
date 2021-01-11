@@ -60,6 +60,15 @@ class SubscriptionManagementTest extends TestCase
         $this->post('/subscriptions', $attributes)->assertSessionHasErrors('cost_percentage');
     }
 
+    /** @test */
+    public function kargo_limit_is_required()
+    {
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $attributes = factory('App\Subscription')->raw(['kargo_limit' => '']);
+        $this->post('/subscriptions', $attributes)->assertSessionHasErrors('kargo_limit');
+    }
+
+
     /**
      * This test is not necessary
      */

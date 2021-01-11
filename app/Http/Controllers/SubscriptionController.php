@@ -44,11 +44,13 @@ class SubscriptionController extends Controller
         $this->authorize('create', Subscription::class);
         $request->validate([
             'plan' => 'required',
-            'cost_percentage' => 'required | numeric'
+            'cost_percentage' => 'required | numeric',
+            'kargo_limit' => 'required | numeric'
         ]);
         $subscriptionData = [
             'plan' => $request->input('plan'),
-            'cost_percentage' => $request->input('cost_percentage')
+            'cost_percentage' => $request->input('cost_percentage'),
+            'kargo_limit' => $request->input('kargo_limit')
         ];
         Subscription::create($subscriptionData);
         return redirect()->route('subscriptions.index');
@@ -88,7 +90,8 @@ class SubscriptionController extends Controller
         $this->authorize('update', $subscription);
         $data = request()->validate([
             'plan' => 'required',
-            'cost_percentage' => 'required|integer'
+            'cost_percentage' => 'required|numeric',
+            'kargo_limit' => 'required|numeric'
         ]);
         $subscription->update($data);
     }
