@@ -67,7 +67,17 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
-        $attributes = factory('App\Kargo')->raw();
+        $kargoList = array();
+        for ($i=1;$i<=10;$i++) {
+           $this->prepOrder();
+           $product = Product::find($i);
+           $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+
+        dump(Product::find(1));
         $this->post('/kargos', $attributes);
         $this->assertDatabaseHas('kargos', ['receiver_name' => $attributes['receiver_name']]);
     }

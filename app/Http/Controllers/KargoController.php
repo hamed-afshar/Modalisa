@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Kargo;
+use App\Product;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +53,14 @@ class KargoController extends Controller
             'receiver_address' => $request->input('receiver_address'),
             'sending_date' => $request->input('sending_date')
         ];
-        $user->kargos()->create($kargoData);
+        $kargo = $user->kargos()->create($kargoData);
+        $productList = array();
+        $list = $request->input('kargo_list');
+        foreach ($list as $item){
+            $product = Product::find($item);
+            $productList[] = $product;
+        }
+        $kargo->setKargo($productList);
     }
 
 }

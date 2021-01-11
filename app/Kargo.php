@@ -54,5 +54,16 @@ class Kargo extends Model
         return $this->belongsTo('App\User');
     }
 
+    /** set kargo number for product's list
+     * @param $productList
+     */
+    public function setKargo($productList)
+    {
+        foreach ($productList as $product) {
+            $this->products()->save($product);
+        }
+        dump(Product::find(1));
+    }
+
 
 }
