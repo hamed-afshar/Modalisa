@@ -1,7 +1,7 @@
 <?php
 
 /**
- * this trait handles uploading images
+ * trait to handles image functions
  */
 
 namespace App\Traits;
