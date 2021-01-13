@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Kargo;
 use App\Product;
+use App\Traits\KargoTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class KargoController extends Controller
 {
+    use KargoTrait;
     /**
      * users should have see-kargos permission to be allowed
      * users can only see their own records
@@ -45,7 +49,8 @@ class KargoController extends Controller
             'receiver_name' => 'required',
             'receiver_tel' => 'required',
             'receiver_address' => 'required',
-            'sending_date' => 'required | date_format:Y-m-d'
+            'sending_date' => 'required | date_format:Y-m-d',
+            'kargo_list' => 'required'
         ]);
         $kargoData = [
             'receiver_name' => $request->input('receiver_name'),
@@ -53,14 +58,12 @@ class KargoController extends Controller
             'receiver_address' => $request->input('receiver_address'),
             'sending_date' => $request->input('sending_date')
         ];
-        $kargo = $user->kargos()->create($kargoData);
-        $productList = array();
-        $list = $request->input('kargo_list');
-        foreach ($list as $item){
-            $product = Product::find($item);
-            $productList[] = $product;
-        }
-        $kargo->setKargo($productList);
+        $user = Auth::user();
+        $kargoList = $request->input('kargo_list');
+        $this->createKargo($user, $kargoData, $kargoList);
+
+
     }
+
 
 }

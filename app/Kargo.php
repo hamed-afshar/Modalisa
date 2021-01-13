@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class Kargo extends Model
 {
@@ -62,7 +64,44 @@ class Kargo extends Model
         foreach ($productList as $product) {
             $this->products()->save($product);
         }
-        dump(Product::find(1));
+    }
+
+    /** check kargo limit based on user's subscription
+     * @param User $user
+     * @param $productList
+     * @return bool
+     */
+    public function checkLimit(User $user, $productList)
+    {
+        $kargoLimit = $user->subscription->kargo_limit;
+        if (count($productList) < $kargoLimit) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function createKargo(User $user, $kargoData, $kargoList)
+    {
+        DB::beginTransaction();
+        $kargo = $user->kargos()->create($kargoData);
+        $productList = array();
+        foreach ($kargoList as $item) {
+            $product = Product::find($item);
+            $productList[] = $product;
+        }
+        // function to check number of items in product list is equal to the kargo_limit value defined in subscription table
+        // if checkLimit function fails, then all changes will rollback and kargo wont be created
+        if ($this->checkLimit($user, $productList)) {
+            dump('checklimit-true');
+            $this->setKargo($productList);
+            $this->refresh();
+            DB::commit();
+        } else {
+            dump('checklimit-false');
+            DB::rollBack();
+            return Redirect::back()->withErrors(['msg', trans('translate.kargo_limit')]);
+        }
     }
 
 

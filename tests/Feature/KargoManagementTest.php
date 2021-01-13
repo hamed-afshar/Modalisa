@@ -76,11 +76,15 @@ class KargoManagementTest extends TestCase
         $attributes = factory('App\Kargo')->raw([
             'kargo_list' => $kargoList,
         ]);
-
-        dump(Product::find(1));
+        //record for the created kargo must exist in db
         $this->post('/kargos', $attributes);
-        $this->assertDatabaseHas('kargos', ['receiver_name' => $attributes['receiver_name']]);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        //product's kargo id must be equal to the created kargo id
+        $product = Product::find(5);
+        $this->assertEquals($product->kargo_id, $lastKargoId);
     }
+
 
     /** @test
      * super privilege users are able to create a kargo for the given user
@@ -90,13 +94,55 @@ class KargoManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
+        // retailer create 10 products
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder();
-        $attributes = factory('App\Kargo')->raw();
+        $kargoList = array();
+        for($i=1; $i<=10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        // BuyerAdmin should be able to create kargo for the retailer's products
         $this->actingAs($BuyerAdmin);
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList
+        ]);
         $this->post('/admin-create-kargo/' . $retailer->id , $attributes);
-        $this->assertDatabaseHas('kargos', ['receiver_name' => $attributes['receiver_name']]);
+        //record for the created kargo must exist in db
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        //product's kargo id must be equal to the created kargo id
+        $product = Product::find(5);
+        $this->assertEquals($product->kargo_id, $lastKargoId);
+    }
+
+    /** @test
+     * number of items in any kargo should meet the minimum limit based on user's subscription plan
+     */
+    public function each_karo_must_contain_minimum_number_of_items()
+    {
+        $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
+        $kargoList = array();
+        for ($i=1;$i<=10;$i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+        // if number of products in kargo is less than kargo_limit, then new record will not be created in db
+        //create a subscription with kargo limit value of 20, but add 10 products to create a new kargo record
+        $newSubscription = factory('App\Subscription')->create(['kargo_limit' => 20]);
+        Auth::user()->subscription()->associate($newSubscription);
+        Auth::user()->save();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->post('/kargos', $attributes);
+        $product = Product::find(5);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId + 1]);
+        $this->assertNotEquals($product->id, $lastKargoId + 1);
     }
 
 

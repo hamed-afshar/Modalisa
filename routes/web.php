@@ -129,7 +129,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/admin-index-single-cost/{user}/{cost}', 'AdminController@showCost' )->name('admin.show-cost');
     Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo', 'AdminController@showKargo')->name('admin.show-kargo');
-    Route::post('/admin-create-kargo/{user}', 'AdminController@createKargo')->name('admin.create-kargo');
+    Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
 });
 
 
