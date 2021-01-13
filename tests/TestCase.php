@@ -33,9 +33,9 @@ abstract class TestCase extends BaseTestCase
 
     protected function prepNormalEnv($role, $permissionArray, $locked, $confirmed)
     {
-        factory('App\Subscription')->create();
+        $subscription = factory('App\Subscription')->create();
         $role = factory('App\Role')->create(['name' => $role]);
-        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked]);
+        $user = factory('App\User')->create(['confirmed' => $confirmed, 'locked' => $locked, 'subscription_id' => $subscription->id]);
         $role->changeRole($user);
         foreach ($permissionArray as $permissionName) {
             // if permission already has existed in db then permission will not be created and assign to the role
@@ -56,7 +56,6 @@ abstract class TestCase extends BaseTestCase
     /**
      * create order and product
      */
-
     protected function prepOrder()
     {
         factory('App\Status')->create();
@@ -71,5 +70,4 @@ abstract class TestCase extends BaseTestCase
             'kargo_id' => $kargo->id
         ]);
     }
-
 }
