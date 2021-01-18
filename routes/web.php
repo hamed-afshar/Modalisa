@@ -124,12 +124,14 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/kargos', 'KargoController@index')->name('kargos.index');
     Route::get('/kargos/create', 'KargoController@create')->name('kargos.create');
     Route::post('/kargos', 'KargoController@store')->name('kargos.store');
+    Route::patch('/confirm-kargo/{kargo}', 'KargoController@confirm')->name('kargos.confirm');
 
     Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
     Route::get('/admin-index-single-cost/{user}/{cost}', 'AdminController@showCost' )->name('admin.show-cost');
     Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo', 'AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
+
 });
 
 

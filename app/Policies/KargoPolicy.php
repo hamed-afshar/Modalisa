@@ -84,6 +84,17 @@ class KargoPolicy
     }
 
     /**
+     * Determine whether the user can confirm the kargo
+     * @param User $user
+     */
+    public function confirm(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
      * Determine whether the user can restore the kargo.
      *
      * @param  \App\User  $user

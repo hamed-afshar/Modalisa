@@ -21,7 +21,7 @@ class CreateKargosTable extends Migration
             $table->string('receiver_tel');
             $table->string('receiver_address');
             $table->date('sending_date');
-//            $table->timestamp('sending_date');
+            $table->boolean('confirmed')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('SET NULL');

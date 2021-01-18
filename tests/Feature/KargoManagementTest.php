@@ -10,6 +10,7 @@ use App\Product;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -68,10 +69,10 @@ class KargoManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $kargoList = array();
-        for ($i=1;$i<=10;$i++) {
-           $this->prepOrder();
-           $product = Product::find($i);
-           $kargoList[] = $product->id;
+        for ($i = 1; $i <= 10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
         }
         $attributes = factory('App\Kargo')->raw([
             'kargo_list' => $kargoList,
@@ -98,7 +99,7 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $retailer = Auth::user();
         $kargoList = array();
-        for($i=1; $i<=10; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $this->prepOrder();
             $product = Product::find($i);
             $kargoList[] = $product->id;
@@ -108,7 +109,7 @@ class KargoManagementTest extends TestCase
         $attributes = factory('App\Kargo')->raw([
             'kargo_list' => $kargoList
         ]);
-        $this->post('/admin-create-kargo/' . $retailer->id , $attributes);
+        $this->post('/admin-create-kargo/' . $retailer->id, $attributes);
         //record for the created kargo must exist in db
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
@@ -124,7 +125,7 @@ class KargoManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $kargoList = array();
-        for ($i=1;$i<=10;$i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $this->prepOrder();
             $product = Product::find($i);
             $kargoList[] = $product->id;
@@ -137,7 +138,7 @@ class KargoManagementTest extends TestCase
         $newSubscription = factory('App\Subscription')->create(['kargo_limit' => 20]);
         Auth::user()->subscription()->associate($newSubscription);
         Auth::user()->save();
-        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->post('/kargos', $attributes);
         $product = Product::find(5);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
@@ -145,11 +146,94 @@ class KargoManagementTest extends TestCase
         $this->assertNotEquals($product->id, $lastKargoId + 1);
     }
 
+    /** @test
+     * super privilege users are able to confirm the kargo
+     */
+    public function super_privilege_users_can_confirm_kargos()
+    {
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0 , 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        //first create a kargo as a retailer
+        $this->actingAs($retailer);
+        $kargoList = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+        $this->post('/kargos', $attributes);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId] );
+        //acting as BuyerAdmin to confirm this kargo
+        $this->actingAs($BuyerAdmin);
+        $kargo = Kargo::find($lastKargoId);
+        $confirmAttributes = [
+            'confirmed' => 1,
+            'weight' =>100
+        ];
+        $this->patch('/confirm-kargo/' . $kargo->id , $confirmAttributes);
+        $this->assertDatabaseHas('kargos', [
+            'id' => $lastKargoId,
+            'weight' => $confirmAttributes['weight'],
+            'confirmed' => $confirmAttributes['confirmed']
+        ]);
+        //other users are not allowed to confirm kargos
+        $this->actingAs($retailer);
+        $this->patch('/confirm-kargo/' . $kargo->id , $confirmAttributes)->assertForbidden();
+    }
+
+    /** @test
+     * only super privilege users can upload pictures
+     */
+    public function image_can_be_uploaded_on_confirmation()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0 , 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        // first create a kargo as a retailer
+        $this->actingAs($retailer);
+        $kargoList = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+        $this->post('/kargos', $attributes);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        // acting as BuyerAdmin to confirm this kargo
+        $this->actingAs($BuyerAdmin);
+        $confirmAttributes = [
+            'confirmed' => 1,
+            'weight' => 100,
+            'image' => UploadedFile::fake()->create('kargo-pic.jpg')
+        ];
+        $kargo = Kargo::find($lastKargoId);
+        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        $this->assertDatabaseHas('kargos', [
+            'id' => $lastKargoId,
+            'weight' => $confirmAttributes['weight'],
+            'confirmed' => $confirmAttributes['confirmed']
+        ]);
+        $this->assertDatabaseHas('images', ['imagable_id' => $kargo->id]);
+    }
+
 
     /** @test
      * super privilege users are able to see a single kargo with all related user and products
      */
-    public function super_privilege_users_can_see_a_single_kargo()
+    public
+    function super_privilege_users_can_see_a_single_kargo()
     {
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
         $user = Auth::user();
@@ -157,14 +241,15 @@ class KargoManagementTest extends TestCase
         $product = Product::find(1);
         $kargo = Kargo::find(1);
         $this->get('/admin-index-single-kargo')->assertSeeText($kargo->reciver_name)
-        ->assertSeeText($user->name)->assertSeeText($product->link);
+            ->assertSeeText($user->name)->assertSeeText($product->link);
         // other users are not allowed to index a single kargo
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
         $this->get('/admin-index-single-kargo')->assertForbidden();
     }
 
     /** @test */
-    public function each_user_may_have_many_kargos()
+    public
+    function each_user_may_have_many_kargos()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -174,7 +259,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_kargo_belongs_to_a_user()
+    public
+    function each_kargo_belongs_to_a_user()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -184,7 +270,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_kargo_may_have_many_products()
+    public
+    function each_kargo_may_have_many_products()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -199,7 +286,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_product_belongs_to_a_kargo()
+    public
+    function each_product_belongs_to_a_kargo()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -209,7 +297,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_kargo_may_have_many_notes()
+    public
+    function each_kargo_may_have_many_notes()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -223,7 +312,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_note_may_belongs_to_a_kargo()
+    public
+    function each_note_may_belongs_to_a_kargo()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -238,7 +328,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_kargo_may_have_many_images()
+    public
+    function each_kargo_may_have_many_images()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
@@ -255,7 +346,8 @@ class KargoManagementTest extends TestCase
     }
 
     /** @test */
-    public function each_image_may_belongs_to_a_kargo()
+    public
+    function each_image_may_belongs_to_a_kargo()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);

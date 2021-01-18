@@ -61,9 +61,33 @@ class KargoController extends Controller
         $user = Auth::user();
         $kargoList = $request->input('kargo_list');
         $this->createKargo($user, $kargoData, $kargoList);
+    }
 
+    /**
+     * confirm the kargo
+     * only super privilege users can confirm kargos
+     * @param Request $request
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function confirm(Request $request, Kargo $kargo)
+    {
+        $this->authorize('confirm', Kargo::class);
+        $request->validate([
+           'weight' => 'required',
+           'confirmed' => 'required',
+        ]);
+        $data = [
+            'weight' => $request->input('weight'),
+            'confirmed' => $request->input('confirmed'),
+        ];
+        $kargo->update($data);
+        if($request->has('image')) {
+            dd('has image');
+        }
 
     }
+
 
 
 }
