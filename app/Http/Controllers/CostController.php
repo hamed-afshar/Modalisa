@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cost;
 use App\Traits\ImageTrait;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -102,8 +103,9 @@ class CostController extends Controller
         }
     }
 
-    /** show a single cost
-     * users with see-costs permission only can see cost records belongs to them
+    /**
+     * show a single cost
+     * users with see-costs permission only can see cost records belong to them
      * @param Cost $cost
      * @return Cost
      * @throws AuthorizationException
@@ -176,7 +178,7 @@ class CostController extends Controller
      * image file and record also must be deleted accordingly.
      * @param Cost $cost
      * @throws AuthorizationException
-     * @throws \Exception
+     * @throws Exception
      */
     public function destroy(Cost $cost)
     {
