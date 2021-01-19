@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Kargo;
 use App\Product;
+use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -13,7 +14,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class KargoController extends Controller
 {
-    use KargoTrait;
+    use KargoTrait, ImageTrait;
+
     /**
      * users should have see-kargos permission to be allowed
      * users can only see their own records
@@ -44,7 +46,6 @@ class KargoController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Kargo::class);
-        $user = Auth::user();
         $request->validate([
             'receiver_name' => 'required',
             'receiver_tel' => 'required',
@@ -64,30 +65,18 @@ class KargoController extends Controller
     }
 
     /**
-     * confirm the kargo
-     * only super privilege users can confirm kargos
-     * @param Request $request
+     * show a single kargo
+     * users with see-kargo permission are allowed
+     * users can only see their own records
      * @param Kargo $kargo
      * @throws AuthorizationException
      */
-    public function confirm(Request $request, Kargo $kargo)
+    public function show(Kargo $kargo)
     {
-        $this->authorize('confirm', Kargo::class);
-        $request->validate([
-           'weight' => 'required',
-           'confirmed' => 'required',
-        ]);
-        $data = [
-            'weight' => $request->input('weight'),
-            'confirmed' => $request->input('confirmed'),
-        ];
-        $kargo->update($data);
-        if($request->has('image')) {
-            dd('has image');
-        }
-
+        $this->authorize('view', $kargo);
+        $user = Auth::user();
+        return $user->kargos->find($kargo)->with('products')->get();
     }
-
 
 
 }

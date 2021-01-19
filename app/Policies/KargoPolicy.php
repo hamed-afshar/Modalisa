@@ -43,7 +43,9 @@ class KargoPolicy
      */
     public function view(User $user, Kargo $kargo)
     {
-        //
+        if($user->checkPermission('see-kargos') && $user->id == $kargo->user->id) {
+            return true;
+        }
     }
 
     /**
@@ -83,16 +85,6 @@ class KargoPolicy
         //
     }
 
-    /**
-     * Determine whether the user can confirm the kargo
-     * @param User $user
-     */
-    public function confirm(User $user)
-    {
-        if($user->checkPrivilegeRole()) {
-            return true;
-        }
-    }
 
     /**
      * Determine whether the user can restore the kargo.

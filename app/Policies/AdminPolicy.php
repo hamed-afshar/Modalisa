@@ -80,5 +80,17 @@ class AdminPolicy
         }
     }
 
+    /**
+     * Determine whether the user can confirm the kargo
+     * @param User $user
+     * @return bool
+     */
+    public function confirm(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
 
 }

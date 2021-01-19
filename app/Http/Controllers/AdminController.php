@@ -94,4 +94,43 @@ class AdminController extends Controller
         $this->authorize('indexSingleKargo', Admin::class);
         return Kargo::with(['user', 'products'])->get();
     }
+
+    /**
+     * confirm the kargo
+     * only super privilege users can confirm kargos
+     * @param Request $request
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function confirm(Request $request, Kargo $kargo)
+    {
+        $this->authorize('confirm', Admin::class);
+        // kargo will be confirmed for this user
+        $user = $kargo->user;
+        // first upload the kargo, then upload the image
+        $request->validate([
+            'weight' => 'required',
+            'confirmed' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048'
+        ]);
+        $data = [
+            'weight' => $request->input('weight'),
+            'confirmed' => $request->input('confirmed'),
+        ];
+        $kargo->update($data);
+        // upload image for the kargo
+        $image = $request->file('image');
+        $imageNewName = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $imageNewName);
+        // create record for the uploaded image
+        $imageData = [
+            // imagable_type always remains App\Kargo
+            'imagable_type' => 'App\Kargo',
+            'imagable_id' => $kargo->id,
+            'image_name' => $filePath
+        ];
+        $user->images()->create($imageData);
+    }
 }

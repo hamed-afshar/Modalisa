@@ -18,6 +18,23 @@ class KargoManagementTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
+    /**
+     * function to prepare kargo
+     */
+    public function prepKargo()
+    {
+        $kargoList = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+        $this->post('/kargos', $attributes);
+    }
+
     /** @test
      * users should have see-kargos permission to be allowed
      * users can only see their own records
@@ -68,17 +85,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
-        $kargoList = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
-            $product = Product::find($i);
-            $kargoList[] = $product->id;
-        }
-        $attributes = factory('App\Kargo')->raw([
-            'kargo_list' => $kargoList,
-        ]);
-        //record for the created kargo must exist in db
-        $this->post('/kargos', $attributes);
+        $this->prepKargo();
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //product's kargo id must be equal to the created kargo id
@@ -93,26 +100,26 @@ class KargoManagementTest extends TestCase
     public function super_privilege_users_can_create_kargo_for_the_given_user()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
+        $this->prepNormalEnv('BuyerAdmin', ['see-kargos', 'create-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
-        // retailer create 10 products
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $retailer = Auth::user();
+        // retailer create 10 products
         $kargoList = array();
         for ($i = 1; $i <= 10; $i++) {
             $this->prepOrder();
             $product = Product::find($i);
             $kargoList[] = $product->id;
         }
-        // BuyerAdmin should be able to create kargo for the retailer's products
-        $this->actingAs($BuyerAdmin);
         $attributes = factory('App\Kargo')->raw([
-            'kargo_list' => $kargoList
+            'kargo_list' => $kargoList,
         ]);
+        //acting as BuyerAdmin to create the kargo
+        $this->actingAs($BuyerAdmin);
         $this->post('/admin-create-kargo/' . $retailer->id, $attributes);
         //record for the created kargo must exist in db
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
-        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId, 'user_id' => $retailer->id]);
         //product's kargo id must be equal to the created kargo id
         $product = Product::find(5);
         $this->assertEquals($product->kargo_id, $lastKargoId);
@@ -151,32 +158,22 @@ class KargoManagementTest extends TestCase
      */
     public function super_privilege_users_can_confirm_kargos()
     {
-        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0 , 1);
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
-        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0 , 1);
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
-        //first create a kargo as a retailer
         $this->actingAs($retailer);
-        $kargoList = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
-            $product = Product::find($i);
-            $kargoList[] = $product->id;
-        }
-        $attributes = factory('App\Kargo')->raw([
-            'kargo_list' => $kargoList,
-        ]);
-        $this->post('/kargos', $attributes);
+        $this->prepKargo();
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
-        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId] );
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //acting as BuyerAdmin to confirm this kargo
         $this->actingAs($BuyerAdmin);
         $kargo = Kargo::find($lastKargoId);
         $confirmAttributes = [
             'confirmed' => 1,
-            'weight' =>100
+            'weight' => 100
         ];
-        $this->patch('/confirm-kargo/' . $kargo->id , $confirmAttributes);
+        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
         $this->assertDatabaseHas('kargos', [
             'id' => $lastKargoId,
             'weight' => $confirmAttributes['weight'],
@@ -184,7 +181,7 @@ class KargoManagementTest extends TestCase
         ]);
         //other users are not allowed to confirm kargos
         $this->actingAs($retailer);
-        $this->patch('/confirm-kargo/' . $kargo->id , $confirmAttributes)->assertForbidden();
+        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes)->assertForbidden();
     }
 
     /** @test
@@ -193,22 +190,13 @@ class KargoManagementTest extends TestCase
     public function image_can_be_uploaded_on_confirmation()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0 , 1);
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
-        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0 , 1);
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $kargoList = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
-            $product = Product::find($i);
-            $kargoList[] = $product->id;
-        }
-        $attributes = factory('App\Kargo')->raw([
-            'kargo_list' => $kargoList,
-        ]);
-        $this->post('/kargos', $attributes);
+        $this->prepKargo();
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         // acting as BuyerAdmin to confirm this kargo
@@ -225,9 +213,25 @@ class KargoManagementTest extends TestCase
             'weight' => $confirmAttributes['weight'],
             'confirmed' => $confirmAttributes['confirmed']
         ]);
-        $this->assertDatabaseHas('images', ['imagable_id' => $kargo->id]);
+        $this->assertDatabaseHas('images', ['imagable_id' => $kargo->id, 'imagable_type' => 'App\Kargo']);
+        $imageName = $kargo->images()->where('imagable_id', $kargo->id)->value('image_name');
+        $this->assertFileExists(public_path('storage' . $imageName));
     }
 
+    /** @test
+     * users can see a single kargo with related products
+     * users should have see-kargos permission to be allowed
+     */
+    public function users_can_see_a_single_kargo()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $this->prepKargo();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $kargo = Kargo::find($lastKargoId);
+        $product = Product::find(5);
+        $this->get($kargo->path())->assertSeeText($kargo->receiver_name)->assertSeeText($product->link);
+    }
 
     /** @test
      * super privilege users are able to see a single kargo with all related user and products
@@ -246,6 +250,46 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
         $this->get('/admin-index-single-kargo')->assertForbidden();
     }
+
+    /** @test
+     *  users can update not confirmed kargos
+     *  users must have create-kargos permission to be allowed
+     *  users can update kargo details, add products and delete products
+     */
+    public function users_can_update_not_confirm_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        // first create a kargo as a retailer
+        $this->actingAs($retailer);
+        $kargoList = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $this->prepOrder();
+            $product = Product::find($i);
+            $kargoList[] = $product->id;
+        }
+        $attributes = factory('App\Kargo')->raw([
+            'kargo_list' => $kargoList,
+        ]);
+        $this->post('/kargos', $attributes);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        // users can update kargo details
+        $updateAttributes = [
+            'receiver_name' => 'new ramin',
+            'receiver_tel' => '0923333333',
+            'receiver_address' => 'new address',
+            'sending_date' => '2020-10-20'
+        ];
+        $kargo = Kargo::find($lastKargoId);
+        $this->patch('/kargos/' . $kargo->id, $updateAttributes);
+
+    }
+
+
 
     /** @test */
     public
