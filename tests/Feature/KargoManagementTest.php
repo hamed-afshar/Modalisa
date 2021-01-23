@@ -258,23 +258,11 @@ class KargoManagementTest extends TestCase
      */
     public function users_can_update_not_confirm_kargos()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
-        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
-        $BuyerAdmin = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $kargoList = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
-            $product = Product::find($i);
-            $kargoList[] = $product->id;
-        }
-        $attributes = factory('App\Kargo')->raw([
-            'kargo_list' => $kargoList,
-        ]);
-        $this->post('/kargos', $attributes);
+        $this->prepKargo();
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         // users can update kargo details
@@ -285,11 +273,50 @@ class KargoManagementTest extends TestCase
             'sending_date' => '2020-10-20'
         ];
         $kargo = Kargo::find($lastKargoId);
-        $this->patch('/kargos/' . $kargo->id, $updateAttributes);
-
+        $this->patch($kargo->path(), $updateAttributes);
+        $this->assertDatabaseHas('kargos', $updateAttributes);
+        //users can only update their own records
+        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->patch($kargo->path(), $updateAttributes)->assertForbidden();
     }
 
-
+    /** @test */
+    public function users_can_not_update_confirmed_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer = Auth::user();
+        // first create a kargo as a retailer
+        $this->actingAs($retailer);
+        $this->prepKargo();
+        //acting as BuyerAdmin to confirm the kargo
+        $this->prepNormalEnv('BuyerAdmin', ['create_kargos', 'see-kargos'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $kargo = Kargo::find($lastKargoId);
+        $confirmAttributes = [
+            'confirmed' => 1,
+            'weight' => 100
+        ];
+        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        $this->assertDatabaseHas('kargos', [
+            'id' => $lastKargoId,
+            'weight' => $confirmAttributes['weight'],
+            'confirmed' => $confirmAttributes['confirmed']
+        ]);
+        //users can not update kargo records if they were confirmed
+        $this->actingAs($retailer);
+        $updateAttributes = [
+            'receiver_name' => 'new ramin',
+            'receiver_tel' => '0923333333',
+            'receiver_address' => 'new address',
+            'sending_date' => '2020-10-20'
+        ];
+        $this->patch($kargo->path(), $updateAttributes)->assertForbidden();
+    }
 
     /** @test */
     public

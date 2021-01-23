@@ -14097,14 +14097,16 @@ video {
   color: #d7e6fd;
   right: 0;
   border-radius: 9999px;
-  font-size: 18px;
-  min-width: 24px;
-  line-height: 24px;
-  min-height: 18px;
+  font-size: 14px;
+  min-width: 18px;
+  line-height: 16px;
+  min-height: 16px;
   text-align: center;
 }
 
 /* end of navbar section */
+
+/* Button section */
 
 .btn {
   color: #fff;
@@ -14136,6 +14138,8 @@ video {
 .btn-green:hover {
   background-color: #38a169;
 }
+
+/* end of button section */
 
 .label {
   display: block;
@@ -14231,7 +14235,7 @@ video {
   border-width: 1px;
   border-radius: 0.25rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  background-color: #6b46c1;
+  background-color: #434190;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   padding-top: 0.5rem;
@@ -14294,29 +14298,51 @@ video {
   font-weight: 700;
 }
 
-.table-header-row {
+/* table section */
+
+.table-back {
   background-color: #fff;
-  color: #718096;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-radius: 0.375rem
 }
 
-.table-body-row {
-  background-color: #fff;
-  border-width: 1px;
-  padding-left: 1rem;
-  padding-right: 1rem;
+.table-design {
+  table-layout: auto;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  border-collapse: collapse
+}
+
+.table-header-cell {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: #434190;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #f7fafc;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem
+}
+
+.table-body-cell {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   text-align: center;
-  color: #2d3748
+  color: #2d3748;
+  border-bottom-width: 1px
 }
 
 .table-body-row:hover {
-  background-color: #f7fafc
+  background-color: #edf2f7
 }
+
+/* end of table section*/
 
 @media (min-width: 640px) {
   .sm\:sr-only {

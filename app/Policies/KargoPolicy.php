@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Kargo;
 use App\User;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class KargoPolicy
@@ -70,7 +71,10 @@ class KargoPolicy
      */
     public function update(User $user, Kargo $kargo)
     {
-        //
+        if($user->checkPermission('create-kargos') && $user->id == $kargo->user->id)
+        {
+            return $kargo->confirmed ? Response::deny('deny') : Response::allow();
+        }
     }
 
     /**

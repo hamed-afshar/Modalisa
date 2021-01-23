@@ -47,3 +47,4 @@ access denied page..
 40 which tyoe is suitable for price? String or integer?
 41. status must set to 1 on product creation time.
 42. upload many images at same time
+43. transaction and kargo return msg for not having image

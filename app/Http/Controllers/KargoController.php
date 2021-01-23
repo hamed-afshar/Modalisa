@@ -69,6 +69,7 @@ class KargoController extends Controller
      * users with see-kargo permission are allowed
      * users can only see their own records
      * @param Kargo $kargo
+     * @return mixed
      * @throws AuthorizationException
      */
     public function show(Kargo $kargo)
@@ -77,6 +78,36 @@ class KargoController extends Controller
         $user = Auth::user();
         return $user->kargos->find($kargo)->with('products')->get();
     }
+
+
+    /**
+     * update a kargo
+     * users with create-kargos permission are allowed
+     * users can update their own records
+     * @param Request $request
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function update(Request $request, Kargo $kargo)
+    {
+        $this->authorize('update', $kargo);
+        $user= Auth::user();
+        $request->validate([
+            'receiver_name' => 'required',
+            'receiver_tel' => 'required',
+            'receiver_address' => 'required',
+            'sending_date' => 'required'
+        ]);
+
+        $kargoData = [
+            'receiver_name' => $request->input('receiver_name'),
+            'receiver_tel' => $request->input('receiver_tel'),
+            'receiver_address' => $request->input('receiver_address'),
+            'sending_date' => $request->input('sending_date')
+        ];
+        $user->kargos()->update($kargoData);
+    }
+
 
 
 }

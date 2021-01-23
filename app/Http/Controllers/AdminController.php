@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Admin;
 use App\Cost;
 use App\Kargo;
+use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 
 {
-    use KargoTrait;
+    use KargoTrait, ImageTrait;
 
     /**
      * index costs for the given user
@@ -119,18 +120,23 @@ class AdminController extends Controller
         ];
         $kargo->update($data);
         // upload image for the kargo
-        $image = $request->file('image');
-        $imageNewName = date('mdYHis') . uniqid();
-        $folder = '/images/';
-        $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-        $this->uploadOne($image, $folder, 'public', $imageNewName);
-        // create record for the uploaded image
-        $imageData = [
-            // imagable_type always remains App\Kargo
-            'imagable_type' => 'App\Kargo',
-            'imagable_id' => $kargo->id,
-            'image_name' => $filePath
-        ];
-        $user->images()->create($imageData);
+        if ($request->has('image')) {
+            $image = $request->file('image');
+            $imageNewName = date('mdYHis') . uniqid();
+            $folder = '/images/';
+            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+            $this->uploadOne($image, $folder, 'public', $imageNewName);
+            // create record for the uploaded image
+            $imageData = [
+                // imagable_type always remains App\Kargo
+                'imagable_type' => 'App\Kargo',
+                'imagable_id' => $kargo->id,
+                'image_name' => $filePath
+            ];
+            $user->images()->create($imageData);
+        } else {
+            return 'it should have image';
+        }
+
     }
 }
