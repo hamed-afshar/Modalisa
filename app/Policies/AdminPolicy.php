@@ -92,5 +92,28 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can update a kargo
+     * @param User $user
+     * @return bool
+     */
+    public function updateKargo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * determine whether admin can delete a kargo
+     * @param User $user
+     * @return bool
+     */
+    public function deleteKargo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
 
 }

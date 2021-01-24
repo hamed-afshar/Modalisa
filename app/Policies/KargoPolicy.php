@@ -86,7 +86,9 @@ class KargoPolicy
      */
     public function delete(User $user, Kargo $kargo)
     {
-        //
+        if($user->checkPermission('create-kargos') && $user->id == $kargo->user->id) {
+            return $kargo->confirmed ? Response::deny('deny') : Response::allow();
+        }
     }
 
 

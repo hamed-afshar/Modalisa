@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Admin;
 use App\Cost;
 use App\Kargo;
+use App\Product;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Container\RewindableGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class AdminController extends Controller
@@ -97,10 +100,11 @@ class AdminController extends Controller
     }
 
     /**
-     * confirm the kargo
+     * confirm the given kargo
      * only super privilege users can confirm kargos
      * @param Request $request
      * @param Kargo $kargo
+     * @return string
      * @throws AuthorizationException
      */
     public function confirm(Request $request, Kargo $kargo)
@@ -137,6 +141,73 @@ class AdminController extends Controller
         } else {
             return 'it should have image';
         }
+    }
 
+    /**
+     * update the kargo record for the given user
+     * super privilege users are able to update both confirmed and not confirmed kargos
+     * @param Request $request
+     * @param User $user
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function updateKargo(Request $request, User $user, Kargo $kargo)
+    {
+
+        $this->authorize('updateKargo', Admin::class);
+        $request->validate([
+            'receiver_name' => 'required',
+            'receiver_tel' => 'required',
+            'receiver_address' => 'required',
+            'sending_date' => 'required'
+        ]);
+        $kargoData = [
+            'receiver_name' => $request->input('receiver_name'),
+            'receiver_tel' => $request->input('receiver_tel'),
+            'receiver_address' => $request->input('receiver_address'),
+            'sending_date' => $request->input('sending_date')
+        ];
+        $user->kargos()->update($kargoData);
+    }
+
+    /**
+     * delete the kargo for the given user
+     * super privilege users are able to delete both confirmed and not confirmed kargos
+     * @param User $user
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function deleteKargo(User $user, Kargo $kargo)
+    {
+        $this->authorize('deleteKargo', Admin::class);
+        $imageNameArray = $kargo->images()->where('imagable_id', $kargo->id)->pluck('image_name');
+        DB::transaction(function () use($kargo, $imageNameArray) {
+            //delete the kargo's image file from directory
+            $this->deleteOne('public', $imageNameArray);
+            //delete the kargo image records
+            $kargo->images()->delete();
+            //delete the given kargo record
+            $kargo->delete();
+        }, 1);
+    }
+
+    /**
+     * add items to the kargo
+     * super privilege users are able to add items to the kargo
+     * @param User $user
+     * @param Kargo $kargo
+     * @param Product $product
+     * @return string
+     * @throws AuthorizationException
+     */
+    public function addToKargo(User $user, Kargo $kargo, Product $product)
+    {
+        $this->authorize('updateKargo', Admin::class);
+        dd('here admin cont');
+        if($product->user()->get('id') != $user->id ) {
+            dd('yes');
+            return 'this product does not belong to the given user';
+        }
+        $kargo->products()->save($product);
     }
 }

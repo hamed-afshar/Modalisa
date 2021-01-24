@@ -124,8 +124,12 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/kargos', 'KargoController@index')->name('kargos.index');
     Route::get('/kargos/create', 'KargoController@create')->name('kargos.create');
     Route::post('/kargos', 'KargoController@store')->name('kargos.store');
-    Route::get('/kargos/{kargo}', 'KargoController@show')->name('kargos.edit');
+    Route::get('/kargos/{kargo}', 'KargoController@show')->name('kargos.show');
+    Route::get('/kargos/{kargo}/edit', 'KargoController@edit')->name('edit');
     Route::patch('/kargos/{kargo}', 'KargoController@update')->name('kargos.update');
+    Route::delete('/kargos/{kargo}', 'KargoController@destroy')->name('kargos.destroy');
+    Route::patch('/add-to-kargo/{kargo}/{product}', 'KargoController@addTO')->name('kargos.add');
+    Route::patch('/remove-from-kargo/{kargo}/{product}', 'KargoController@removeFrom')->name('kargos.remove');
 
 
     Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
@@ -133,8 +137,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo', 'AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
-    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirm')->name('kargos.confirm');
-
+    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirm')->name('admin.confirm-kargo');
+    Route::patch('/update-kargo/{user}/{kargo}', 'AdminController@updateKargo')->name('admin.update-kargo');
+    Route::delete('/delete-kargo/{user}/{kargo}', 'AdminController@deleteKargo')->name('admin.delete-kargo');
+    Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'AdminController@addTOKargo')->name('admin.add-to-kargo');
+    Route::patch('/admin-remove-from-kargo/{user}/{kargo}/{product}', 'AdminController@removeFromKargo')->name('admin.remove-from-kargo');
 });
 
 

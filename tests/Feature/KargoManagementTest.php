@@ -282,17 +282,109 @@ class KargoManagementTest extends TestCase
         $this->patch($kargo->path(), $updateAttributes)->assertForbidden();
     }
 
-    /** @test */
-    public function users_can_not_update_confirmed_kargos()
+    /** @test
+     * super privilege users can update kargos even if they were confirmed before
+     */
+    public function super_privilege_users_can_update_kargos()
     {
         $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-kargos' , 'create-kargos', 'delete-kargos'], 0 , 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-kargos', 'create-kargos', 'delete-kargos'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        //create a kargo as a retailer
+        $this->actingAs($retailer);
+        $this->prepKargo();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        //acting as a BuyerAdmin to update the kargo
+        $this->actingAs($BuyerAdmin);
+        $updateAttributes = [
+            'receiver_name' => 'new ramin admin',
+            'receiver_tel' => '0923333333',
+            'receiver_address' => 'new address',
+            'sending_date' => '2020-10-20'
+        ];
+        $this->patch('/update-kargo/' . $retailer->id . '/' . $lastKargoId, $updateAttributes);
+        $this->assertDatabaseHas('kargos', $updateAttributes);
+    }
+
+    /** @test
+     * users should have delete-kargos permission to be allowed
+     * users can only delete their own records
+     * deleting images is not necessary as it has not confirmed yet
+     */
+    public function users_can_delete_not_confirmed_kargos()
+    {
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
         $this->prepKargo();
-        //acting as BuyerAdmin to confirm the kargo
-        $this->prepNormalEnv('BuyerAdmin', ['create_kargos', 'see-kargos'], 0 , 1);
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        //users can only delete their own records
+        $kargo = Kargo::find($lastKargoId);
+        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->delete($kargo->path())->assertForbidden();
+        // retailer can delete it's own records
+        $this->actingAs($retailer);
+        $this->delete($kargo->path());
+        $this->assertDatabaseMissing('kargos', ['id' => $kargo->id]);
+    }
+
+    /** @test
+     * super privilege users can delete kargos even if they were confirmed before
+     * all related images should also be deleted
+     */
+    public function super_privilege_users_can_delete_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-kargos' , 'create-kargos', 'delete-kargos'], 0 , 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-kargos', 'create-kargos', 'delete-kargos'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        //create a kargo as a retailer
+        $this->actingAs($retailer);
+        $this->prepKargo();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        //acting as a BuyerAdmin to confirm the kargo
+        $this->actingAs($BuyerAdmin);
+        $confirmAttributes = [
+            'confirmed' => 1,
+            'weight' => 100,
+            'image' => UploadedFile::fake()->create('kargo-pic.jpg')
+        ];
+        $kargo = Kargo::find($lastKargoId);
+        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        // assert to see the confirmed kargo
+        $this->assertDatabaseHas('kargos', [
+            'id' => $lastKargoId,
+            'weight' => $confirmAttributes['weight'],
+            'confirmed' => $confirmAttributes['confirmed']
+        ]);
+        //assert the existence of the image file
+        $imageName = $kargo->images()->where('imagable_id', $kargo->id)->value('image_name');
+        $this->assertFileExists(public_path('storage' . $imageName));
+        //assert missing of the deleted kargo records
+        $this->delete('/delete-kargo/' . $retailer->id . '/' . $lastKargoId);
+        $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId]);
+        //assert missing of deleted image file
+        $this->assertFileNotExists(public_path('storage' . $imageName));
+    }
+
+
+    /** @test */
+    public function users_can_not_update_or_delete_confirmed_kargos()
+    {
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer = Auth::user();
+        // first create a kargo as a retailer
+        $this->actingAs($retailer);
+        $this->prepKargo();
+        //acting as a BuyerAdmin to confirm the kargo
+        $this->prepNormalEnv('BuyerAdmin', ['create_kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->actingAs($BuyerAdmin);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
@@ -307,7 +399,7 @@ class KargoManagementTest extends TestCase
             'weight' => $confirmAttributes['weight'],
             'confirmed' => $confirmAttributes['confirmed']
         ]);
-        //users can not update kargo records if they were confirmed
+        //users can not update confirmed kargo records
         $this->actingAs($retailer);
         $updateAttributes = [
             'receiver_name' => 'new ramin',
@@ -315,7 +407,80 @@ class KargoManagementTest extends TestCase
             'receiver_address' => 'new address',
             'sending_date' => '2020-10-20'
         ];
+        //users can not update confirmed kargos
         $this->patch($kargo->path(), $updateAttributes)->assertForbidden();
+        //users can not delete confirmed kargos
+        $this->delete($kargo->path())->assertForbidden();
+    }
+
+    /** @test
+     * users can edit the kargo list
+     * users can add or delete items from the kargo
+     */
+    public function users_can_add_or_delete_items_to_kargos()
+    {
+        //acting as a retailer to create a kargo
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->prepKargo();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        //assert existence of the created kargo
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        $this->prepOrder();
+        $newProductID = Product::latest()->orderBy('id', 'DESC')->first()->id;
+        $newProduct = Product::find($newProductID);
+        //users can not alter other user's kargos
+        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->patch('/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id )->assertForbidden();
+        $this->patch('remove-from-kargo/' . $lastKargoId . '/' .$newProductID)->assertForbidden();
+        //new product should be added to the kargo
+        $this->actingAs($retailer1);
+        $this->patch('/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id );
+        $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
+        //users can delete items from the kargo
+        $this->patch('remove-from-kargo/' . $lastKargoId . '/' .$newProductID);
+        $this->assertDatabaseMissing('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
+    }
+
+    /** @test
+     * super privilege users can add or delete items from the kargo
+     */
+    public function super_privilege_users_can_add_or_delete_items_to_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //acting as a retailer to create a kargo
+        $this->actingAs($retailer);
+        $this->prepKargo();
+        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        //assert existence of the created kargo
+        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        //new product should be added to the kargo
+        $this->prepOrder();
+        $newProductID = Product::latest()->orderBy('id', 'DESC')->first()->id;
+        $newProduct = Product::find($newProductID);
+        //acting as a BuyerAdmin to add items to the kargo
+        $this->actingAs($BuyerAdmin);
+        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct->id );
+        $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
+        //given product must belongs to the right owner
+        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2);
+        $this->prepOrder();
+        $newProductID2 = Product::latest()->orderBy('id', 'DESC')->first()->id;
+        $newProduct2 = Product::find($newProductID2);
+        $this->actingAs($BuyerAdmin);
+        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct2->id );
+
+        //users can delete items from the kargo
+//        $this->patch('/admin-remove-from-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct->id );
+//        $this->assertDatabaseMissing('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
     }
 
     /** @test */

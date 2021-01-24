@@ -6,6 +6,7 @@ use App\Kargo;
 use App\Product;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,6 +80,17 @@ class KargoController extends Controller
         return $user->kargos->find($kargo)->with('products')->get();
     }
 
+    /**
+     * edit form
+     * VueJs generates this form
+     * @param Kargo $kargo
+     * @throws AuthorizationException
+     */
+    public function edit(Kargo $kargo)
+    {
+        $this->authorize('update', $kargo);
+    }
+
 
     /**
      * update a kargo
@@ -106,6 +118,48 @@ class KargoController extends Controller
             'sending_date' => $request->input('sending_date')
         ];
         $user->kargos()->update($kargoData);
+    }
+
+    /**
+     * delete a kargo
+     * users with delete-kargos are allowed
+     * users can delete their own records
+     * no need to delete related image records because this record has not confirmed yet
+     * @param Kargo $kargo
+     * @throws Exception
+     */
+    public function destroy(Kargo $kargo)
+    {
+        $this->authorize('delete', $kargo);
+        $kargo->delete();
+    }
+
+    /**
+     * add products to the given kargo
+     * users should have create-kargos permission to be allowed
+     * users can only add items to their own records
+     * @param Kargo $kargo
+     * @param Product $product
+     * @throws AuthorizationException
+     */
+    public function addTo(Kargo $kargo, Product $product)
+    {
+        $this->authorize('update', $kargo);
+        $kargo->products()->save($product);
+    }
+
+    /**
+     * remove products from the given kargo
+     * users should have create-kargos permission to be allowed
+     * users can only remove items from their own records
+     * @param Kargo $kargo
+     * @param Product $product
+     * @throws AuthorizationException
+     */
+    public function removeFrom(Kargo $kargo, Product $product)
+    {
+        $this->authorize('update', $kargo);
+        $kargo->products()->delete($product);
     }
 
 
