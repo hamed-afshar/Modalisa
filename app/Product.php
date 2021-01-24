@@ -11,7 +11,6 @@ class Product extends Model
     /**
      * return product path
      */
-
     public function path()
     {
         return "/products/{$this->path()}";
@@ -64,6 +63,12 @@ class Product extends Model
     public function order()
     {
         return $this->belongsTo('App\Order');
+    }
+
+    /** each product belongs to a user */
+    public function user()
+    {
+        return$this->belongsTo('App\User');
     }
 
 }
