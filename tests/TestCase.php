@@ -39,12 +39,10 @@ abstract class TestCase extends BaseTestCase
         $role->changeRole($user);
         foreach ($permissionArray as $permissionName) {
             // if permission already has existed in db then permission will not be created and assign to the role
-            if (Permission::where('name', '=', $permissionName)->count() > 0)
-            {
+            if (Permission::where('name', '=', $permissionName)->count() > 0) {
                 $permission = Permission::where('name', '=', $permissionName)->get();
                 $role->allowTo($permission);
-            }
-            //if permission has not existed in db then new permission will be created and assign to the role
+            } //if permission has not existed in db then new permission will be created and assign to the role
             else {
                 $permission = factory('App\Permission')->create(['name' => $permissionName]);
                 $role->allowTo($permission);
@@ -55,8 +53,10 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * create order and product
+     * @param $withKargo
+     * @param $withoutKargo
      */
-    protected function prepOrder()
+    protected function prepOrder($withKargo, $withoutKargo)
     {
         factory('App\Status')->create();
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
@@ -64,10 +64,19 @@ abstract class TestCase extends BaseTestCase
             'user_id' => Auth::user()->id,
             'customer_id' => $customer->id
         ]);
-        $kargo = factory('App\Kargo')->create(['user_id' => Auth::user()->id]);
-        factory('App\Product')->create([
-            'order_id' => $order->id,
-            'kargo_id' => $kargo->id
-        ]);
+        for ($i = 0; $i < $withoutKargo; $i++) {
+            $p = factory('App\Product')->create([
+                'order_id' => $order->id,
+            ]);
+        }
+        if ($withKargo > 0) {
+            $kargo = factory('App\Kargo')->create(['user_id' => Auth::user()->id]);
+            for($i=0; $i<$withKargo; $i++) {
+                factory('App\Product')->create([
+                    'order_id' => $order->id,
+                    'kargo_id' => $kargo->id
+                ]);
+            }
+        }
     }
 }
