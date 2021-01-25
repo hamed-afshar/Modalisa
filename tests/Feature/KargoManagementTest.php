@@ -20,14 +20,18 @@ class KargoManagementTest extends TestCase
 
     /**
      * function to prepare kargo
+     * @param $withKargo
+     * @param $withoutKargo
      */
-    public function prepKargo()
+    public function prepKargo($withKargo, $withoutKargo)
     {
         $kargoList = array();
-        for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
-            $product = Product::find($i);
-            $kargoList[] = $product->id;
+        $this->prepOrder($withKargo, $withoutKargo);
+        if($withKargo>0) {
+            for ($i = 1; $i <=$withKargo; $i++) {
+                $product = Product::find($i);
+                $kargoList[] = $product->id;
+            }
         }
         $attributes = factory('App\Kargo')->raw([
             'kargo_list' => $kargoList,
@@ -44,7 +48,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(10,0);
         $kargo = Kargo::find(1);
         $product = Product::find(1);
         $this->get('/kargos')->assertSeeText($kargo->receiver_name)
@@ -60,7 +64,7 @@ class KargoManagementTest extends TestCase
     public function super_privilege_users_can_see_all_kargos()
     {
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(10,0);
         $user = Auth::user();
         $kargo = Kargo::find(1);
         $this->get('/admin-index-kargos/')->assertSeeText($kargo->receiver_name)
@@ -85,7 +89,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
-        $this->prepKargo();
+        $this->prepKargo(10, 0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //product's kargo id must be equal to the created kargo id
@@ -106,8 +110,8 @@ class KargoManagementTest extends TestCase
         $retailer = Auth::user();
         // retailer create 10 products
         $kargoList = array();
+        $this->prepOrder(10, 0);
         for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
             $product = Product::find($i);
             $kargoList[] = $product->id;
         }
@@ -132,8 +136,8 @@ class KargoManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $kargoList = array();
+        $this->prepOrder(10, 0);
         for ($i = 1; $i <= 10; $i++) {
-            $this->prepOrder();
             $product = Product::find($i);
             $kargoList[] = $product->id;
         }
@@ -163,7 +167,7 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //acting as BuyerAdmin to confirm this kargo
@@ -196,7 +200,7 @@ class KargoManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0 );
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         // acting as BuyerAdmin to confirm this kargo
@@ -226,7 +230,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $kargo = Kargo::find($lastKargoId);
         $product = Product::find(5);
@@ -241,7 +245,7 @@ class KargoManagementTest extends TestCase
     {
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
         $user = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(10,0);
         $product = Product::find(1);
         $kargo = Kargo::find(1);
         $this->get('/admin-index-single-kargo')->assertSeeText($kargo->reciver_name)
@@ -262,7 +266,7 @@ class KargoManagementTest extends TestCase
         $retailer = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         // users can update kargo details
@@ -294,7 +298,7 @@ class KargoManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         //create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         //acting as a BuyerAdmin to update the kargo
         $this->actingAs($BuyerAdmin);
@@ -319,7 +323,7 @@ class KargoManagementTest extends TestCase
         $retailer = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //users can only delete their own records
@@ -347,7 +351,7 @@ class KargoManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         //create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         //acting as a BuyerAdmin to confirm the kargo
         $this->actingAs($BuyerAdmin);
@@ -382,7 +386,7 @@ class KargoManagementTest extends TestCase
         $retailer = Auth::user();
         // first create a kargo as a retailer
         $this->actingAs($retailer);
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         //acting as a BuyerAdmin to confirm the kargo
         $this->prepNormalEnv('BuyerAdmin', ['create_kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
@@ -422,11 +426,11 @@ class KargoManagementTest extends TestCase
         //acting as a retailer to create a kargo
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer1 = Auth::user();
-        $this->prepKargo();
+        $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
-        //assert existence of the created kargo
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
-        $this->prepOrder();
+        //add a new product to this kargo
+        $this->prepOrder(0,1);
         $newProductID = Product::latest()->orderBy('id', 'DESC')->first()->id;
         $newProduct = Product::find($newProductID);
         //users can not alter other user's kargos
@@ -456,31 +460,31 @@ class KargoManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         //acting as a retailer to create a kargo
         $this->actingAs($retailer);
-        $this->prepKargo();
-        $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
+        $this->prepKargo(10, 0);
+        $kargo= Kargo::find(1);
         //assert existence of the created kargo
-        $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
+        $this->assertDatabaseHas('kargos', ['id' => $kargo->id]);
         //new product should be added to the kargo
-        $this->prepOrder();
+        $this->prepOrder(0,1);
         $newProductID = Product::latest()->orderBy('id', 'DESC')->first()->id;
         $newProduct = Product::find($newProductID);
         //acting as a BuyerAdmin to add items to the kargo
         $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct->id );
-        $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
+        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct->id );
+        $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $kargo->id]);
         //given product must belongs to the right owner
-        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
-        $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
-        $this->prepOrder();
-        $newProductID2 = Product::latest()->orderBy('id', 'DESC')->first()->id;
-        $newProduct2 = Product::find($newProductID2);
-        $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct2->id );
+        //and if it doesn't then this new product will not be added to the kargo
+//        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+//        $retailer2 = Auth::user();
+//        $this->actingAs($retailer2);
+//        $this->prepOrder(0,1);
+//        $newProductID2 = Product::latest()->orderBy('id', 'DESC')->first()->id;
+//        $newProduct2 = Product::find($newProductID2);
+//        $this->actingAs($BuyerAdmin);
+//        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct2->id);
+//        $this->assertDatabaseMissing('products', ['kargo_id' => null]);
 
         //users can delete items from the kargo
-//        $this->patch('/admin-remove-from-kargo/'. $retailer->id . '/' . $lastKargoId . '/' . $newProduct->id );
-//        $this->assertDatabaseMissing('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
     }
 
     /** @test */

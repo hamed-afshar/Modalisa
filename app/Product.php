@@ -68,7 +68,7 @@ class Product extends Model
     /** each product belongs to a user */
     public function user()
     {
-        return$this->belongsTo('App\User');
+        return $this->order->user;
     }
 
 }

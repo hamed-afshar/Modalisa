@@ -91,5 +91,6 @@ return [
     "locked_sentence" =>"You are restricted to access your dashboard, please contact system administrator!",
     "not_confirmed" => 'Your Account is Not Confirmed!',
     "not_confirmed_sentence" => "Your account is not confirmed yet, you can access your dashboard once it becomes confirmed",
-    "kargo_limit" => "Number of added items in this kargo is not enough"
+    "kargo_limit" => "Number of added items in this kargo is not enough",
+    "wrong_kargo_add" => "This product does not belongs to the given user"
 ];

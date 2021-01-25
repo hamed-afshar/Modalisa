@@ -14,6 +14,7 @@ use Illuminate\Container\RewindableGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 
 class AdminController extends Controller
@@ -202,12 +203,14 @@ class AdminController extends Controller
      */
     public function addToKargo(User $user, Kargo $kargo, Product $product)
     {
+
         $this->authorize('updateKargo', Admin::class);
-        dd('here admin cont');
-        if($product->user()->get('id') != $user->id ) {
-            dd('yes');
-            return 'this product does not belong to the given user';
+        if($product->user()->value('id') != $user->id ) {
+            return Redirect::back()->withErrors('msg', trans('translate.wrong_kargo_add'));
+        } else {
+            $kargo->products()->save($product);
         }
-        $kargo->products()->save($product);
+
+
     }
 }

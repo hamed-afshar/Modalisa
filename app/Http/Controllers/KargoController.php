@@ -162,6 +162,4 @@ class KargoController extends Controller
         $kargo->products()->delete($product);
     }
 
-
-
 }
