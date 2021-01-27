@@ -203,14 +203,16 @@ class AdminController extends Controller
      */
     public function addToKargo(User $user, Kargo $kargo, Product $product)
     {
-
         $this->authorize('updateKargo', Admin::class);
         if($product->user()->value('id') != $user->id ) {
             return Redirect::back()->withErrors('msg', trans('translate.wrong_kargo_add'));
         } else {
             $kargo->products()->save($product);
+            $kargo->refresh();
         }
+    }
 
-
+    public function removeFromKargo(User $user, Kargo $kargo, Product $product) {
+        dd('cont');
     }
 }
