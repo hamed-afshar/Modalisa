@@ -141,7 +141,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/update-kargo/{user}/{kargo}', 'AdminController@updateKargo')->name('admin.update-kargo');
     Route::delete('/delete-kargo/{user}/{kargo}', 'AdminController@deleteKargo')->name('admin.delete-kargo');
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'AdminController@addTOKargo')->name('admin.add-to-kargo');
-    Route::patch('/admin-remove-from-kargo/{user}/{kargo}/{product}', 'AdminController@removeFromKargo')->name('admin.remove-from-kargo');
+    Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'AdminController@removeFromKargo')->name('admin.remove-from-kargo');
 });
 
 

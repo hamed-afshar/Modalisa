@@ -212,7 +212,9 @@ class AdminController extends Controller
         }
     }
 
-    public function removeFromKargo(User $user, Kargo $kargo, Product $product) {
-        dd('cont');
+    public function removeFromKargo(Kargo $kargo, Product $product) {
+        $this->authorize('updateKargo', Admin::class);
+        $kargo->products()->delete($product);
+        $kargo->refresh();
     }
 }

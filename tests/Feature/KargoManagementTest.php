@@ -451,7 +451,7 @@ class KargoManagementTest extends TestCase
     /** @test
      * super privilege users can add items from the kargo
      */
-    public function super_privilege_users_can_add__items_to_kargos()
+    public function super_privilege_users_can_add_items_to_kargos()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
@@ -504,19 +504,8 @@ class KargoManagementTest extends TestCase
         //acting as a BuyerAdmin to delete items from the kargo
         $deleteProduct = Product::find(5);
         $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-delete-from-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $deleteProduct->id );
+        $this->patch('/admin-remove-from-kargo/' . $kargo->id . '/' . $deleteProduct->id );
         $this->assertDatabaseMissing('products', ['id' => $deleteProduct, 'kargo_id' => $kargo->id]);
-        //given product must belongs to the right owner
-        //and if it doesn't then this new product will not be added to the kargo
-//        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
-//        $retailer2 = Auth::user();
-//        $this->actingAs($retailer2);
-//        $this->prepOrder(0,1);
-//        $newProductID2 = Product::latest()->orderBy('id', 'DESC')->first()->id;
-//        $newProduct2 = Product::find($newProductID2);
-//        $this->actingAs($BuyerAdmin);
-//        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct2->id);
-//        $this->assertDatabaseHas('products', ['id' => $newProductID2, 'kargo_id' => null]);
     }
 
 
@@ -526,7 +515,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $this->assertInstanceOf(Kargo::class, $user->kargos->find(1));
     }
@@ -537,7 +526,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         $this->assertInstanceOf(User::class, $kargo->user);
     }
@@ -548,7 +537,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $kargo = Kargo::find(1);
         factory('App\Product')->create([
@@ -564,7 +553,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $this->assertInstanceOf(Kargo::class, $product->kargo);
     }
@@ -575,7 +564,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         factory('App\Note')->create([
             'notable_type' => 'App\Kargo',
@@ -590,7 +579,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         $note = factory('App\Note')->create([
             'notable_type' => 'App\Kargo',
@@ -606,7 +595,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $kargo = Kargo::find(1);
         factory('App\Image')->create([
@@ -624,7 +613,7 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $kargo = Kargo::find(1);
         $image = factory('App\Image')->create([
