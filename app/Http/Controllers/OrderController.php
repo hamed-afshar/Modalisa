@@ -36,7 +36,8 @@ class OrderController extends Controller
         $this->authorize('create', Order::class);
     }
 
-    /** store orders
+    /**
+     * store orders
      * all related products
      * @param Request $request
      * @throws AuthorizationException
@@ -53,16 +54,15 @@ class OrderController extends Controller
         ]);
         $products = $request->input('productList');
         foreach ($products as $item) {
-            $product = Product::find($item);
-            $productList[] = $product;
+            $productList[] = $item;
         }
         $orderData = [
             'customer_id' => $request->input('customer_id'),
         ];
         DB::beginTransaction();
         $order = $user->orders()->create($orderData);
-        dd('order controller');
-//        $order->products()->createMany($productList);
+        $order->products()->createMany($productList);
+        DB::commit();
     }
 
 }

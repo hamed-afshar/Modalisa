@@ -22,10 +22,10 @@ class CreateProductsTable extends Migration
             $table->string('link');
             $table->string('price');
             $table->string('quantity');
-            $table->string('weight');
+            $table->string('weight')->nullable();
             $table->string('country');
             $table->string('currency');
-            $table->string('ref');
+            $table->string('ref')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onUpdate('cascade')->onDelete('cascade');

@@ -6,6 +6,7 @@ use App\Customer;
 use App\Kargo;
 use App\Order;
 use App\Product;
+use App\Status;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -13,14 +14,15 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
-class ProjectTests extends TestCase
+class OrderManagementTest extends TestCase
 {
 
     use WithFaker,
         RefreshDatabase;
 
 
-    /** @test
+    /**
+     * @test
      * users can see their orders with related products
      * users should have see-orders permission to be allowed
      */
@@ -42,7 +44,8 @@ class ProjectTests extends TestCase
 
     }
 
-    /** @test
+    /**
+     *  @test
      *  Users can create orders
      *  users should have create orders permission to be allowed
      */
@@ -51,8 +54,8 @@ class ProjectTests extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        //first create a customer
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $status = factory('App\Status')->create();
         //create numbers of products
         $productList = array();
         for ($i = 0; $i <= 10; $i++) {
@@ -66,19 +69,61 @@ class ProjectTests extends TestCase
         ];
         $this->post('/orders', $attributes);
         //assert to check order existence in db
-        $this->assertDatabaseHas('orders', ['user_id' =>$retailer->id,'customer_id' => $customer->id]);
+        $this->assertDatabaseHas('orders', ['user_id' => $retailer->id, 'customer_id' => $customer->id]);
         //assert to see the existence of the products
-        $product = Product::find(1);
-        dd($product);
-        $this->assertDatabaseHas('products', $product);
+        for ($i = 0; $i <= 10; $i++) {
+            $product = Product::find(1);
+            $this->assertDatabaseHas('products', ['id' => $product->id]);
+        }
+    }
 
+    /** @test */
+    public function customer_id_is_required()
+    {
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $status = factory('App\Status')->create();
+        //create numbers of products
+        $productList = array();
+        for ($i = 0; $i <= 10; $i++) {
+            $product = factory('App\Product')->raw();
+            $productList[] = $product;
+        }
+        //prepare attributes
+        $attributes = [
+            'customer_id' => '',
+            'productList' => $productList
+        ];
+        $this->post('/orders', $attributes)->assertSessionHasErrors('customer_id');
+    }
+
+    /** @test */
+    public function productList_is_required()
+    {
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $status = factory('App\Status')->create();
+        //create numbers of products
+        $productList = array();
+        for ($i = 0; $i <= 10; $i++) {
+            $product = factory('App\Product')->raw();
+            $productList[] = $product;
+        }
+        //prepare attributes
+        $attributes = [
+            'customer_id' => $customer->id,
+            'productList' => ''
+        ];
+        $this->post('/orders', $attributes)->assertSessionHasErrors('productList');
     }
 
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
-
     public function each_user_has_many_orders()
     {
         $this->withoutExceptionHandling();
@@ -87,7 +132,8 @@ class ProjectTests extends TestCase
         $this->assertInstanceOf(Order::class, Auth::user()->orders->find(1));
     }
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
     public function each_order_belongs_to_a_user()
@@ -99,7 +145,8 @@ class ProjectTests extends TestCase
         $this->assertInstanceOf(User::class, $order->user);
     }
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
     public function each_customer_has_many_orders()
@@ -111,7 +158,8 @@ class ProjectTests extends TestCase
         $this->assertInstanceOf(Order::class, $customer->orders->find(1));
     }
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
     public function each_order_belongs_to_a_customer()

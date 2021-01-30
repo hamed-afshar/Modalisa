@@ -12,9 +12,7 @@ $factory->define(Product::class, function (Faker $faker) {
         'link' => 'www.zara.com',
         'price' => '250',
         'quantity' => '1',
-        'weight' => '200',
         'country' => 'Turkey',
         'currency' => 'TL',
-        'ref' => '11200300'
     ];
 });
