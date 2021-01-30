@@ -19,7 +19,7 @@ class ProductManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $this->assertInstanceOf(Product::class, $order->products->find(1));
     }
@@ -29,7 +29,7 @@ class ProductManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $this->assertInstanceOf(Order::class, $product->order);
     }
@@ -40,7 +40,7 @@ class ProductManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-orders'], 0, 1);
         $user = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $this->assertInstanceOf(Product::class, $user->products->find(1));
     }
 
