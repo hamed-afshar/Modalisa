@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    protected $guarded = [];
     /**
      * each order belongs to a user
      */

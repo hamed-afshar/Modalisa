@@ -84,9 +84,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/histories', 'HistoryController@store')->name('history.store');
     Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.destroy');
 
-    Route::get('/orders', 'OrdersController@index');
+    Route::get('/orders', 'OrderController@index')->name('orders.index');
+    Route::get('/orders/create', 'OrderController@create')->name('orders.create');
+    Route::post('/orders', 'OrderController@store')->name('orders.store');
     Route::get('/orders/{order}', 'OrdersController@show');
-    Route::post('/orders', 'OrdersController@store');
+
 
     Route::get('/customers', 'CustomerController@index')->name('customers.index');
     Route::get('/customers/create', 'CustomerController@create')->name('customers.create');
