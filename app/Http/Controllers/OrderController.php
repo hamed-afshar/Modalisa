@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Product;
+use App\Traits\ImageTrait;
 use App\User;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +14,28 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    use  ImageTrait;
+
+    /** function to upload images
+     * @param $user
+     * @param $product
+     * @param $image
+     */
+    public function uploadImage($user, $product, $image)
+    {
+        $imageName = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $imageName);
+        $imageData = [
+            //imagable_type always remains App\Product
+            'imagable_type' => 'App\Product',
+            'imagable_id' => $product->id,
+            'image_name' => $filePath
+        ];
+        //create record for the image
+        $user->images()->create($imageData);
+    }
 
     /**
      * index all orders with related products and customers
@@ -38,7 +62,7 @@ class OrderController extends Controller
 
     /**
      * store orders
-     * all related products
+     * users should have create-orders permission to be allowed
      * @param Request $request
      * @throws AuthorizationException
      */
@@ -46,23 +70,71 @@ class OrderController extends Controller
     {
         $this->authorize('create', Order::class);
         $user = Auth::user();
-        $productList = array();
-        //first create order then add all products
         $request->validate([
             'customer_id' => 'required',
-            'productList' => 'required'
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'size' => 'required',
+            'color' => 'required',
+            'link' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+            'country' => 'required',
+            'currency' => 'required',
         ]);
-        $products = $request->input('productList');
-        foreach ($products as $item) {
-            $productList[] = $item;
-        }
+        $productData = [
+            'size' => $request->input('size'),
+            'color' => $request->input('color'),
+            'link' => $request->input('link'),
+            'price' => $request->input('price'),
+            'quantity' => $request->input('quantity'),
+            'country' => $request->input('country'),
+            'currency' => $request->input('currency'),
+        ];
         $orderData = [
             'customer_id' => $request->input('customer_id'),
         ];
-        DB::beginTransaction();
+        //first create record for the order then add products
+        //create record for the order
         $order = $user->orders()->create($orderData);
-        $order->products()->createMany($productList);
-        DB::commit();
+        //create record for the product
+        $product = $order->products()->create($productData);
+        //upload image for the created product
+        $image = $request->file('image');
+        $this->uploadImage($user, $product, $image);
     }
 
+    /**
+     * add product to the given order
+     * users should have create-orders permission to be allowed
+     * @param Request $request
+     * @param Order $order
+     * @throws AuthorizationException
+     */
+    public function addTo(Request $request, Order $order)
+    {
+        $this->authorize('create', Order::class);
+        $user = Auth::user();
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'size' => 'required',
+            'color' => 'required',
+            'link' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+            'country' => 'required',
+            'currency' => 'required',
+        ]);
+        $productData = [
+            'size' => $request->input('size'),
+            'color' => $request->input('color'),
+            'link' => $request->input('link'),
+            'price' => $request->input('price'),
+            'quantity' => $request->input('quantity'),
+            'country' => $request->input('country'),
+            'currency' => $request->input('currency'),
+        ];
+        $product = $order->products()->create($productData);
+        $image = $request->file('image');
+        $this->uploadImage($user, $product, $image);
+    }
 }

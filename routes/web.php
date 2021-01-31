@@ -87,7 +87,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/orders', 'OrderController@index')->name('orders.index');
     Route::get('/orders/create', 'OrderController@create')->name('orders.create');
     Route::post('/orders', 'OrderController@store')->name('orders.store');
-    Route::get('/orders/{order}', 'OrdersController@show');
+
+    Route::post('/add-to-order/{order}', 'OrderController@addTo')->name('orders.addTo');
 
 
     Route::get('/customers', 'CustomerController@index')->name('customers.index');
