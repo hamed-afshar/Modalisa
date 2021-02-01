@@ -8,7 +8,6 @@ use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
 use App\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -167,8 +166,8 @@ class OrderController extends Controller
         $nextStatus = 0;
         $latestHistory = DB::table('histories')->orderBy('created_at', 'desc')->first();
         $currentStatus = $latestHistory->status_id;
-        $statusChecker = new StatusChecker();
-        $statusChecker.check($currentStatus, $nextStatus);
+        $statusChecker = new StatusChecker($currentStatus, $nextStatus);
+        $statusChecker->check();
         $orderID = $product->order()->value('id');
         $order = Order::find($orderID);
         $productCounts = $order->products()->count();
