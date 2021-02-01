@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
+use App\Helper\StatusChecker;
 use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
@@ -63,6 +65,8 @@ class OrderController extends Controller
     /**
      * store orders
      * users should have create-orders permission to be allowed
+     * all order by default consider retailers as the customer
+     * but retailer can change this customer later
      * @param Request $request
      * @throws AuthorizationException
      */
@@ -71,7 +75,6 @@ class OrderController extends Controller
         $this->authorize('create', Order::class);
         $user = Auth::user();
         $request->validate([
-            'customer_id' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'size' => 'required',
             'color' => 'required',
@@ -90,17 +93,27 @@ class OrderController extends Controller
             'country' => $request->input('country'),
             'currency' => $request->input('currency'),
         ];
-        $orderData = [
-            'customer_id' => $request->input('customer_id'),
-        ];
         //first create record for the order then add products
         //create record for the order
-        $order = $user->orders()->create($orderData);
+        $order = $user->orders()->create();
         //create record for the product
         $product = $order->products()->create($productData);
         //upload image for the created product
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
+    }
+
+    /**
+     * assign the customer to the given order
+     * users should have create-orders permission to be allowed
+     * @param Customer $customer
+     * @param Order $order
+     * @throws AuthorizationException
+     */
+    public function assignCustomer(Customer $customer, Order $order)
+    {
+        $this->authorize('create', Order::class);
+        $order->update(['customer_id' => $customer->id]);
     }
 
     /**
@@ -110,7 +123,7 @@ class OrderController extends Controller
      * @param Order $order
      * @throws AuthorizationException
      */
-    public function addTo(Request $request, Order $order)
+    public function addToOrder(Request $request, Order $order)
     {
         $this->authorize('create', Order::class);
         $user = Auth::user();
@@ -136,5 +149,28 @@ class OrderController extends Controller
         $product = $order->products()->create($productData);
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
+    }
+
+    /**
+     * remove product from the given order
+     * users should have create-orders permission to be allowed
+     * if order contains just one product then order record must be deleted completely
+     * if order contains more than one product, then just the given product will be deleted
+     * it is not possible to delete products if they have
+     * status will change from current to deleted:0
+     * @param Product $product
+     * @throws AuthorizationException
+     */
+    public function deleteProduct(Product $product)
+    {
+        $this->authorize('create', Order::class);
+        $nextStatus = 0;
+        $latestHistory = DB::table('histories')->orderBy('created_at', 'desc')->first();
+        $currentStatus = $latestHistory->status_id;
+        $statusChecker = new StatusChecker();
+        $statusChecker.check($currentStatus, $nextStatus);
+        $orderID = $product->order()->value('id');
+        $order = Order::find($orderID);
+        $productCounts = $order->products()->count();
     }
 }

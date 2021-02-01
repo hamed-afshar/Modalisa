@@ -15,7 +15,8 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('customer_id')->nullable();
+            //if users do not assign any customer, then 1 would be the default customer id
+            $table->unsignedBigInteger('customer_id')->nullable()->default(1);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
@@ -25,7 +26,6 @@ class CreateOrdersTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()

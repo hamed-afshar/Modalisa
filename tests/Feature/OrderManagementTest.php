@@ -80,27 +80,6 @@ class OrderManagementTest extends TestCase
         $this->assertFileExists(public_path('storage' . $image_name));
     }
 
-    /** @test */
-    public function customer_id_is_required()
-    {
-        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
-        $retailer = Auth::user();
-        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
-        factory('App\Status')->create();
-        //prepare attributes
-        $attributes = [
-            'customer_id' => '',
-            'size' => 'medium',
-            'color' => 'Black',
-            'link' => 'www.zara.com',
-            'price' => '250',
-            'quantity' => '1',
-            'country' => 'Turkey',
-            'currency' => 'TL',
-            'image' => UploadedFile::fake()->create('pic.jpg')
-        ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('customer_id');
-    }
 
     /** @test */
     public function size_is_required()
@@ -280,6 +259,25 @@ class OrderManagementTest extends TestCase
 
     /**
      * @test
+     * users can assign customers for orders
+     * users should have create-orders permission to be allowed
+     */
+    public function assign_customer_to_orders()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        //create an order then assign new customer
+        $this->prepOrder(0,1);
+        $order = Order::find(1);
+        $newCustomer = factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $order = Order::find(1);
+        $this->post('/assign-customer/' . $newCustomer->id . '/' . $order->id);
+        $this->assertDatabaseHas('orders', ['customer_id' => $newCustomer->id]);
+    }
+
+    /**
+     * @test
      * users can add products to the orders
      * users should have create orders permission to be allowed
      */
@@ -287,7 +285,6 @@ class OrderManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
-        $retailer = Auth::user();
         $this->prepOrder(0,1);
         $order = Order::find(1);
         $attributes = [
@@ -310,31 +307,18 @@ class OrderManagementTest extends TestCase
     /**
      * @test
      * users can delete a products from order
-     * users should have create order permission to be allowed
-     * if the parent order just have one product then the order will be deleted as well.
+     * users should have create-orders permission to be allowed
      */
-    public function deleteProduct()
+    public function delete_product_from_orders_with_more_than_two_products()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0,1);
+        $this->prepOrder(0,3);
         $order = Order::find(1);
-        $attributes = [
-            'size' => 'X-Large',
-            'color' => 'Black',
-            'link' => 'www.zara.com',
-            'price' => '250',
-            'quantity' => '1',
-            'country' => 'Turkey',
-            'currency' => 'TL',
-            'image' => UploadedFile::fake()->create('pic.jpg')
-        ];
-        $this->post('/add-to-order/' . $order->id, $attributes);
         $product = Product::find(2);
-        $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
-        $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
-        $this->assertFileExists(public_path('storage' . $image_name ));
+        $this->delete('/delete-product/' . $product->id);
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
 
 
