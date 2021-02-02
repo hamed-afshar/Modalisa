@@ -25,7 +25,7 @@ class KargoPolicy
     /**
      * Determine whether the user can view any kargos.
      * users should have see-kargos permission to be allowed
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function viewAny(User $user)
@@ -38,8 +38,8 @@ class KargoPolicy
     /**
      * Determine whether the user can view the kargo.
      * users should have see-kargos permission to be allowed
-     * @param  \App\User  $user
-     * @param  \App\Kargo  $kargo
+     * @param User $user
+     * @param Kargo $kargo
      * @return mixed
      */
     public function view(User $user, Kargo $kargo)
@@ -52,7 +52,7 @@ class KargoPolicy
     /**
      * Determine whether the user can create kargos.
      * users should have create-kargos permission to be allowed
-     * @param  \App\User  $user
+     * @param User $user
      * @return mixed
      */
     public function create(User $user)
@@ -65,8 +65,8 @@ class KargoPolicy
     /**
      * Determine whether the user can update the kargo.
      *
-     * @param  \App\User  $user
-     * @param  \App\Kargo  $kargo
+     * @param User $user
+     * @param Kargo $kargo
      * @return mixed
      */
     public function update(User $user, Kargo $kargo)
@@ -80,8 +80,8 @@ class KargoPolicy
     /**
      * Determine whether the user can delete the kargo.
      *
-     * @param  \App\User  $user
-     * @param  \App\Kargo  $kargo
+     * @param User $user
+     * @param Kargo $kargo
      * @return mixed
      */
     public function delete(User $user, Kargo $kargo)
@@ -95,8 +95,8 @@ class KargoPolicy
     /**
      * Determine whether the user can restore the kargo.
      *
-     * @param  \App\User  $user
-     * @param  \App\Kargo  $kargo
+     * @param User $user
+     * @param Kargo $kargo
      * @return mixed
      */
     public function restore(User $user, Kargo $kargo)
@@ -107,8 +107,8 @@ class KargoPolicy
     /**
      * Determine whether the user can permanently delete the kargo.
      *
-     * @param  \App\User  $user
-     * @param  \App\Kargo  $kargo
+     * @param User $user
+     * @param Kargo $kargo
      * @return mixed
      */
     public function forceDelete(User $user, Kargo $kargo)
