@@ -306,7 +306,7 @@ class OrderManagementTest extends TestCase
 
     /**
      * @test
-     * users can delete a products from order
+     * users can remove products from order
      * users should have create-orders permission to be allowed
      */
     public function delete_product_from_orders_with_more_than_two_products()
@@ -318,7 +318,84 @@ class OrderManagementTest extends TestCase
         $order = Order::find(1);
         $product = Product::find(2);
         $this->delete('/delete-product/' . $product->id);
+        //keep the order and delete the product
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
+        $this->assertDatabaseHas('orders', ['id' => $order->id]);
+    }
+
+    /**
+     * @test
+     * users can remove products from order
+     * users should have create-orders permission to be allowed
+     */
+    public function delete_product_from_orders_with_one_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepOrder(0,1);
+        $order = Order::find(1);
+        $product = Product::find(1);
+        $this->delete('/delete-product/' . $product->id);
+        //Both order and product will be deleted
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+        $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+    }
+
+    /**
+     * @test
+     * users can edit products
+     * users can only edit products that has not been bought yet
+     * users should have create-order permission to be allowed
+     */
+    public function users_can_edit_products_that_has_not_been_bought_yet()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepOrder(0,3);
+        $product = Product::find(2);
+        //create status for edited
+        factory('App\Status')->create([
+            'id' => 9,
+            'priority' => 9,
+            'name' => 'Order Edited',
+            'description' => 'Order Edited'
+        ]);
+        $newProductAttributes = [
+            'size' => 'Medium',
+            'color' => 'White',
+            'link' => 'www.mango.com',
+            'price' => '150',
+            'quantity' => '1',
+            'country' => 'UK',
+            'currency' => 'Pound',
+            'image' => UploadedFile::fake()->create('pic.jpg')
+        ];
+        $this->patch('/edit-product/' . $product->id, $newProductAttributes);
+        $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
+        $this->assertDatabaseHas('products', [
+            'size' => 'Medium',
+            'color' => 'White',
+            'link' => 'www.mango.com',
+            'price' => '150',
+            'quantity' => '1',
+            'country' => 'UK',
+            'currency' => 'Pound',
+        ]);
+        //record for this change should be created in the histories table
+        $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => 9]);
+        //assert to check existence of the new uploaded file
+        $this->assertFileExists(public_path('storage' . $image_name));
+        dump('old image also should be deleted');
+    }
+
+    /**
+     * @test
+     */
+    public function old_image_file_should_be_deleted_after_editing_product()
+    {
+
     }
 
 

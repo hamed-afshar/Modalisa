@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
-use App\Helper\StatusChecker;
+use App\Helper\StatusManager;
 use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
@@ -17,7 +17,8 @@ class OrderController extends Controller
 {
     use  ImageTrait;
 
-    /** function to upload images
+    /**
+     * function to upload images
      * @param $user
      * @param $product
      * @param $image
@@ -36,6 +37,19 @@ class OrderController extends Controller
         ];
         //create record for the image
         $user->images()->create($imageData);
+    }
+
+    /**
+     * function to return the current status
+     * @param Product $product
+     * @return int
+     */
+    public function getStatus(Product $product):int
+    {
+        $latestHistory = DB::table('histories')
+            ->where('product_id', '=' , $product->id)
+            ->orderBy('created_at', 'desc')->first();
+        return $latestHistory->status_id;
     }
 
     /**
@@ -156,20 +170,84 @@ class OrderController extends Controller
      * if order contains just one product then order record must be deleted completely
      * if order contains more than one product, then just the given product will be deleted
      * it is not possible to delete products if they have
-     * status will change from current to deleted:0
+     * status will change from current status to deleted status:0
      * @param Product $product
      * @throws AuthorizationException
      */
     public function deleteProduct(Product $product)
     {
         $this->authorize('create', Order::class);
+        //nextStatus will be Order Deleted
         $nextStatus = 0;
-        $latestHistory = DB::table('histories')->orderBy('created_at', 'desc')->first();
-        $currentStatus = $latestHistory->status_id;
-        $statusChecker = new StatusChecker($currentStatus, $nextStatus);
-        $statusChecker->check();
-        $orderID = $product->order()->value('id');
-        $order = Order::find($orderID);
-        $productCounts = $order->products()->count();
+        $currentStatus = $this->getStatus($product);
+        $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
+        //validate this change from current to deleted status
+        if($statusManager->check()) {
+            $orderID = $product->order()->value('id');
+            $order = Order::find($orderID);
+            $productCount = $order->products()->count();
+            // if order contains less than 1 product, then whole record for this order will be deleted
+            // else if order contains more than 1 product, then only the given product will be deleted
+            if($productCount <= 1) {
+                $order->delete();
+            } else {
+                $order->products()->delete($product);
+            }
+        } else {
+            abort(403, 'Access Denied');
+        }
+    }
+
+    /**
+     * @test
+     * edit the given product
+     * users can only edit products that has not been bought yet
+     * users should have create-orders permission to be allowed
+     * status will change from current status to Order Edit status:9
+     * @param Request $request
+     * @param Product $product
+     * @throws AuthorizationException
+     */
+    public function editProduct(Request $request, Product $product)
+    {
+        $this->authorize('create', Order::class);
+        $user = Auth::user();
+        $request->validate([
+            'size' => 'required',
+            'color' => 'required',
+            'link' => 'required',
+            'price' => 'required',
+            'quantity' => 'required',
+            'country' => 'required',
+            'currency' => 'required',
+        ]);
+        $productData = [
+            'size' => $request->input('size'),
+            'color' => $request->input('color'),
+            'link' => $request->input('link'),
+            'price' => $request->input('price'),
+            'quantity' => $request->input('quantity'),
+            'country' => $request->input('country'),
+            'currency' => $request->input('currency'),
+        ];
+        //next status will be Order Edited
+        $nextStatus = 9;
+        $currentStatus = $this->getStatus($product);
+        $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
+        //validate this change from current to Order Edited status
+        if($statusManager->check()) {
+            $product->update($productData);
+            $statusManager->changeHistory();
+            if($request->has('image')) {
+                $request->validate([
+                    'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                ]);
+                $image = $request->file('image');
+                $this->uploadImage($user, $product, $image);
+            }
+        } else {
+            abort(403, 'Access Denied');
+        }
+        dd($this->getStatus($product));
     }
 }
