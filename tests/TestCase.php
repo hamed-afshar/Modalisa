@@ -58,7 +58,8 @@ abstract class TestCase extends BaseTestCase
      */
     protected function prepOrder($withKargo, $withoutKargo)
     {
-        factory('App\Status')->create();
+        //create first two possible statuses. 0:Order Deleted, 1:Order Created
+        factory('App\Status', 2)->create();
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $order = factory('App\Order')->create([
             'user_id' => Auth::user()->id,
@@ -78,5 +79,53 @@ abstract class TestCase extends BaseTestCase
                 ]);
             }
         }
+    }
+
+    /**
+     * create remaining possible statuses in the system
+     */
+    public function prepStatus()
+    {
+
+        factory('App\Status')->create([
+            'priority' => 3,
+            'name' => 'Order Bought',
+            'description' => 'order is bought'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 4,
+            'name' => 'Order In-Office',
+            'description' => 'order reached to office in Turkey'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 5,
+            'name' => 'Order In-Kargo-To-Iran',
+            'description' => 'order is in kargo to Iran'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 6,
+            'name' => 'Order In-Iran',
+            'description' => 'order reached to Iran'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 7,
+            'name' => 'Order In-Kargo-From-Iran',
+            'description' => 'order returned back from Iran'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 8,
+            'name' => 'Order Returned',
+            'description' => 'order is returned to seller'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 9,
+            'name' => 'Order Refunded',
+            'description' => 'order is refunded'
+        ]);
+        factory('App\Status')->create([
+            'priority' => 10,
+            'name' => 'Order Edited',
+            'description' => 'order is edited',
+        ]);
     }
 }
