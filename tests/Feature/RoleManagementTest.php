@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Permission;
 use App\Role;
 use App\User;
-use App\UserRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
@@ -73,9 +72,7 @@ class RoleManagementTest extends TestCase
         $this->post('/roles', $attributes)->assertSessionHasErrors('label');
     }
 
-    /** @test
-     * This test is not necessary
-     */
+    /** @test */
     public
     function only_SystemAdmin_can_vew_a_single_role_with_all_assigned_permissions()
     {
@@ -118,13 +115,18 @@ class RoleManagementTest extends TestCase
     function only_SystemAdmin_can_delete_a_role()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $role = factory('App\Role')->create();
+        $SystemAdmin = Auth::user();
+        $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $role = Role::find(1);
+        //other users are not allowed to delete roles
+        //acting as the retailer to delete the role
+        $this->actingAs($retailer);
+        $this->delete($role->path())->assertForbidden();
+        //acting as the SystemAdmin to delete the role
+        $this->actingAs($SystemAdmin);
         $this->delete($role->path());
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
-        //other users are not allowed to delete roles
-        $role = factory('App\Role')->create();
-        $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
-        $this->delete($role->path())->assertForbidden();
     }
 
     /** @test */

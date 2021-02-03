@@ -79,7 +79,7 @@ class RoleController extends Controller
 
     /**
      * update roles
-     * only SystemAdmin can update role
+     * only SystemAdmin can update roles
      * @param Role $role
      * @throws AuthorizationException
      */
