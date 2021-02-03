@@ -17,16 +17,16 @@ class StatusManager
     {
         /**
          * this variable holds all possible status combination
-         * 0: Order Deleted
-         * 1: Order Created
-         * 2: Order Bought
-         * 3: Order in-office
-         * 4: Order in-kargo-to-iran
-         * 5: Order in-iran
-         * 6: Order in-kargo-from-iran
-         * 7: Order returned
-         * 8: Order refund
-         * 9: Order Edited
+         * 0: Order Deleted             Status Table Record: 1
+         * 1: Order Created             Status Table Record: 2
+         * 2: Order Bought              Status Table Record: 3
+         * 3: Order in-office           Status Table Record: 4
+         * 4: Order in-kargo-to-iran    Status Table Record: 5
+         * 5: Order in-iran             Status Table Record: 6
+         * 6: Order in-kargo-from-iran  Status Table Record: 7
+         * 7: Order returned            Status Table Record: 8
+         * 8: Order refund              Status Table Record: 9
+         * 9: Order Edited              Status Table Record: 10
          */
         $this->statusMatrix = array(
             array(1, 1, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -41,8 +41,12 @@ class StatusManager
             array(0, 0, 1, 0, 0, 0, 0, 0, 0, 1)
         );
         $this->product = $product;
-        $this->current = $current;
+        $this->currentInDB = $current;
         $this->next = $next;
+
+        //variable to holds the corresponding value for the current and next status in the matrix
+        $this->currentInMatrix = $current-1;
+        $this->nextInMatrix = $next-1;
     }
 
 
@@ -52,7 +56,7 @@ class StatusManager
      */
     public function check(): bool
     {
-        if($this->statusMatrix[$this->current][$this->next]) {
+        if($this->statusMatrix[$this->currentInMatrix][$this->nextInMatrix]) {
             return true;
         } else {
             return false;
@@ -64,6 +68,8 @@ class StatusManager
      */
     public function changeHistory()
     {
-        $this->product->histories()->create(['status_id' => $this->next]);
+        $this->product->histories()->create([
+            'status_id' => $this->next,
+        ]);
     }
 }
