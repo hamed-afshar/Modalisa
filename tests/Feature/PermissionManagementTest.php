@@ -100,6 +100,7 @@ class PermissionManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-orders', 'create-transactions'] , 0,1);
         //other users are not allowed to delete permissions
         $retailer = Auth::user();
+        $this->actingAs($retailer);
         $permission = factory('App\Permission')->create();
         $this->delete($permission->path())->assertForbidden();
         //only SystemAdmin can delete permissions

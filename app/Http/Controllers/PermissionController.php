@@ -64,7 +64,7 @@ class PermissionController extends Controller
     }
 
     /**
-     * Permission update form
+     * Form to update permissions
      * VueJs Modal
      * @param Permission $permission
      * @throws AuthorizationException
