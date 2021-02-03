@@ -25,7 +25,11 @@ class AuthServiceProvider extends ServiceProvider
         'App\Status' => 'App\Policies\StatusPolicy',
         'App\Note' => 'App\Policies\NotePolicy',
         'App\Image' => 'App\Policies\ImagePolicy',
-        'App\Admin' => 'App\Policies\AdminPolicy'
+        'App\Admin' => 'App\Policies\AdminPolicy',
+        'App\kargo' => 'App\Policies\KargoPolicy',
+        'App\Order' => 'App\Policies\OrderPolicy',
+        'App\Cost' => 'App\Policies\CostPolicy',
+        'App\History' => 'App\Policies\HistoryPolicy'
     ];
 
     /**
