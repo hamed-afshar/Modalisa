@@ -44,11 +44,9 @@ class OrderController extends Controller
      * @param Product $product
      * @return int
      */
-    public function getStatus(Product $product):int
+    public function getStatus(Product $product): int
     {
-        $latestHistory = DB::table('histories')
-            ->where('product_id', '=' , $product->id)
-            ->orderBy('created_at', 'desc')->first();
+        $latestHistory = DB::table('histories')->latest()->first();
         return $latestHistory->status_id;
     }
 
@@ -111,7 +109,7 @@ class OrderController extends Controller
         $order = $user->orders()->create();
         //create record for the product
         $product = $order->products()->create($productData);
-        //upload image for the created product
+        //upload image for the created product and create a record in the images table
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
     }
@@ -178,17 +176,17 @@ class OrderController extends Controller
     {
         $this->authorize('create', Order::class);
         //nextStatus will be Order Deleted
-        $nextStatus = 0;
+        $nextStatus = 1;
         $currentStatus = $this->getStatus($product);
         $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
         //validate this change from current to deleted status
-        if($statusManager->check()) {
+        if ($statusManager->check()) {
             $orderID = $product->order()->value('id');
             $order = Order::find($orderID);
             $productCount = $order->products()->count();
             // if order contains less than 1 product, then whole record for this order will be deleted
             // else if order contains more than 1 product, then only the given product will be deleted
-            if($productCount <= 1) {
+            if ($productCount <= 1) {
                 $order->delete();
             } else {
                 $order->products()->delete($product);
@@ -231,23 +229,27 @@ class OrderController extends Controller
             'currency' => $request->input('currency'),
         ];
         //next status will be Order Edited
-        $nextStatus = 9;
+        $nextStatus = 10;
         $currentStatus = $this->getStatus($product);
         $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
         //validate this change from current to Order Edited status
-        if($statusManager->check()) {
+        if ($statusManager->check()) {
             $product->update($productData);
             $statusManager->changeHistory();
-            if($request->has('image')) {
+            if ($request->has('image')) {
                 $request->validate([
                     'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 ]);
+                $oldImageName = $product->images()
+                    ->where('imagable_id', $product->id)
+                    ->where('imagable_type', 'App\Product')
+                    ->value('image_name');
                 $image = $request->file('image');
                 $this->uploadImage($user, $product, $image);
+                $this->deleteOne('public', [$oldImageName]);
             }
         } else {
             abort(403, 'Access Denied');
         }
-        dd($this->getStatus($product));
     }
 }

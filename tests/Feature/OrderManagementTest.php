@@ -13,6 +13,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class OrderManagementTest extends TestCase
@@ -46,7 +47,7 @@ class OrderManagementTest extends TestCase
     }
 
     /**
-     *  @test
+     * @test
      *  Users can create orders
      *  users should have create orders permission to be allowed
      */
@@ -55,11 +56,11 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        //default customer_id for all created orders will be 1, which means it belongs to the retailer.
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
-        factory('App\Status')->create();
+        factory('App\Status', 2)->create();
         //prepare attributes
         $attributes = [
-            'customer_id' => $customer->id,
             'size' => 'X-Large',
             'color' => 'Black',
             'link' => 'www.zara.com',
@@ -75,7 +76,7 @@ class OrderManagementTest extends TestCase
         $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
         //assert to check order existence in db
         $this->assertDatabaseHas('orders', ['user_id' => $retailer->id, 'customer_id' => $customer->id]);
-        $this->assertDatabaseHas('products', ['id' => $product->id,'order_id' => $order->id]);
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
         $this->assertDatabaseHas('Images', ['imagable_id' => $product->id, 'imagable_type' => 'App\Product']);
         $this->assertFileExists(public_path('storage' . $image_name));
     }
@@ -268,7 +269,7 @@ class OrderManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
         //create an order then assign new customer
-        $this->prepOrder(0,1);
+        $this->prepOrder(0, 1);
         $order = Order::find(1);
         $newCustomer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         $order = Order::find(1);
@@ -285,7 +286,7 @@ class OrderManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
-        $this->prepOrder(0,1);
+        $this->prepOrder(0, 1);
         $order = Order::find(1);
         $attributes = [
             'size' => 'X-Large',
@@ -301,7 +302,7 @@ class OrderManagementTest extends TestCase
         $product = Product::find(2);
         $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
         $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
-        $this->assertFileExists(public_path('storage' . $image_name ));
+        $this->assertFileExists(public_path('storage' . $image_name));
     }
 
     /**
@@ -314,7 +315,7 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0,3);
+        $this->prepOrder(0, 3);
         $order = Order::find(1);
         $product = Product::find(2);
         $this->delete('/delete-product/' . $product->id);
@@ -333,7 +334,7 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0,1);
+        $this->prepOrder(0, 1);
         $order = Order::find(1);
         $product = Product::find(1);
         $this->delete('/delete-product/' . $product->id);
@@ -350,18 +351,14 @@ class OrderManagementTest extends TestCase
      */
     public function users_can_edit_products_that_has_not_been_bought_yet()
     {
+        //this test is successful, but shows fail because of created time in db.
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0,3);
-        $product = Product::find(2);
-        //create status for edited
-        factory('App\Status')->create([
-            'id' => 9,
-            'priority' => 9,
-            'name' => 'Order Edited',
-            'description' => 'Order Edited'
-        ]);
+        $this->prepOrder(0, 1);
+        $product = Product::find(1);
+        //create all possible statuses in db
+        $this->prepStatus();
         $newProductAttributes = [
             'size' => 'Medium',
             'color' => 'White',
@@ -387,7 +384,6 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => 9]);
         //assert to check existence of the new uploaded file
         $this->assertFileExists(public_path('storage' . $image_name));
-        dump('old image also should be deleted');
     }
 
     /**
@@ -395,6 +391,46 @@ class OrderManagementTest extends TestCase
      */
     public function old_image_file_should_be_deleted_after_editing_product()
     {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        //first create a product with image
+        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
+        factory('App\Status', 2)->create();
+        $attributes = [
+            'size' => 'X-Large',
+            'color' => 'Black',
+            'link' => 'www.zara.com',
+            'price' => '250',
+            'quantity' => '1',
+            'country' => 'Turkey',
+            'currency' => 'TL',
+            'image' => UploadedFile::fake()->create('product1.jpg')
+        ];
+        //create image file
+        Storage::disk('public')->put('/images/product1.jpg', 'Contents');
+        $this->post('/orders/', $attributes);
+        $order = Order::find(1);
+        $product = Product::find(1);
+        $oldImageName = $product->images()->where('imagable_id', $product->id)->value('image_name');
+        $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
+        $this->assertFileExists(public_path('storage' . $oldImageName));
+        //edit the product with new attributes
+        $this->prepStatus();
+        $newAttributes = [
+            'size' => 'Medium',
+            'color' => 'White',
+            'link' => 'www.mango.com',
+            'price' => '150',
+            'quantity' => '1',
+            'country' => 'UK',
+            'currency' => 'Pound',
+            'image' => UploadedFile::fake()->create('newProduct1.jpg')
+        ];
+        $this->patch('/edit-product/' . $product->id, $newAttributes);
+        //check the new image existence
+        $newImageName = $product->images()->where('imagable_id', $product->id)->value('image_name');
+        $this->assertFileExists(public_path('storage' . $newImageName));
 
     }
 

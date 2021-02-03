@@ -9,15 +9,16 @@ class ProductObserver
 {
     /**
      * Handle the product "created" event.
-     *
+     * Created Orders status should set to 2
      * @param Product $product
      * @return void
      */
     public function created(Product $product)
     {
+
         History::create([
             'product_id'=> $product->id,
-            'status_id' => 1
+            'status_id' => 2
         ]);
     }
 
