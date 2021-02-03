@@ -150,7 +150,6 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 
-Route::delete('/orders', 'OrdersController@destroy');
 
 
 
