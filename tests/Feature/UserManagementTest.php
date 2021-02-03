@@ -14,7 +14,7 @@ class UserManagementTest extends TestCase
         RefreshDatabase;
 
     /** @test */
-    public function only_SystemAdmin_can_see_users()
+    public function only_SystemAdmin_can_see_users_with_respective_role_and_subscription()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $SystemAdmin = Auth::user();
@@ -22,8 +22,10 @@ class UserManagementTest extends TestCase
         $retailer = Auth::user();
         //System admin is able to see all users
         $this->actingAs($SystemAdmin);
-        $this->get('/users')->assertSeeText($SystemAdmin->name);
-        $this->get('/users')->assertSeeText($retailer->name);
+        $this->get('/users')->assertSeeText($SystemAdmin->name)
+            ->assertSeeText($retailer->name)
+            ->assertSeeText($retailer->role->name)
+            ->assertSeeText($retailer->subscription->plan);
         //other users are not allowed to see users list
         $this->actingAs($retailer);
         $this->get('/users')->assertForbidden();
@@ -40,12 +42,8 @@ class UserManagementTest extends TestCase
     public function users_can_register_into_the_system()
     {
         $this->withoutExceptionHandling();
-        $subscription = factory('App\Subscription')->create();
-        $role = factory('App\Role')->create();
         $attributes = [
             'id' => 1,
-            'subscription_id' => $subscription->id,
-            'role_id' => $role->id,
             'name' => 'Hamed Afshar',
             'email' => 'asghar@yahoo.com',
             'password' => '13651362',
@@ -66,7 +64,6 @@ class UserManagementTest extends TestCase
         $SystemAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['create-costs', 'see-costs'], 0 , 1);
         $retailer = Auth::user();
-        $subscription = factory('App\Subscription')->create();
         //System admin is able to see all users
         $this->actingAs($SystemAdmin);
         $this->get($retailer->path())->assertSeeText($retailer->name);
@@ -78,7 +75,6 @@ class UserManagementTest extends TestCase
     /** This should be tested in VueJS */
     public function form_is_available_to_update_users()
     {
-        $this->withoutExceptionHandling();
     }
 
     /** @test */
