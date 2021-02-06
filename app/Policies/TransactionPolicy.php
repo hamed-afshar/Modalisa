@@ -41,7 +41,7 @@ class TransactionPolicy
      * Determine whether the users can view all of their transactions.
      * User should have see-transactions permission to be allowed
      * @param User $user
-     * @param  \App\Transaction  $transaction
+     * @param Transaction $transaction
      * @return mixed
      */
     public function view(User $user, Transaction $transaction)

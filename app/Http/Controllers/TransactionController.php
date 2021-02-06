@@ -82,10 +82,10 @@ class TransactionController extends Controller
 
     /**
      * show a single transaction
-     * user should have see-transaction permission to be allowed
+     * user should have see-transactions permission to be allowed
      * VueJs shows this single transaction
      * @param Transaction $transaction
-     * @return
+     * @return mixed
      * @throws AuthorizationException
      */
     public function show(Transaction $transaction)
@@ -133,13 +133,18 @@ class TransactionController extends Controller
         // if request has image for update then new image name will be generated and old image be deleted
         // if request dose not have image, then image name will not change
         if ($request->has('image')) {
-            $oldImageName = $transaction->images()->where('imagable_id', $transaction->id)->value('image_name');
+            $oldImage = $transaction->images()
+                ->where('imagable_type', 'App\Transaction')
+                ->where('imagable_id', $transaction->id);
+            $oldImageName = $oldImage->value('image_name');
             $image = $request->file('image');
             $imageNewName = date('mdYHis') . uniqid();
             $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
+            //delete the old image file and respective record in the db
             $this->deleteOne('public', [$oldImageName]);
+            $user->images()->delete($oldImage);
             $imageData = [
                 // imagable_type always remains App\Transaction
                 'imagable_type' => 'App\Transaction',
@@ -179,6 +184,6 @@ class TransactionController extends Controller
     public function confirm(Transaction $transaction)
     {
         $this->authorize('confirm', Transaction::class);
-        $transaction->update(['confirmed' => 1]) ;
+        $transaction->update(['confirmed' => 1]);
     }
 }

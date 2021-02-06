@@ -23,7 +23,7 @@ class TransactionManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['see-transactions', 'see-costs'], 0, 1);
         $retailer1 = Auth::user();
-        $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
+        $transaction = factory('App\Transaction')->create(['user_id' => $retailer1->id]);
         $this->get('/transactions')->assertSeeText($transaction->comment);
         //users are only able to see their own transactions
         $this->prepNormalEnv('retailer2', ['see-transactions', 'see-costs'], 0, 1);
@@ -39,7 +39,8 @@ class TransactionManagementTest extends TestCase
 
     }
 
-    /** @test
+    /**
+     * @test
      * user should have create-transactions permission to be allowed
      */
     public function retailers_can_create_transaction()
@@ -94,11 +95,12 @@ class TransactionManagementTest extends TestCase
         // Assert file exist on server
         $this->assertFileExists(public_path('storage' . $image_name));
         // Assert database has image which has a imagable_id for created transaction
-        $this->assertDatabaseHas('images', ['imagable_id' => $transaction->id]);
+        $this->assertDatabaseHas('images', ['user_id' =>Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
     }
 
 
-    /** @test
+    /**
+     * @test
      * users should have see-transaction permission to be allowed
      * users can only see their own transactions
      */
@@ -120,7 +122,8 @@ class TransactionManagementTest extends TestCase
 
     }
 
-    /** @test
+    /**
+     * @test
      * Users are only able to update not confirmed transactions
      */
     public function retailer_can_update_not_confirmed_transactions()
@@ -130,7 +133,7 @@ class TransactionManagementTest extends TestCase
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         // create image for this transaction
         factory('App\Image')->create([
-            'user_id'=>Auth::user()->id,
+            'user_id' => Auth::user()->id,
             'imagable_type' => 'App\Transaction',
             'imagable_id' => $transaction->id,
             'image_name' => '/images/transaction1.jpg'
@@ -154,18 +157,33 @@ class TransactionManagementTest extends TestCase
         // update record without new image
         $this->patch($transaction->path(), $newAttributesWithoutImage);
         // updated image record should be available on the server
-        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithoutImage['comment']]);
+        $this->assertDatabaseHas('transactions', [
+            'id' => $transaction->id,
+            'currency' => 'USD',
+            'amount' => '5555',
+            'comment' => $newAttributesWithoutImage['comment'],
+        ]);
+
         // old image file should remain intact
         $this->assertFileExists(public_path('storage' . $oldImageName));
         //update record with new image
         $this->patch($transaction->path(), $newAttributesWithImage);
-        // updated image record should be available on the server
-        $this->assertDatabaseHas('transactions', ['comment' => $newAttributesWithImage['comment']]);
-        // new image file should be uploaded on the server
-        $transaction = Transaction::find(1);
-        $this->assertFileExists(public_path('storage' . $transaction->image_name));
-        // old image file should be deleted from the server
+        // updated transaction record should be available on the server
+        $this->assertDatabaseHas('transactions', [
+                'id' => $transaction->id,
+                'currency' => 'USD',
+                'amount' => '9999',
+                'comment' => $newAttributesWithImage['comment']]
+        );
+        // new image file should be uploaded on the server and respective record created in the images table
+        $image = $transaction->images()->find(1);
+        $image_name = $image->image_name;
+        dd('here');
+        $this->assertFileExists(public_path('storage' . $image_name));
+        $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
+        // old image file should be deleted from the server, also respective image record must be deleted
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        $this->assertDatabaseMissing('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction' , 'imagable_id' => $transaction->id]);
         //users can only update their own transactions
         $this->prepNormalEnv('retailer2', ['create-transactions'], 0, 1);
         $this->patch($transaction->path(), $newAttributesWithImage)->assertForbidden();
@@ -194,10 +212,10 @@ class TransactionManagementTest extends TestCase
         $retailer1 = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         $image = factory('App\Image')->create([
-           'user_id' => $retailer1->id,
-           'imagable_type' => 'App\Transaction',
-           'imagable_id' => $transaction->id,
-           'image_name' => '/images/transaction1.jpg'
+            'user_id' => $retailer1->id,
+            'imagable_type' => 'App\Transaction',
+            'imagable_id' => $transaction->id,
+            'image_name' => '/images/transaction1.jpg'
         ]);
         Storage::disk('public')->put('/images/transaction1.jpg', 'contents');
         $imageName = $image->image_name;
@@ -212,7 +230,7 @@ class TransactionManagementTest extends TestCase
         // transaction record must be deleted
         $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
         // transaction's image record must be deleted
-        $this->assertDatabaseMissing('images', ['id' => $image->id ]);
+        $this->assertDatabaseMissing('images', ['id' => $image->id]);
         // transaction's image file must be deleted
         $this->assertFileNotExists(public_path('storage' . $imageName));
     }
