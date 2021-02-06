@@ -28,7 +28,7 @@ class SubscriptionManagementTest extends TestCase
     /**
      * this should be tested in VueJs
      */
-    public function form_is_available_to_create_roles()
+    public function form_is_available_to_create_subscription()
     {
     }
 
@@ -45,7 +45,7 @@ class SubscriptionManagementTest extends TestCase
     }
 
     /** @test */
-    public function name_is_required()
+    public function plan_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $attributes = factory('App\Subscription')->raw(['plan' => '']);
@@ -91,11 +91,15 @@ class SubscriptionManagementTest extends TestCase
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $subscription = factory('App\Subscription')->create(['plan' => 'test-plan']);
         $newAttributes = [
-            'plan' => 'Gold',
+            'plan' => 'Platinum',
             'cost_percentage' => 20,
+            'kargo_limit' => 10
         ];
         $this->patch($subscription->path(), $newAttributes);
-        $this->assertDatabaseHas('subscriptions', ['id' => $subscription->id]);
+        $this->assertDatabaseHas('subscriptions', [
+            'plan' => 'Platinum',
+            'cost_percentage' => 20
+        ]);
         //other users are not allowed to update subscriptions
         $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
         $this->patch($subscription->path(), $newAttributes)->assertForbidden();
@@ -126,13 +130,14 @@ class SubscriptionManagementTest extends TestCase
         $newUser = factory('App\User')->create();
         $newSubscription = factory('App\Subscription')->create(['plan' => 'Gold']);
         $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
-        $this->assertDatabaseHas('users', ['subscription_id' => $newSubscription->id]);
+        $this->assertDatabaseHas('users', ['id' =>$newUser->id, 'subscription_id' => $newSubscription->id]);
         //other users are not allowed to change subscriptions
         $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
         $this->get('/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id)->assertForbidden();
     }
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
     public function each_subscription_has_many_users()
@@ -144,7 +149,8 @@ class SubscriptionManagementTest extends TestCase
         $this->assertInstanceOf(User::class, $subscription->users->find(1));
     }
 
-    /** @test
+    /**
+     * @test
      * one to many relationship
      */
     public function each_user_belongs_to_one_subscription()

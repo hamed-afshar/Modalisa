@@ -82,18 +82,24 @@ class SubscriptionController extends Controller
     /**
      * update a subscription
      * only SystemAdmin can update subscriptions
+     * @param Request $request
      * @param Subscription $subscription
      * @throws AuthorizationException
      */
-    public function update(Subscription $subscription)
+    public function update(Request $request, Subscription $subscription)
     {
         $this->authorize('update', $subscription);
-        $data = request()->validate([
+        $request->validate([
             'plan' => 'required',
             'cost_percentage' => 'required|numeric',
             'kargo_limit' => 'required|numeric'
         ]);
-        $subscription->update($data);
+        $subscriptionData = [
+            'plan' => $request->input('plan'),
+            'cost_percentage' => $request->input('cost_percentage'),
+            'kargo_limit' => $request->input('kargo_limit')
+        ];
+        $subscription->update($subscriptionData);
     }
 
     /**
@@ -118,7 +124,7 @@ class SubscriptionController extends Controller
      */
     public function changeSubscription(Subscription $subscription, User $user)
     {
-        $this->authorize('update', $subscription );
+        $this->authorize('update', $subscription);
         $subscription->changeSubscription($user);
     }
 }
