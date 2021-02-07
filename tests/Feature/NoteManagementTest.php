@@ -27,7 +27,7 @@ class NoteManagementTest extends TestCase
     public function user_can_see_all_notes_related_to_a_specific_object()
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $user = Auth::user();
         $order = Order::find(1);
         $note1 = factory('App\Note')->create([
@@ -36,7 +36,7 @@ class NoteManagementTest extends TestCase
             'notable_id' => $order->id,
             'body' => 'first note'
         ]);
-        //
+
         $note2 = factory('App\Note')->create([
             'user_id' => $user->id,
             'notable_type' => 'App\Order',
@@ -69,7 +69,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
@@ -85,7 +85,7 @@ class NoteManagementTest extends TestCase
     public function title_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $user = Auth::user();
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
@@ -102,7 +102,7 @@ class NoteManagementTest extends TestCase
     public function body_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
@@ -119,7 +119,7 @@ class NoteManagementTest extends TestCase
     public function notable_type_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
@@ -136,7 +136,7 @@ class NoteManagementTest extends TestCase
     public function notable_id_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
@@ -156,7 +156,7 @@ class NoteManagementTest extends TestCase
     public function users_can_see_a_single_note()
     {
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
         $note = factory('App\Note')->create([
@@ -184,7 +184,7 @@ class NoteManagementTest extends TestCase
     public function users_can_not_update_notes()
     {
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
         $note = factory('App\Note')->create([
@@ -201,7 +201,7 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes', 'delete-notes'], 0 , 1);
         $retailer1 = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
         $note = factory('App\Note')->create([
@@ -217,7 +217,7 @@ class NoteManagementTest extends TestCase
         //users can delete their own notes
         $this->actingAs($retailer1);
         $this->delete($note->path());
-        $this->assertDatabaseMissing('notes', ['id' => $note->id]);
+        $this->assertDatabaseMissing('notes', ['id' => $note->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
     }
 
     /** all relationship related to Note model should be tested
@@ -233,7 +233,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
         factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
@@ -247,7 +247,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $user = Auth::user();
         $order = Order::find(1);
         $note = factory('App\Note')->create(['user_id' => $user->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
@@ -263,7 +263,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Order', 'notable_id' => 1]);
         $this->assertInstanceOf(Note::class, $order->notes->find(1));
@@ -279,7 +279,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $note = factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Order', 'notable_id' => 1]);
         $this->assertInstanceOf(Order::class, $note->notable);
     }
@@ -321,7 +321,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Product', 'notable_id' => 1]);
         $this->assertInstanceOf(Note::class, $product->notes->find(1));
@@ -336,7 +336,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $note = factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Product', 'notable_id' => 1]);
         $this->assertInstanceOf(Product::class, $note->notable);
     }
@@ -379,7 +379,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Kargo', 'notable_id' => 1]);
         $this->assertInstanceOf(Note::class, $kargo->notes->find(1));
@@ -394,7 +394,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $cost = factory('App\Cost')->create(['user_id' => Auth::user()->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Cost', 'notable_id' => 1]);
@@ -410,7 +410,7 @@ class NoteManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         factory('App\Cost')->create(['user_id' => Auth::user()->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $note = factory('App\Note')->create(['user_id' => Auth::user()->id, 'notable_type' => 'App\Cost', 'notable_id' => 1]);

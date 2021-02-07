@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Auth;
 class NoteController extends Controller
 {
     /**
-     * index all notes for the given record
+     * index all notes for the given model
      * users should have see-notes permission to be allowed
      * @param $id
      * @param $model
-     * @return Cost
+     * @return mixed
      * @throws AuthorizationException
      */
     public function index($id, $model)
@@ -37,6 +37,7 @@ class NoteController extends Controller
 
     /**
      * store notes
+     * users should have create-notes permission to be allowed
      * @param Request $request
      * @throws AuthorizationException
      */
