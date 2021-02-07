@@ -51,6 +51,115 @@ class AdminController extends Controller
     }
 
     /**
+     * Determine whether admin can create cost for the given user
+     * @param Request $request
+     * @throws AuthorizationException
+     */
+    public function storeCost(Request $request)
+    {
+        $this->authorize('createCost', Admin::class);
+        // first cost record must be created and get cost_id to be used in image creation model
+        // cost will be created for this user
+        $user = $request->input('user');
+        // prepare cost's data to create record in db
+        $request->validate([
+            'user' => 'required',
+            'amount' => 'required',
+            'description' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'costable_type' => 'required',
+            'costable_id' => 'required'
+        ]);
+        $costData = [
+            'amount' => $request->input('amount'),
+            'description' => $request->input('description'),
+            'costable_type' => $request->input('costable_type'),
+            'costable_id' => $request->input('costable_id')
+        ];
+        // create a cost record for the given user
+        $cost = $user->costs()->create($costData);
+        // if image is included, then image should be uploaded and associated record will be created in db
+        if ($request->has('image')) {
+            // first upload image
+            $image = $request->file('image');
+            $imageNewName = date('mdYHis') . uniqid();
+            $folder = '/images/';
+            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+            $this->uploadOne($image, $folder, 'public', $imageNewName);
+            // create record for the uploaded image
+            $imageData = [
+                // imagable_type always remains App\Cost
+                'imagable_type' => 'App\Cost',
+                'imagable_id' => $cost->id,
+                'image_name' => $filePath
+            ];
+            $user->images()->create($imageData);
+        }
+    }
+
+    /**
+     * update a cost record
+     * only SuperPrivilege users are allowed
+     * @param Request $request
+     * @param Cost $cost
+     * @throws AuthorizationException
+     */
+    public function updateCost(Request $request, Cost $cost)
+    {
+        $this->authorize('updateCost', Admin::class);
+        $request->validate([
+            'user' => 'required',
+            'amount' => 'required',
+            'description' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        $user = $request->input('user');
+        $costData = [
+            'amount' => $request->input('amount'),
+            'description' => $request->input('description'),
+        ];
+        //update the cost record
+        $cost->update($costData);
+        // if request has image for update then new image name will be generated and old image will be deleted
+        // if request does not have image, then image will not change
+        if ($request->has('image')) {
+            $oldImage = $cost->images()
+                ->where('imagable_id', $cost->id)
+                ->where('imagable_type', 'App\Cost');
+            $oldImageName = $oldImage->value('image_name');
+            $image = $request->file('image');
+            $imageNewName = date('mdYHis') . uniqid();
+            $folder = '/images/';
+            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+            $this->uploadOne($image, $folder, 'public', $imageNewName);
+            $this->deleteOne('public', [$oldImageName]);
+            $imageData = [
+                // imagable_type always remains App\\Cost
+                'imagable_type' => 'App\Cost',
+                'imagable_id' => $cost->id,
+                'image_name' => $filePath
+            ];
+            // update image record for the given user
+            $oldImage->update($imageData);
+
+        }
+    }
+
+    public function deleteCost(Cost $cost)
+    {
+        $this->authorize('deleteCost', Admin::class);
+        $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
+        DB::transaction(function () use ($cost, $imageNameArray){
+            //delete the cost's image file from directory
+            $this->deleteOne('public', $imageNameArray);
+            //delete the cost image records
+            $cost->images()->delete();
+            //delete the given cost records
+            $cost->delete();
+        }, 1);
+    }
+
+    /**
      * create kargo for the given user
      * super privilege users are able to create kargo for the given user
      * @param Request $request
@@ -183,7 +292,7 @@ class AdminController extends Controller
     {
         $this->authorize('deleteKargo', Admin::class);
         $imageNameArray = $kargo->images()->where('imagable_id', $kargo->id)->pluck('image_name');
-        DB::transaction(function () use($kargo, $imageNameArray) {
+        DB::transaction(function () use ($kargo, $imageNameArray) {
             //delete the kargo's image file from directory
             $this->deleteOne('public', $imageNameArray);
             //delete the kargo image records
@@ -205,7 +314,7 @@ class AdminController extends Controller
     public function addToKargo(User $user, Kargo $kargo, Product $product)
     {
         $this->authorize('updateKargo', Admin::class);
-        if($product->user()->value('id') != $user->id ) {
+        if ($product->user()->value('id') != $user->id) {
             return Redirect::back()->withErrors('msg', trans('translate.wrong_kargo_add'));
         } else {
             $kargo->products()->save($product);
@@ -213,7 +322,8 @@ class AdminController extends Controller
         }
     }
 
-    public function removeFromKargo(Kargo $kargo, Product $product) {
+    public function removeFromKargo(Kargo $kargo, Product $product)
+    {
         $this->authorize('updateKargo', Admin::class);
         $kargo->products()->delete($product);
         $kargo->refresh();

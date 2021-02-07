@@ -3,7 +3,9 @@
 namespace App\Policies;
 
 use App\Admin;
+use App\Cost;
 use App\User;
+use http\Env\Request;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AdminPolicy
@@ -34,12 +36,49 @@ class AdminPolicy
         }
     }
 
+
     /**
      * Determine whether admin can view a single cost for the given user
      * @param User $user
      * @return bool
      */
     public function indexSingleCost(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether admin can create a cost for the given user
+     * @param User $user
+     * @return bool
+     */
+    public function createCost(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether admin can update a cost for the given user
+     * @param User $user
+     * @return bool
+     */
+    public function updateCost(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether admin can delete a cost for the given user
+     * @param User $user
+     * @return bool
+     */
+    public function deleteCost(User $user)
     {
         if($user->checkPrivilegeRole()) {
             return true;

@@ -16,7 +16,7 @@ class CostController extends Controller
 
     /**
      * index costs created for retailers
-     * to index, retailers must have see-costs permission
+     * users should have see-costs permission to be allowed
      * retailers can only see costs created for them
      * @throws AuthorizationException
      */
@@ -62,45 +62,6 @@ class CostController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Cost::class);
-        // first cost record must be created and get cost_id to be used in image creation model
-        // cost will be created for this user
-        $user = $request->input('user');
-        // prepare cost's data to create record in db
-        $request->validate([
-            'user' => 'required',
-            'amount' => 'required',
-            'description' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'costable_type' => 'required',
-            'costable_id' => 'required'
-        ]);
-        $costData = [
-            'amount' => $request->input('amount'),
-            'description' => $request->input('description'),
-            'costable_type' => $request->input('costable_type'),
-            'costable_id' => $request->input('costable_id')
-        ];
-        // create a cost record for the given user
-        $cost = $user->costs()->create($costData);
-        // if image is included, then image should be uploaded and associated record will be created in db
-        if ($request->has('image')) {
-            // first upload image
-            $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
-            $image = $request->file('image');
-            $imageNewName = date('mdYHis') . uniqid();
-            $folder = '/images/';
-            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', [$oldImageName]);
-            // create record for the uploaded image
-            $imageData = [
-                // imagable_type always remains App\Cost
-                'imagable_type' => 'App\Cost',
-                'imagable_id' => $cost->id,
-                'image_name' => $filePath
-            ];
-            $user->images()->create($imageData);
-        }
     }
 
     /**
@@ -138,38 +99,6 @@ class CostController extends Controller
     public function update(Request $request, Cost $cost)
     {
         $this->authorize('update', $cost);
-        $request->validate([
-            'user' => 'required',
-            'amount' => 'required',
-            'description' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-        $user = $request->input('user');
-        $costData = [
-            'amount' => $request->input('amount'),
-            'description' => $request->input('description'),
-        ];
-        //update the cost record
-        $cost->update($costData);
-        // if request has image for update then new image name will be generated and old image will be deleted
-        // if request does not have image, then image will not change
-        if ($request->has('image')) {
-            $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
-            $image = $request->file('image');
-            $imageNewName = date('mdYHis') . uniqid();
-            $folder = '/images/';
-            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', [$oldImageName]);
-            $imageData = [
-                // imagable_type always remains App\\Cost
-                'imagable_type' => 'App\Cost',
-                'imagable_id' => $cost->id,
-                'image_name' => $filePath
-            ];
-            // update image record for the given user
-            $user->images()->update($imageData);
-        }
     }
 
     /**
@@ -183,14 +112,5 @@ class CostController extends Controller
     public function destroy(Cost $cost)
     {
         $this->authorize('delete', $cost);
-        $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
-        DB::transaction(function () use ($cost, $imageNameArray){
-            //delete the cost's image file from directory
-            $this->deleteOne('public', $imageNameArray);
-            //delete the cost image records
-            $cost->images()->delete();
-            //delete the given cost records
-            $cost->delete();
-        }, 1);
     }
 }

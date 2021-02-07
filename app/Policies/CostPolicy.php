@@ -57,9 +57,7 @@ class CostPolicy
      */
     public function create(User $user)
     {
-        if($user->checkPermission('create-costs')) {
-            return true;
-        }
+      return false;
     }
 
     /**
@@ -71,10 +69,7 @@ class CostPolicy
      */
     public function update(User $user, Cost $cost)
     {
-        if($user->checkPermission('create-costs'))
-        {
-            return true;
-        }
+        return false;
     }
 
     /**
@@ -86,9 +81,7 @@ class CostPolicy
      */
     public function delete(User $user, Cost $cost)
     {
-        if($user->checkPermission('delete-costs')) {
-            return true;
-        }
+       return false;
     }
 
     /**

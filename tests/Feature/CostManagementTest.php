@@ -33,9 +33,9 @@ class CostManagementTest extends TestCase
         //create a retailer with just see-costs permission
         $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
         $retailer1 = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
-        //acting as the BuyerAdmin to create a cost for retailer.
+        //acting as the BuyerAdmin to create a cost for the retailer.
         $this->actingAs($BuyerAdmin);
         $cost = factory('App\Cost')->create([
             'user_id' => $retailer1->id,
@@ -53,7 +53,7 @@ class CostManagementTest extends TestCase
     }
 
     /** @test
-     * retailer can see all costs related to a specific record
+     * retailer can see all costs related to a specific model
      * first BuyerAdmin should create a cost for a specific user and model
      * then that user will be able to see created cost for him related to that record
      * here we use product model for testing, using any other model is also possible
@@ -67,7 +67,7 @@ class CostManagementTest extends TestCase
         //create retailer with permission only to see costs
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         $retailer1 = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         // acting as BuyerAdmin to create a costs for retailer.
         $this->actingAs($BuyerAdmin);
@@ -77,18 +77,18 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id,
             'description' => 'cost1'
         ]);
-        $cost2 = $cost1 = factory('App\Cost')->create([
+        $cost2 = factory('App\Cost')->create([
             'user_id' => $retailer1->id,
             'costable_type' => 'App\Product',
             'costable_id' => $product->id,
             'description' => 'cost2'
         ]);
-        // acting as a retailer to check created cost existence for the product record
+        // acting as a retailer to check created cost existence for the product
         $this->actingAs($retailer1);
         $model = 'App\Product';
         $id = $product->id;
         $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
-        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
+        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost2->description);
         // all retailers are only able to see their own records
         $this->prepNormalEnv('retailer2', ['see-costs'], 0 , 1);
         $retailer2 = Auth::user();
@@ -108,7 +108,7 @@ class CostManagementTest extends TestCase
         //create a retailer with just see-costs permission
         $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         //acting as the BuyerAdmin to create a cost for retailer.
         $this->actingAs($BuyerAdmin);
@@ -133,17 +133,17 @@ class CostManagementTest extends TestCase
     }
 
     /** @test
-     * BuyerAdmin can create cost for a specific user
-     * BuyerAdmin must have create-costs permission to be allowed
+     * SuperPrivilege can create cost for a specific user
+     * SuperPrivilege must have create-costs permission to be allowed
      */
-    public function BuyerAdmins_can_create_costs()
+    public function SuperPrivilege_users_can_create_costs()
     {
         $this->prepNormalEnv('BuyerAdmin', ['create-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1, 0 );
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -154,7 +154,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes);
+        $this->post('/admin-create-cost', $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         // other users are not allowed to create costs
         $this->actingAs($retailer);
@@ -170,7 +170,7 @@ class CostManagementTest extends TestCase
         // cost will be created for this user
         $retailer = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => '',
@@ -181,7 +181,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes)->assertSessionHasErrors('user');
+        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('user');
     }
 
     /** @test */
@@ -193,7 +193,7 @@ class CostManagementTest extends TestCase
         // cost will be created for this user
         $retailer = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -204,7 +204,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes)->assertSessionHasErrors('amount');
+        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('amount');
     }
 
     /** @test */
@@ -216,7 +216,7 @@ class CostManagementTest extends TestCase
         // cost will be created for this user
         $retailer = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -227,7 +227,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes)->assertSessionHasErrors('description');
+        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('description');
     }
 
     /** @test */
@@ -239,7 +239,7 @@ class CostManagementTest extends TestCase
         // cost will be created for this user
         $retailer = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -250,7 +250,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes)->assertSessionHasErrors('costable_type');
+        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('costable_type');
     }
 
     /** @test */
@@ -262,7 +262,7 @@ class CostManagementTest extends TestCase
         // cost will be created for this user
         $retailer = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -273,7 +273,7 @@ class CostManagementTest extends TestCase
         ];
         // acting as a BuyerAdmin to create cost for the retailer
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes)->assertSessionHasErrors('costable_id');
+        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('costable_id');
     }
 
     /** @test
@@ -287,7 +287,7 @@ class CostManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer,
@@ -299,14 +299,14 @@ class CostManagementTest extends TestCase
         ];
         // acting as BuyerAdmin to create a cost record
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes);
+        $this->post('/admin-create-cost', $attributes);
         $cost = Cost::find(1);
         $image = $cost->images()->find($cost->id);
         $image_name = $image->image_name;
         // Assert file existence on the server
         $this->assertFileExists(public_path('storage' . $image_name));
         // Assert database has image record for the created cost
-        $this->assertDatabaseHas('images', ['imagable_id' => $cost->id]);
+        $this->assertDatabaseHas('images', ['user_id' => $retailer->id,'imagable_type' => 'App\Cost','imagable_id' => $cost->id]);
     }
 
     /** @test
@@ -319,8 +319,7 @@ class CostManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         $retailer1 = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
             'user' => $retailer1,
@@ -331,7 +330,7 @@ class CostManagementTest extends TestCase
         ];
         //first assert to see that cost created successfully by BuyerAdmin
         $this->actingAs($BuyerAdmin);
-        $this->post('/costs', $attributes);
+        $this->post('/admin-create-cost', $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         // acting as a retailer to check single record for the created cost
         $this->actingAs($retailer1);
@@ -355,7 +354,7 @@ class CostManagementTest extends TestCase
         //create a retailer with just see-costs permission
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         //acting as the BuyerAdmin to create a cost for retailer.
         $this->actingAs($BuyerAdmin);
@@ -390,7 +389,7 @@ class CostManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         // create a cost record for the product
         factory('App\Cost')->create([
@@ -430,7 +429,7 @@ class CostManagementTest extends TestCase
         // acting as BuyerAdmin to have permission for update costs records
         $this->actingAs($BuyerAdmin);
         // update the cost record without new image
-        $this->patch('/costs/' . $cost->id, $newAttributesWithoutImage);
+        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithoutImage);
         $this->assertDatabaseHas('costs', [
             'amount' => 2000,
             'description' => 'new cost for product',
@@ -440,7 +439,7 @@ class CostManagementTest extends TestCase
         // old image should remain intact
         $this->assertFileExists(public_path('storage' . $oldImageName));
         // update cost record with new image
-        $this->patch('/costs/' . $cost->id, $newAttributesWithImage);
+        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithImage);
         $this->assertDatabaseHas('costs', [
             'amount' => 2000,
             'description' => 'new cost for product',
@@ -453,7 +452,7 @@ class CostManagementTest extends TestCase
         $this->assertFileExists(public_path('storage' . $newImageName));
         // only BuyerAdmin is allowed to update cost records
         $this->actingAs($retailer);
-        $this->patch('/costs/' . $cost->id, $newAttributesWithImage)->assertForbidden();
+        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithImage)->assertForbidden();
     }
 
     /** @test
@@ -462,13 +461,12 @@ class CostManagementTest extends TestCase
      */
     public function only_BuyerAdmin_can_delete_costs()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['delete-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         // create a cost record for the product
         factory('App\Cost')->create([
@@ -496,9 +494,12 @@ class CostManagementTest extends TestCase
         Storage::disk('public')->put('/images/cost1.jpg', 'Contents');
         Storage::disk('public')->put('/images/cost2.jpg', 'Contents');
         $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
+        //other users are not allowed to delete costs
+        $this->actingAs($retailer);
+        $this->delete('/admin-delete-cost/' . $cost->id)->assertForbidden();
         //acting as BuyerAdmin to delete cost
         $this->actingAs($BuyerAdmin);
-        $this->delete($cost->path());
+        $this->delete('/admin-delete-cost/' . $cost->id);
         //cost record must be deleted
         $this->assertDatabaseMissing('costs', ['id' => $cost->id]);
         //cost's image records also must be deleted
@@ -507,6 +508,7 @@ class CostManagementTest extends TestCase
         //cost's images also must be deleted
         $this->assertFileNotExists(public_path('storage' . $imageNameArray[0]));
         $this->assertFileNotExists(public_path('storage' . $imageNameArray[1]));
+
     }
 
 
@@ -519,8 +521,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Order', 'costable_id' => $order->id]);
         $this->assertInstanceOf(Cost::class, $user->costs->find(1));
@@ -535,8 +536,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $cost = factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Order', 'costable_id' => $order->id]);
         $this->assertInstanceOf(User::class, $cost->user);
@@ -551,8 +551,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Order', 'costable_id' => $order->id]);
         $this->assertInstanceOf(Cost::class, $order->costs->find(1));
@@ -567,8 +566,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $cost = factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Order', 'costable_id' => $order->id]);
         $this->assertInstanceOf(Order::class, $cost->costable);
@@ -583,8 +581,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $this->assertInstanceOf(Cost::class, $product->costs->find(1));
@@ -599,8 +596,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $cost = factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         $this->assertInstanceOf(Product::class, $cost->costable);
@@ -615,8 +611,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
         factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Transaction', 'costable_id' => $transaction->id]);
         $this->assertInstanceOf(Cost::class, $transaction->costs->find(1));
@@ -631,8 +626,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $transaction = factory('App\Transaction')->create(['user_id' => $user->id]);
         $cost = factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Transaction', 'costable_id' => $transaction->id]);
         $this->assertInstanceOf(Transaction::class, $cost->costable);
@@ -647,8 +641,7 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = factory('App\Kargo')->create(['user_id' => $user->id]);
         factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Kargo', 'costable_id' => $kargo->id]);
         $this->assertInstanceOf(Cost::class, $kargo->costs->find(1));
@@ -663,15 +656,14 @@ class CostManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-cost'], 0, 1);
         $user = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $kargo = factory('App\Kargo')->create(['user_id' => $user->id]);
         $cost = factory('App\Cost')->create(['user_id' => $user->id, 'costable_type' => 'App\Kargo', 'costable_id' => $kargo->id]);
         $this->assertInstanceOf(Kargo::class, $cost->costable);
     }
 
     /** @test */
-    public function guests_can_not_access_زخسف_management()
+    public function guests_can_not_access_cost_management()
     {
         $this->get('/costs')->assertRedirect('login');
         $this->get('/costs/create')->assertRedirect('login');
