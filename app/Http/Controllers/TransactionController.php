@@ -151,7 +151,8 @@ class TransactionController extends Controller
                 'image_name' => $filePath
             ];
             // update image record for the given user
-            $user->images()->update($imageData);
+            $oldImage->update($imageData);
+            $user->refresh();
         }
     }
 

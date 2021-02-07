@@ -176,8 +176,7 @@ class TransactionManagementTest extends TestCase
                 'comment' => $newAttributesWithImage['comment']]
         );
         // new image file should be uploaded on the server and respective record created in the images table
-        $image = $transaction->images()->find(1);
-        $image_name = $image->image_name;
+        $image_name = $transaction->images()->where(['imagable_id' => $transaction->id, 'imagable_type' => 'App\Transaction'])->value('image_name');
         $this->assertFileExists(public_path('storage' . $image_name));
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
         // old image file should be deleted from the server, also respective image record must be updated
