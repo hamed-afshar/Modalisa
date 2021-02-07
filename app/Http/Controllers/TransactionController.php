@@ -152,7 +152,6 @@ class TransactionController extends Controller
             ];
             // update image record for the given user
             $oldImage->update($imageData);
-            $user->refresh();
         }
     }
 
