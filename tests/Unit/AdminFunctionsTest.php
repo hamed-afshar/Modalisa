@@ -86,15 +86,5 @@ class AdminFunctionsTest extends TestCase
 
     }
 
-    /** @test */
-    public function only_SystemAdmin_can_confirm_transactions()
-    {
-        $this->withoutExceptionHandling();
-        $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $newUser = factory('App\User')->create();
-        $transaction = factory('App\Transaction')->create(['user_id' => $newUser->id]);
-        $this->get('/transactions/confirm/' . $transaction->id);
-        $this->assertEquals(1, Transaction::where('id', $transaction->id)->value('confirmed'));
-    }
 
 }

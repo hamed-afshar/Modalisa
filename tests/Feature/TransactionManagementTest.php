@@ -95,7 +95,7 @@ class TransactionManagementTest extends TestCase
         // Assert file exist on server
         $this->assertFileExists(public_path('storage' . $image_name));
         // Assert database has image which has a imagable_id for created transaction
-        $this->assertDatabaseHas('images', ['user_id' =>Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
+        $this->assertDatabaseHas('images', ['user_id' =>Auth::user()->id, 'image_name' => $image_name,'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
     }
 
 
@@ -178,20 +178,18 @@ class TransactionManagementTest extends TestCase
         // new image file should be uploaded on the server and respective record created in the images table
         $image = $transaction->images()->find(1);
         $image_name = $image->image_name;
-        dd('here');
         $this->assertFileExists(public_path('storage' . $image_name));
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
-        // old image file should be deleted from the server, also respective image record must be deleted
+        // old image file should be deleted from the server, also respective image record must be updated
         $this->assertFileNotExists(public_path('storage' . $oldImageName));
-        $this->assertDatabaseMissing('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction' , 'imagable_id' => $transaction->id]);
+        $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'image_name' => $image_name, 'imagable_type' => 'App\Transaction' , 'imagable_id' => $transaction->id]);
         //users can only update their own transactions
         $this->prepNormalEnv('retailer2', ['create-transactions'], 0, 1);
         $this->patch($transaction->path(), $newAttributesWithImage)->assertForbidden();
     }
 
     /** @test
-     * retailers can not make any changes to confirmed transactions
-     * including edit and delete
+     * retailers can not make any changes to confirmed transactions,so update and delete records are not allowed
      */
     public function retailer_can_not_delete_or_update_confirmed_transactions()
     {
@@ -228,9 +226,9 @@ class TransactionManagementTest extends TestCase
         $this->actingAs($retailer1);
         $this->delete($transaction->path());
         // transaction record must be deleted
-        $this->assertDatabaseMissing('transactions', ['id' => $transaction->id]);
+        $this->assertDatabaseMissing('transactions', ['id' => $transaction->id, 'user_id' => $retailer1->id]);
         // transaction's image record must be deleted
-        $this->assertDatabaseMissing('images', ['id' => $image->id]);
+        $this->assertDatabaseMissing('images', ['imagable_id' => $image->id, 'imagable_type' => 'App\Transaction', 'user_id' => $retailer1->id]);
         // transaction's image file must be deleted
         $this->assertFileNotExists(public_path('storage' . $imageName));
     }
@@ -243,7 +241,18 @@ class TransactionManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
-        $this->get('/transactions/confirm/' . $transaction->id)->assertForbidden();
+        $this->patch('/confirm-transaction/' . $transaction->id)->assertForbidden();
+    }
+
+    /** @test */
+    public function only_SystemAdmin_can_confirm_transactions()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $newUser = factory('App\User')->create();
+        $transaction = factory('App\Transaction')->create(['user_id' => $newUser->id]);
+        $this->patch('/confirm-transaction/' . $transaction->id);
+        $this->assertEquals(1, Transaction::where('id', $transaction->id)->value('confirmed'));
     }
 
     /** @test */

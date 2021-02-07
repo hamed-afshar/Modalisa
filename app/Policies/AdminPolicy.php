@@ -116,4 +116,16 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can confirm Transaction
+     * @param User $user
+     * @return bool
+     */
+    public function confirmTransaction(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
 }

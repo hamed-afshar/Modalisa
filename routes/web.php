@@ -70,7 +70,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
     Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
     Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
-    Route::get('/transactions/confirm/{transaction}', 'TransactionController@confirm')->name('transaction.confirm');
 
     Route::get('/statuses', 'StatusController@index')->name('status.index');
     Route::get('/statuses/create', 'StatusController@create')->name('status.create');
@@ -142,11 +141,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo', 'AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
-    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirm')->name('admin.confirm-kargo');
+    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirmKargo')->name('admin.confirm-kargo');
     Route::patch('/update-kargo/{user}/{kargo}', 'AdminController@updateKargo')->name('admin.update-kargo');
     Route::delete('/delete-kargo/{user}/{kargo}', 'AdminController@deleteKargo')->name('admin.delete-kargo');
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'AdminController@removeFromKargo')->name('admin.remove-from-kargo');
+    Route::patch('/confirm-transaction/{transaction}', 'AdminController@confirmTransaction')->name('admin.confirm-transaction');
+
 });
 
 

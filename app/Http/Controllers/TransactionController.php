@@ -142,9 +142,8 @@ class TransactionController extends Controller
             $folder = '/images/';
             $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
             $this->uploadOne($image, $folder, 'public', $imageNewName);
-            //delete the old image file and respective record in the db
+            //delete the old image file and update respective record in the db
             $this->deleteOne('public', [$oldImageName]);
-            $user->images()->delete($oldImage);
             $imageData = [
                 // imagable_type always remains App\Transaction
                 'imagable_type' => 'App\Transaction',
@@ -175,15 +174,4 @@ class TransactionController extends Controller
         }, 1);
     }
 
-    /**
-     * confirm transactions
-     * only Systemadmin can confirm transactions
-     * @param Transaction $transaction
-     * @throws AuthorizationException
-     */
-    public function confirm(Transaction $transaction)
-    {
-        $this->authorize('confirm', Transaction::class);
-        $transaction->update(['confirmed' => 1]);
-    }
 }

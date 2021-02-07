@@ -8,6 +8,7 @@ use App\Kargo;
 use App\Product;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
+use App\Transaction;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Container\RewindableGenerator;
@@ -108,7 +109,7 @@ class AdminController extends Controller
      * @return string
      * @throws AuthorizationException
      */
-    public function confirm(Request $request, Kargo $kargo)
+    public function confirmKargo(Request $request, Kargo $kargo)
     {
         $this->authorize('confirm', Admin::class);
         // kargo will be confirmed for this user
@@ -216,5 +217,17 @@ class AdminController extends Controller
         $this->authorize('updateKargo', Admin::class);
         $kargo->products()->delete($product);
         $kargo->refresh();
+    }
+
+    /**
+     * confirm transactions
+     * only SystemAdmin can confirm transactions
+     * @param Transaction $transaction
+     * @throws AuthorizationException
+     */
+    public function confirmTransaction(Transaction $transaction)
+    {
+        $this->authorize('confirm', Admin::class);
+        $transaction->update(['confirmed' => 1]);
     }
 }
