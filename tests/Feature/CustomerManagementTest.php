@@ -168,8 +168,7 @@ class CustomerManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $customer = Customer::find(1);
         $this->assertInstanceOf(Order::class, $customer->orders->find(1));
     }
@@ -181,8 +180,7 @@ class CustomerManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
-        factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $this->assertInstanceOf(Customer::class, $order->customer);
     }
