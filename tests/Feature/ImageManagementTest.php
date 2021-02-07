@@ -38,13 +38,13 @@ class ImageManagementTest extends TestCase
     }
 
     /** @test
-     * users should have see-images permission to be allowed
+     * users should have create-images permission to be allowed
      */
     public function user_can_upload_and_store_images()
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $attributes = [
             'imagable_type' => 'App\Order',
@@ -61,7 +61,7 @@ class ImageManagementTest extends TestCase
     public function image_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
             'imagable_type' => 'App\Order',
@@ -76,7 +76,7 @@ class ImageManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
             'imagable_type' => 'App\Order',
@@ -90,7 +90,7 @@ class ImageManagementTest extends TestCase
     public function imagable_type_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
             'user_id' => Auth::user()->id,
@@ -105,7 +105,7 @@ class ImageManagementTest extends TestCase
     public function imagable_id_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $attributes = [
             'user_id' => Auth::user()->id,
             'imagable_type' => 'App\Order',
@@ -123,7 +123,7 @@ class ImageManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
         $retailer1 = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $image = factory('App\Image')->create([
             'user_id' => $retailer1->id,
@@ -153,7 +153,7 @@ class ImageManagementTest extends TestCase
     public function user_can_update_a_photo()
     {
         $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
             'user_id' => Auth::user()->id,
@@ -172,9 +172,9 @@ class ImageManagementTest extends TestCase
             'image' => $newImage
         ];
         $this->patch($oldImage->path(), $newAttributes);
-        $newImageName = Image::find(1)->image_name;
+        $newImageName = $order->images()->where(['imagable_id' => $order->id, 'imagable_type' => 'App\Order'])->value('image_name');
         //assert image updated in db
-        $this->assertDatabaseHas('images', ['image_name' => $newImageName]);
+        $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Order' ,'image_name' => $newImageName]);
         //assert new image exist on server
         $this->assertFileExists(public_path('storage') . $newImageName);
         //assert old image deletes from server
@@ -191,9 +191,9 @@ class ImageManagementTest extends TestCase
      */
     public function user_can_delete_a_photo()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
-        $this->prepOrder();
+        $this->prepNormalEnv('retailer1', ['create-images', 'delete-images'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         factory('App\Image')->create([
             'user_id' => Auth::user()->id,
@@ -202,11 +202,16 @@ class ImageManagementTest extends TestCase
             'image_name' => 'images/image1.jpg',
         ]);
         Storage::disk('public')->put('/images/image1.jpg', 'contents');
-        // first create image then try to delete it
+        // first create an image
         $image = Image::find(1);
         $imageName = $image->image_name;
+        //users can only delete their own records
+        $this->prepNormalEnv('retailer2', ['create-images', 'delete-images'], 0, 1);
+        $this->delete($image->path())->assertForbidden();
+        //delete the image and respective record
+        $this->actingAs($retailer1);
         $this->delete($image->path());
-        $this->assertDatabaseMissing('images', ['id', $image->id]);
+        $this->assertDatabaseMissing('images', ['id' => $image->id, 'imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
         $this->assertFileNotExists(public_path('storage' . $imageName));
     }
 
@@ -311,7 +316,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $order = Order::find(1);
         $cost = factory('App\Cost')->create([
             'user_id' => $user->id,
@@ -337,7 +342,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $cost = factory('App\Cost')->create([
             'user_id' => $user->id,
@@ -363,7 +368,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         factory('App\Image')->create([
             'user_id' => $user->id,
@@ -384,7 +389,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $image = factory('App\Image')->create([
             'user_id' => $user->id,
@@ -405,7 +410,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $product = factory('App\Product')->create([
             'order_id' => $order->id,
@@ -429,7 +434,7 @@ class ImageManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-images', 'delete-images'], 0, 1);
         $user = Auth::user();
         factory('App\Status')->create();
-        $this->prepOrder();
+        $this->prepOrder(1, 0);
         $order = Order::find(1);
         $product = factory('App\Product')->create([
             'order_id' => $order->id,

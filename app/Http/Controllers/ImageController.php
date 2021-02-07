@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use function Couchbase\basicEncoderV1;
 
 class ImageController extends Controller
 {
@@ -34,6 +35,7 @@ class ImageController extends Controller
      * store image
      * any user with create-images permission is allowed to upload images
      * @param Request $request
+     * @return string
      * @throws AuthorizationException
      */
     public function store(Request $request)
@@ -45,21 +47,17 @@ class ImageController extends Controller
             'imagable_id' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-        if ($request->has('image')) {
-            $image = $request->file('image');
-            $imageName = date('mdYHis') . uniqid();
-            $folder = '/images/';
-            $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $imageName);
-            $data = [
-                'image_name' => $filePath,
-                'imagable_type' => $request->input('imagable_type'),
-                'imagable_id' => $request->input('imagable_id')
-            ];
-            $user->images()->create($data);
-        } else {
-            return 'please add an image to your request';
-        }
+        $image = $request->file('image');
+        $imageName = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $imageName);
+        $data = [
+            'image_name' => $filePath,
+            'imagable_type' => $request->input('imagable_type'),
+            'imagable_id' => $request->input('imagable_id')
+        ];
+        $user->images()->create($data);
     }
 
     /**
@@ -77,6 +75,8 @@ class ImageController extends Controller
 
     /**
      * update photos
+     * users should have create-images permission to be allowed
+     * users can only update their own records
      * @param Request $request
      * @param Image $image
      * @return string
@@ -90,24 +90,21 @@ class ImageController extends Controller
             'imagable_id' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-        if ($request->has('image')) {
-            // get current image name from db and change it with new name
-            $oldImageName = $image->image_name;
-            $image = $request->file('image');
-            $imageNewName = date('mdYHis') . uniqid();
-            $folder = '/images/';
-            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $imageNewName);
-            $this->deleteOne('public', [$oldImageName]);
-            $data = [
-                'imagable_type' => $request->input('imagable_type'),
-                'imagable_id' => $request->input('imagable_id'),
-                'image_name' => $filePath
-            ];
-            Auth::user()->images()->update($data);
-        } else {
-            return 'please add an image to your request';
-        }
+        // get current image name from db and change it with new name
+        $oldImage = $image;
+        $oldImageName = $oldImage->image_name;
+        $image = $request->file('image');
+        $newImageName = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $filePath = $folder . $newImageName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $newImageName);
+        $this->deleteOne('public', [$oldImageName]);
+        $data = [
+            'imagable_type' => $request->input('imagable_type'),
+            'imagable_id' => $request->input('imagable_id'),
+            'image_name' => $filePath
+        ];
+        $oldImage->update($data);
     }
 
     /**
@@ -123,7 +120,7 @@ class ImageController extends Controller
         $imageNameArray = [$image];
         DB::transaction(function () use ($image, $imageNameArray) {
             $this->deleteOne('public', $imageNameArray);
-            Auth::user()->images()->delete($image);
+            $image->delete();
         }, 1);
     }
 }
