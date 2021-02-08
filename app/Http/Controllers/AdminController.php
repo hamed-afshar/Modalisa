@@ -149,7 +149,7 @@ class AdminController extends Controller
     {
         $this->authorize('deleteCost', Admin::class);
         $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
-        DB::transaction(function () use ($cost, $imageNameArray){
+        DB::transaction(function () use ($cost, $imageNameArray) {
             //delete the cost's image file from directory
             $this->deleteOne('public', $imageNameArray);
             //delete the cost image records
@@ -227,7 +227,7 @@ class AdminController extends Controller
         $request->validate([
             'weight' => 'required',
             'confirmed' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
         $data = [
             'weight' => $request->input('weight'),
@@ -235,23 +235,19 @@ class AdminController extends Controller
         ];
         $kargo->update($data);
         // upload image for the kargo
-        if ($request->has('image')) {
-            $image = $request->file('image');
-            $imageNewName = date('mdYHis') . uniqid();
-            $folder = '/images/';
-            $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-            $this->uploadOne($image, $folder, 'public', $imageNewName);
-            // create record for the uploaded image
-            $imageData = [
-                // imagable_type always remains App\Kargo
-                'imagable_type' => 'App\Kargo',
-                'imagable_id' => $kargo->id,
-                'image_name' => $filePath
-            ];
-            $user->images()->create($imageData);
-        } else {
-            return 'it should have image';
-        }
+        $image = $request->file('image');
+        $imageNewName = date('mdYHis') . uniqid();
+        $folder = '/images/';
+        $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $imageNewName);
+        // create record for the uploaded image
+        $imageData = [
+            // imagable_type always remains App\Kargo
+            'imagable_type' => 'App\Kargo',
+            'imagable_id' => $kargo->id,
+            'image_name' => $filePath
+        ];
+        $user->images()->create($imageData);
     }
 
     /**

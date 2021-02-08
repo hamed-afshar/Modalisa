@@ -193,6 +193,7 @@ class KargoManagementTest extends TestCase
      */
     public function image_can_be_uploaded_on_confirmation()
     {
+        dd('ends here');
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
