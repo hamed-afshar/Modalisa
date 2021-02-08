@@ -55,7 +55,7 @@ class HistoryPolicy
      */
     public function create(User $user)
     {
-        if($user->checkPermission('create-histories') && $user->checkPrivilegeRole())
+        if($user->checkPrivilegeRole())
         {
             return true;
         }
@@ -82,7 +82,7 @@ class HistoryPolicy
      */
     public function delete(User $user, History $history)
     {
-        if($user->checkPermission('delete-histories') && $user->checkPrivilegeRole())
+        if($user->checkPrivilegeRole())
         {
             return true;
         }

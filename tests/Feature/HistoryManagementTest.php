@@ -22,7 +22,7 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-histories','create-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $status1 = Status::find(1);
         $product = Product::find(1);
         $status2 = factory('App\Status')->create([
@@ -52,19 +52,19 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
-        $status = Status::find(1);
+        $status = Status::find(2);
         $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => $status->id]);
     }
 
     /** @test
-     * only BuyerAdmins and users with privilege permissions are allowed to create histories
+     * only users with privilege permissions are allowed to create histories
      */
-    public function only_BuyerAdmin_can_create_history()
+    public function only_privilege_users_can_create_history()
     {
         $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $status = factory('App\Status')->create([
                 'description' => 'in-office'
         ]);
@@ -82,13 +82,13 @@ class HistoryManagementTest extends TestCase
     }
 
     /** @test
-     * only BuyerAdmins and users with privilege permissions are allowed to delete histories
+     * only users with privilege permissions are allowed to delete histories
      */
-    public function only_BuyerAdmin_can_delete_histories()
+    public function only_super_privilege_users_can_delete_histories()
     {
         $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories', 'delete-histories'], 0, 1);
         $BuyerAdmin = Auth::user();
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $history = History::find(1);
         //other users are not allowed to delete records
         $this->prepNormalEnv('retailer', ['create-histories', 'see-histories', 'delete-histories'], 0, 1);
@@ -107,8 +107,8 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
-        $this->prepOrder();
-        $status = Status::find(1);
+        $this->prepOrder(1,0);
+        $status = Status::find(2);
         // History automatically is always created on order creation
         $this->assertInstanceOf(History::class, $status->histories->find(1));
     }
@@ -120,8 +120,7 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
-        $this->prepOrder();
-        $status = Status::find(1);
+        $this->prepOrder(1,0);
         // History automatically is always created on order creation
         $history = History::find(1);
         $this->assertInstanceOf(Status::class, $history->status);
@@ -134,7 +133,7 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $product = Product::find(1);
         $this->assertInstanceOf(History::class, $product->histories->find(1));
     }
@@ -146,7 +145,7 @@ class HistoryManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
-        $this->prepOrder();
+        $this->prepOrder(1,0);
         $history = History::find(1);
         $this->assertInstanceOf(Product::class, $history->product);
     }

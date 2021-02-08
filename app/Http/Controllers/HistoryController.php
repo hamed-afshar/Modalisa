@@ -31,7 +31,6 @@ class HistoryController extends Controller
         } else {
             return null;
         }
-
     }
 
     /**
