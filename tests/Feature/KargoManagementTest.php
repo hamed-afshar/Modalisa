@@ -175,7 +175,8 @@ class KargoManagementTest extends TestCase
         $kargo = Kargo::find($lastKargoId);
         $confirmAttributes = [
             'confirmed' => 1,
-            'weight' => 100
+            'weight' => 100,
+            'image' => UploadedFile::fake()->create('kargo-pic.jpg')
         ];
         $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
         $this->assertDatabaseHas('kargos', [
@@ -193,7 +194,6 @@ class KargoManagementTest extends TestCase
      */
     public function image_can_be_uploaded_on_confirmation()
     {
-        dd('ends here');
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
@@ -229,13 +229,16 @@ class KargoManagementTest extends TestCase
      */
     public function users_can_see_a_single_kargo()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $kargo = Kargo::find($lastKargoId);
         $product = Product::find(5);
         $this->get($kargo->path())->assertSeeText($kargo->receiver_name)->assertSeeText($product->link);
+        //users can only access to their own records
+        $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $this->get($kargo->path())->assertForbidden();
+
     }
 
     /** @test
@@ -249,11 +252,11 @@ class KargoManagementTest extends TestCase
         $this->prepOrder(10,0);
         $product = Product::find(1);
         $kargo = Kargo::find(1);
-        $this->get('/admin-index-single-kargo')->assertSeeText($kargo->reciver_name)
+        $this->get('/admin-index-single-kargo/' . $kargo->id )->assertSeeText($kargo->reciver_name)
             ->assertSeeText($user->name)->assertSeeText($product->link);
         // other users are not allowed to index a single kargo
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->get('/admin-index-single-kargo')->assertForbidden();
+        $this->get('/admin-index-single-kargo/' . $kargo->id)->assertForbidden();
     }
 
     /** @test
@@ -292,6 +295,7 @@ class KargoManagementTest extends TestCase
      */
     public function super_privilege_users_can_update_kargos()
     {
+
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos' , 'create-kargos', 'delete-kargos'], 0 , 1);
         $retailer = Auth::user();
@@ -327,8 +331,8 @@ class KargoManagementTest extends TestCase
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
-        //users can only delete their own records
         $kargo = Kargo::find($lastKargoId);
+        //users can only delete their own records
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer2 = Auth::user();
         $this->actingAs($retailer2);
@@ -369,14 +373,16 @@ class KargoManagementTest extends TestCase
             'weight' => $confirmAttributes['weight'],
             'confirmed' => $confirmAttributes['confirmed']
         ]);
-        //assert the existence of the image file
+        //assert the existence of the image file and respective image records
         $imageName = $kargo->images()->where('imagable_id', $kargo->id)->value('image_name');
         $this->assertFileExists(public_path('storage' . $imageName));
+        $this->assertDatabaseHas('images', ['imagable_id' => $kargo->id, 'imagable_type' => 'App\Kargo']);
         //assert missing of the deleted kargo records
         $this->delete('/delete-kargo/' . $retailer->id . '/' . $lastKargoId);
         $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId]);
-        //assert missing of deleted image file
+        //assert missing of deleted image files and respective record
         $this->assertFileNotExists(public_path('storage' . $imageName));
+        $this->assertDatabaseMissing('images',['imagable_id' => $kargo->id, 'imagable_type' =>'App\Kargo']);
     }
 
 
@@ -396,7 +402,8 @@ class KargoManagementTest extends TestCase
         $kargo = Kargo::find($lastKargoId);
         $confirmAttributes = [
             'confirmed' => 1,
-            'weight' => 100
+            'weight' => 100,
+            'image' => UploadedFile::fake()->create('kargo-pic.jpg')
         ];
         $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
         $this->assertDatabaseHas('kargos', [
@@ -424,6 +431,7 @@ class KargoManagementTest extends TestCase
      */
     public function users_can_add_or_delete_items_to_kargos()
     {
+        dd('here');
         //acting as a retailer to create a kargo
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer1 = Auth::user();

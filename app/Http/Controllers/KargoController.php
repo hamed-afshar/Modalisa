@@ -117,7 +117,7 @@ class KargoController extends Controller
             'receiver_address' => $request->input('receiver_address'),
             'sending_date' => $request->input('sending_date')
         ];
-        $user->kargos()->update($kargoData);
+        $kargo->update($kargoData);
     }
 
     /**

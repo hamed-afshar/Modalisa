@@ -12,6 +12,8 @@ use App\Transaction;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Container\RewindableGenerator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -202,12 +204,14 @@ class AdminController extends Controller
     /**
      * show a single kargo
      * super privilege users are able to see all kargos with all related user and products
+     * @param Kargo $kargo
+     * @return Builder[]|Collection
      * @throws AuthorizationException
      */
-    public function showKargo()
+    public function showKargo(Kargo $kargo)
     {
         $this->authorize('indexSingleKargo', Admin::class);
-        return Kargo::with(['user', 'products'])->get();
+        return $kargo->with(['user', 'products'])->get();
     }
 
     /**
@@ -220,7 +224,7 @@ class AdminController extends Controller
      */
     public function confirmKargo(Request $request, Kargo $kargo)
     {
-        $this->authorize('confirm', Admin::class);
+        $this->authorize('confirmKargo', Admin::class);
         // kargo will be confirmed for this user
         $user = $kargo->user;
         // first upload the kargo, then upload the image
@@ -236,10 +240,10 @@ class AdminController extends Controller
         $kargo->update($data);
         // upload image for the kargo
         $image = $request->file('image');
-        $imageNewName = date('mdYHis') . uniqid();
+        $imageName = date('mdYHis') . uniqid();
         $folder = '/images/';
-        $filePath = $folder . $imageNewName . '.' . $image->getClientOriginalExtension();
-        $this->uploadOne($image, $folder, 'public', $imageNewName);
+        $filePath = $folder . $imageName . '.' . $image->getClientOriginalExtension();
+        $this->uploadOne($image, $folder, 'public', $imageName);
         // create record for the uploaded image
         $imageData = [
             // imagable_type always remains App\Kargo
@@ -274,7 +278,7 @@ class AdminController extends Controller
             'receiver_address' => $request->input('receiver_address'),
             'sending_date' => $request->input('sending_date')
         ];
-        $user->kargos()->update($kargoData);
+        $kargo->update($kargoData);
     }
 
     /**

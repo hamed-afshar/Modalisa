@@ -124,7 +124,7 @@ class AdminPolicy
      * @param User $user
      * @return bool
      */
-    public function confirm(User $user)
+    public function confirmKargo(User $user)
     {
         if($user->checkPrivilegeRole()) {
             return true;
