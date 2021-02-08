@@ -37,7 +37,6 @@ class StatusPolicy
      * Determine whether the user can view the status.
      *
      * @param User $user
-     * @param Status $status
      * @return mixed
      */
     public function view(User $user)

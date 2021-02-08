@@ -104,7 +104,4 @@ class StatusController extends Controller
         $this->authorize('delete', $status);
         $status->delete();
     }
-
-
-
 }
