@@ -138,6 +138,7 @@ class KargoController extends Controller
      * add products to the given kargo
      * users should have create-kargos permission to be allowed
      * users can only add items to their own records
+     * users can not add items to confirmed kargos
      * @param Kargo $kargo
      * @param Product $product
      * @throws AuthorizationException
@@ -152,6 +153,7 @@ class KargoController extends Controller
      * remove products from the given kargo
      * users should have create-kargos permission to be allowed
      * users can only remove items from their own records
+     * users can not remove items from confirmed kargos
      * @param Kargo $kargo
      * @param Product $product
      * @throws AuthorizationException

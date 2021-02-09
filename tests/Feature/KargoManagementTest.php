@@ -431,7 +431,6 @@ class KargoManagementTest extends TestCase
      */
     public function users_can_add_or_delete_items_to_kargos()
     {
-        dd('here');
         //acting as a retailer to create a kargo
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer1 = Auth::user();
@@ -576,6 +575,7 @@ class KargoManagementTest extends TestCase
         $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         factory('App\Note')->create([
+            'user_id' => Auth::user()->id,
             'notable_type' => 'App\Kargo',
             'notable_id' => $kargo->id
         ]);
@@ -591,6 +591,7 @@ class KargoManagementTest extends TestCase
         $this->prepOrder(1,0);
         $kargo = Kargo::find(1);
         $note = factory('App\Note')->create([
+            'user_id' => Auth::user()->id,
             'notable_type' => 'App\Kargo',
             'notable_id' => $kargo->id
         ]);
