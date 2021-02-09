@@ -22,7 +22,6 @@ class OrderManagementTest extends TestCase
     use WithFaker,
         RefreshDatabase;
 
-
     /**
      * @test
      * users can see their orders with related products
@@ -270,11 +269,10 @@ class OrderManagementTest extends TestCase
         $retailer = Auth::user();
         //create an order then assign new customer
         $this->prepOrder(0, 1);
-        $order = Order::find(1);
         $newCustomer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         $order = Order::find(1);
         $this->post('/assign-customer/' . $newCustomer->id . '/' . $order->id);
-        $this->assertDatabaseHas('orders', ['customer_id' => $newCustomer->id]);
+        $this->assertDatabaseHas('orders', ['id' => $order->id, 'customer_id' => $newCustomer->id]);
     }
 
     /**
@@ -303,6 +301,7 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
         $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
         $this->assertFileExists(public_path('storage' . $image_name));
+        $this->assertDatabaseHas('images', ['imagable_id' => $product->id, 'imagable_type' => 'App\Product']);
     }
 
     /**
@@ -315,13 +314,40 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0, 3);
-        $order = Order::find(1);
-        $product = Product::find(2);
-        $this->delete('/delete-product/' . $product->id);
+        factory('App\Customer')->create(['user_id' => $retailer->id]);
+        factory('App\Status', 2)->create();
+        $attributesProduct1 = [
+            'size' => 'X-Large',
+            'color' => 'Black',
+            'link' => 'www.zara.com',
+            'price' => '250',
+            'quantity' => '1',
+            'country' => 'Turkey',
+            'currency' => 'TL',
+            'image' => UploadedFile::fake()->create('pic.jpg')
+        ];
+        $this->post('/orders', $attributesProduct1);
+        $order1 = Order::find(1);
+        $attributesProduct2 = [
+            'size' => 'Large',
+            'color' => 'White',
+            'link' => 'www.zara.com',
+            'price' => '250',
+            'quantity' => '1',
+            'country' => 'Turkey',
+            'currency' => 'TL',
+            'image' => UploadedFile::fake()->create('pic.jpg')
+        ];
+        $this->post('/add-to-order/' . $order1->id, $attributesProduct2);
+        $product2 = Product::find(2);
+        $image_name = $product2->images()->where('imagable_id', $product2->id)->value('image_name');
+        $this->delete('/delete-product/' . $product2->id);
         //keep the order and delete the product
-        $this->assertDatabaseMissing('products', ['id' => $product->id]);
-        $this->assertDatabaseHas('orders', ['id' => $order->id]);
+        $this->assertDatabaseMissing('products', ['id' => $product2->id]);
+        $this->assertDatabaseHas('orders', ['id' => $order1->id]);
+        //at the same time delete the respective image record and file for the deleted product.
+        $this->assertDatabaseMissing('images', ['imagable_id' => $product2->id, 'imagable_type' => 'App\Product']);
+        $this->assertFileNotExists(public_path('storage' . $image_name));
     }
 
     /**
@@ -334,13 +360,32 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        $this->prepOrder(0, 1);
+        factory('App\Customer')->create(['user_id' => $retailer->id]);
+        factory('App\Status', 2)->create();
+        $attributes = [
+            'size' => 'X-Large',
+            'color' => 'Black',
+            'link' => 'www.zara.com',
+            'price' => '250',
+            'quantity' => '1',
+            'country' => 'Turkey',
+            'currency' => 'TL',
+            'image' => UploadedFile::fake()->create('pic.jpg')
+        ];
+        $this->post('/orders', $attributes);
         $order = Order::find(1);
         $product = Product::find(1);
+        $image_name = $product->images()
+            ->where('imagable_id', $product->id)
+            ->where('imagable_type', 'App\Product')
+            ->value('image_name');
         $this->delete('/delete-product/' . $product->id);
         //Both order and product will be deleted
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+        //old respective image file and database record also must be deleted
+        $this->assertDatabaseMissing('images', ['imagable_id' => $product->id, 'imagable_type' => 'App\Product']);
+        $this->assertFileNotExists(public_path('storage' . $image_name));
     }
 
     /**

@@ -76,7 +76,7 @@ class OrderController extends Controller
     /**
      * store orders
      * users should have create-orders permission to be allowed
-     * all order by default consider retailers as the customer
+     * all order by default set retailers as default customer
      * but retailer can change this customer later
      * @param Request $request
      * @throws AuthorizationException
@@ -167,7 +167,7 @@ class OrderController extends Controller
      * users should have create-orders permission to be allowed
      * if order contains just one product then order record must be deleted completely
      * if order contains more than one product, then just the given product will be deleted
-     * it is not possible to delete products if they have
+     * it is not possible to delete products if they have bought
      * status will change from current status to deleted status:0
      * @param Product $product
      * @throws AuthorizationException
@@ -184,12 +184,21 @@ class OrderController extends Controller
             $orderID = $product->order()->value('id');
             $order = Order::find($orderID);
             $productCount = $order->products()->count();
+            $oldImage = $product->images()
+                ->where('imagable_id', $product->id)
+                ->where('imagable_type', 'App\Product');
+            $oldImageName = $oldImage->value('image_name');
             // if order contains less than 1 product, then whole record for this order will be deleted
             // else if order contains more than 1 product, then only the given product will be deleted
+            // at the same time all respective image records and image files must be deleted
             if ($productCount <= 1) {
+                $product->images()->delete($oldImage);
                 $order->delete();
+                $this->deleteOne('public', [$oldImageName]);
             } else {
+                $product->images()->delete($oldImage);
                 $order->products()->delete($product);
+                $this->deleteOne('public', [$oldImageName]);
             }
         } else {
             abort(403, 'Access Denied');

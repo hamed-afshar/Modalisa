@@ -55,7 +55,7 @@ class OrderPolicy
      */
     public function create(User $user)
     {
-        if ($user->checkPermission('see-orders')) {
+        if ($user->checkPermission('create-orders')) {
             return true;
         }
     }
