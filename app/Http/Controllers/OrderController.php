@@ -210,7 +210,7 @@ class OrderController extends Controller
      * edit the given product
      * users can only edit products that has not been bought yet
      * users should have create-orders permission to be allowed
-     * status will change from current status to Order Edit status:9
+     * status will change from current status to Order Edit status:10
      * @param Request $request
      * @param Product $product
      * @throws AuthorizationException
@@ -249,13 +249,14 @@ class OrderController extends Controller
                 $request->validate([
                     'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
                 ]);
-                $oldImageName = $product->images()
+                $oldImage = $product->images()
                     ->where('imagable_id', $product->id)
-                    ->where('imagable_type', 'App\Product')
-                    ->value('image_name');
+                    ->where('imagable_type', 'App\Product');
+                $oldImageName = $oldImage->value('image_name');
                 $image = $request->file('image');
-                $this->uploadImage($user, $product, $image);
+                $product->images()->delete($oldImage);
                 $this->deleteOne('public', [$oldImageName]);
+                $this->uploadImage($user, $product, $image);
             }
         } else {
             abort(403, 'Access Denied');

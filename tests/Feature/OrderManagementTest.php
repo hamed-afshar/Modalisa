@@ -396,7 +396,6 @@ class OrderManagementTest extends TestCase
      */
     public function users_can_edit_products_that_has_not_been_bought_yet()
     {
-        //this test is successful, but shows fail because of created time in db.
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
@@ -415,7 +414,10 @@ class OrderManagementTest extends TestCase
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
         $this->patch('/edit-product/' . $product->id, $newProductAttributes);
-        $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
+        $image_name = $product->images()
+            ->where('imagable_id', $product->id)
+            ->where('imagable_type', 'App\Product')
+            ->value('image_name');
         $this->assertDatabaseHas('products', [
             'size' => 'Medium',
             'color' => 'White',
@@ -426,7 +428,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'Pound',
         ]);
         //record for this change should be created in the histories table
-        $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => 9]);
+        $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => 10]);
         //assert to check existence of the new uploaded file
         $this->assertFileExists(public_path('storage' . $image_name));
     }
@@ -474,10 +476,69 @@ class OrderManagementTest extends TestCase
         ];
         $this->patch('/edit-product/' . $product->id, $newAttributes);
         //check the new image existence
-        $newImageName = $product->images()->where('imagable_id', $product->id)->value('image_name');
+        $newImageName = $product->images()
+            ->where('imagable_id', $product->id)
+            ->where('imagable_type', 'App\Product')
+            ->value('image_name');
         $this->assertFileExists(public_path('storage' . $newImageName));
-
+        //old image and respective record must be deleted
+        $this->assertFileNotExists(public_path('storage'. $oldImageName));
+        $this->assertDatabaseMissing('images', [
+            'imagable_id'=>$product->id,
+            'imagable_type' => 'App\Product',
+            'image_name' => $oldImageName
+        ]);
     }
+
+    /**
+     * @test
+     * Super Privilege users can index orders
+     */
+    public function super_privilege_users_can_index_all_orders_with_relative_products()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-orders', 'create-orders'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //acting as the retailer to create orders
+        $this->actingAs($retailer);
+        $this->prepOrder(10, 0);
+        //acting as the BuyerAdmin to index orders
+        $this->actingAs($BuyerAdmin);
+        $order = Order::find(1);
+        $product = Product::find(5);
+        $this->get('/admin-index-orders')
+            ->assertSeeText($order->id)
+            ->assertSeeText($product->link)
+            ->assertSeeText($product->size);
+    }
+
+    /**
+     * @test
+     * Super Privilege users can index a single order
+     */
+    public function super_privilege_users_can_index_a_single_order_with_relative_products()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-orders', 'create-orders'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //acting as the retailer to create orders
+        $this->actingAs($retailer);
+        $this->prepOrder(10, 0);
+        //acting as the BuyerAdmin to index orders
+        $this->actingAs($BuyerAdmin);
+        $order = Order::find(1);
+        $product = Product::find(5);
+        $this->get('/admin-index-orders/' . $order->id)
+            ->assertSeeText($order->id)
+            ->assertSeeText($product->link)
+            ->assertSeeText($product->size);
+    }
+
+
 
 
     /**

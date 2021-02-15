@@ -167,4 +167,29 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can index orders
+     * @param User $user
+     * @return bool
+     */
+    public function indexOrder(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * determine whether admin can index a single order
+     * @param User $user
+     * @return bool
+     */
+    public function indexSingleOrder(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+
 }

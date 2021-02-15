@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Admin;
 use App\Cost;
 use App\Kargo;
+use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
@@ -339,5 +340,27 @@ class AdminController extends Controller
     {
         $this->authorize('confirm', Admin::class);
         $transaction->update(['confirmed' => 1]);
+    }
+
+    /**
+     * index all orders with relative products
+     * Super privilege users can index all orders
+     */
+    public function indexOrders()
+    {
+        $this->authorize('indexOrder', Admin::class);
+        return Order::with(['products'])->get();
+    }
+
+    /**
+     * index a single order with relative products
+     * Super privilege users can index orders with relative product
+     * @param Order $order
+     * @throws AuthorizationException
+     */
+    public function indexSingleOrder(Order $order)
+    {
+        $this->authorize('indexSingleOrder', Admin::class);
+        return $order->with('products')->get();
     }
 }
