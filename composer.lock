@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c525ae49f399edd3a4c0e29ba34ae3c",
+    "content-hash": "a3fde25942374606dd9ac0fddb026f56",
     "packages": [
         {
             "name": "brick/math",
@@ -1800,6 +1800,63 @@
                 }
             ],
             "time": "2020-08-18T17:17:46+00:00"
+        },
+        {
+            "name": "scottlaurent/accounting",
+            "version": "v0.3.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scottlaurent/accounting.git",
+                "reference": "28adb295c64cbbb8ef2af6a90362a753f5cefab7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scottlaurent/accounting/zipball/28adb295c64cbbb8ef2af6a90362a753f5cefab7",
+                "reference": "28adb295c64cbbb8ef2af6a90362a753f5cefab7",
+                "shasum": ""
+            },
+            "require": {
+                "moneyphp/money": "^3.0",
+                "ramsey/uuid": "^4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3",
+                "orchestra/testbench": "^5.2",
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Scottlaurent\\Accounting\\Providers\\AccountingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Scottlaurent\\Accounting\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Scott Laurent",
+                    "email": "scott@baselineapplications.com"
+                }
+            ],
+            "description": "Laravel Accounting Journals for Eloquent Models",
+            "keywords": [
+                "Accounting",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/scottlaurent/accounting/issues",
+                "source": "https://github.com/scottlaurent/accounting/tree/v0.3.3"
+            },
+            "time": "2020-04-29T00:43:08+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
