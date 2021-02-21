@@ -338,7 +338,7 @@ class AdminController extends Controller
      */
     public function confirmTransaction(Transaction $transaction)
     {
-        $this->authorize('confirm', Admin::class);
+        $this->authorize('confirmTransaction', Admin::class);
         $transaction->update(['confirmed' => 1]);
     }
 

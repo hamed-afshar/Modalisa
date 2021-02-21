@@ -18,7 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->boolean('confirmed')->default(0);
             $table->string('currency');
-            $table->string('amount');
+            $table->bigInteger('amount');
             $table->string('comment');
             $table->timestamps();
 

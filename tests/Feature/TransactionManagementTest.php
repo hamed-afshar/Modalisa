@@ -247,9 +247,13 @@ class TransactionManagementTest extends TestCase
     public function only_SystemAdmin_can_confirm_transactions()
     {
         $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer',['create-transactions'], 0 , 1 );
+        $retailer = Auth::user();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
-        $newUser = factory('App\User')->create();
-        $transaction = factory('App\Transaction')->create(['user_id' => $newUser->id]);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($retailer);
+        $transaction = factory('App\Transaction')->create(['user_id' => $retailer->id]);
+        $this->actingAs($SystemAdmin);
         $this->patch('/confirm-transaction/' . $transaction->id);
         $this->assertEquals(1, Transaction::where('id', $transaction->id)->value('confirmed'));
     }
