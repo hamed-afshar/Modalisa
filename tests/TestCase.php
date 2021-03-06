@@ -26,8 +26,8 @@ abstract class TestCase extends BaseTestCase
     /**
      * prepare normal user environment
      * @param $role
-     * @param $permissions []
-     * @param $lockedc
+     * @param $permissionArray
+     * @param $locked
      * @param $confirmed
      */
 
