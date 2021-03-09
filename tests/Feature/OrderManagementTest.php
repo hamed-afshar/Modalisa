@@ -347,7 +347,7 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseHas('orders', ['id' => $order1->id]);
         //at the same time delete the respective image record and file for the deleted product.
         $this->assertDatabaseMissing('images', ['imagable_id' => $product2->id, 'imagable_type' => 'App\Product']);
-        $this->assertFileNotExists(public_path('storage' . $image_name));
+        $this->assertFileDoesNotExist(public_path('storage' . $image_name));
     }
 
     /**
@@ -385,7 +385,7 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
         //old respective image file and database record also must be deleted
         $this->assertDatabaseMissing('images', ['imagable_id' => $product->id, 'imagable_type' => 'App\Product']);
-        $this->assertFileNotExists(public_path('storage' . $image_name));
+        $this->assertFileDoesNotExist(public_path('storage' . $image_name));
     }
 
     /**
@@ -482,7 +482,7 @@ class OrderManagementTest extends TestCase
             ->value('image_name');
         $this->assertFileExists(public_path('storage' . $newImageName));
         //old image and respective record must be deleted
-        $this->assertFileNotExists(public_path('storage'. $oldImageName));
+        $this->assertFileDoesNotExist(public_path('storage'. $oldImageName));
         $this->assertDatabaseMissing('images', [
             'imagable_id'=>$product->id,
             'imagable_type' => 'App\Product',

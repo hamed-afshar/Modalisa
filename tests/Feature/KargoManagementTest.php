@@ -381,7 +381,7 @@ class KargoManagementTest extends TestCase
         $this->delete('/delete-kargo/' . $retailer->id . '/' . $lastKargoId);
         $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId]);
         //assert missing of deleted image files and respective record
-        $this->assertFileNotExists(public_path('storage' . $imageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $imageName));
         $this->assertDatabaseMissing('images',['imagable_id' => $kargo->id, 'imagable_type' =>'App\Kargo']);
     }
 

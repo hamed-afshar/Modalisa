@@ -180,7 +180,7 @@ class TransactionManagementTest extends TestCase
         $this->assertFileExists(public_path('storage' . $image_name));
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Transaction', 'imagable_id' => $transaction->id]);
         // old image file should be deleted from the server, also respective image record must be updated
-        $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $oldImageName));
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'image_name' => $image_name, 'imagable_type' => 'App\Transaction' , 'imagable_id' => $transaction->id]);
         //users can only update their own transactions
         $this->prepNormalEnv('retailer2', ['create-transactions'], 0, 1);
@@ -229,7 +229,7 @@ class TransactionManagementTest extends TestCase
         // transaction's image record must be deleted
         $this->assertDatabaseMissing('images', ['imagable_id' => $image->id, 'imagable_type' => 'App\Transaction', 'user_id' => $retailer1->id]);
         // transaction's image file must be deleted
-        $this->assertFileNotExists(public_path('storage' . $imageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $imageName));
     }
 
     /** @test

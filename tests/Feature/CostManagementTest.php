@@ -447,7 +447,7 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id
         ]);
         //old image should be deleted and new image should be uploaded
-        $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $oldImageName));
         $newImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
         $this->assertFileExists(public_path('storage' . $newImageName));
         // only BuyerAdmin is allowed to update cost records
@@ -506,8 +506,8 @@ class CostManagementTest extends TestCase
         $this->assertDatabaseMissing('images', ['id' => $image1->id]);
         $this->assertDatabaseMissing('images', ['id' => $image2->id]);
         //cost's images also must be deleted
-        $this->assertFileNotExists(public_path('storage' . $imageNameArray[0]));
-        $this->assertFileNotExists(public_path('storage' . $imageNameArray[1]));
+        $this->assertFileDoesNotExist(public_path('storage' . $imageNameArray[0]));
+        $this->assertFileDoesNotExist(public_path('storage' . $imageNameArray[1]));
 
     }
 

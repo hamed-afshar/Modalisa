@@ -178,7 +178,7 @@ class ImageManagementTest extends TestCase
         //assert new image exist on server
         $this->assertFileExists(public_path('storage') . $newImageName);
         //assert old image deletes from server
-        $this->assertFileNotExists(public_path('storage' . $oldImageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $oldImageName));
         // users can only update their own records
         $this->prepNormalEnv('retailer2', ['create-images', 'see-images'], 0, 1);
         $this->patch($oldImage->path(), $newAttributes)->assertForbidden();
@@ -212,7 +212,7 @@ class ImageManagementTest extends TestCase
         $this->actingAs($retailer1);
         $this->delete($image->path());
         $this->assertDatabaseMissing('images', ['id' => $image->id, 'imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
-        $this->assertFileNotExists(public_path('storage' . $imageName));
+        $this->assertFileDoesNotExist(public_path('storage' . $imageName));
     }
 
 
