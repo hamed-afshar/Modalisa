@@ -1,11 +1,15 @@
 <?php
+namespace Database\Seeders;
 
+use App\Role;
+use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      *
      * @return void
      */
@@ -14,7 +18,7 @@ class UserSeeder extends Seeder
         /*
          * create SystemAdmin user first
          */
-        factory(App\User::class)->create([
+        factory(User::class)->create([
             'name' => 'Hamed Afshar',
             'email' => 'abtin_bep@yahoo.com',
             'password' => Hash::make('13651362'),
@@ -29,8 +33,8 @@ class UserSeeder extends Seeder
         /*
          * assign SystemAdmin role to user
          */
-        $SystemAdminUser = App\User::find(1);
-        $role = App\Role::where('name', 'SystemAdmin')->first();
+        $SystemAdminUser = User::find(1);
+        $role = Role::where('name', 'SystemAdmin')->first();
         $role->changeRole($SystemAdminUser);
     }
 }

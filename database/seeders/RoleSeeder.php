@@ -1,11 +1,13 @@
 <?php
+namespace Database\Seeders;
 
+use App\Role;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      *
      * @return void
      */
@@ -16,12 +18,12 @@ class RoleSeeder extends Seeder
          * SystemAdmin is the main admin account with ID 0f 2
          * None is the default for new users with ID 0f 1
          */
-        factory(App\Role::class)->create([
+        factory(Role::class)->create([
             'name' => 'None',
             'label' => 'Without Role'
         ]);
 
-        factory(App\Role::class)->create([
+        factory(Role::class)->create([
             'name' => 'SystemAdmin',
             'label' => 'System Administrator'
         ]);

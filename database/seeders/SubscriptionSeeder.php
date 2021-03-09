@@ -1,11 +1,13 @@
 <?php
+namespace Database\Seeders;
 
+use App\Subscription;
 use Illuminate\Database\Seeder;
 
 class SubscriptionSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeders.
      *
      * @return void
      */
@@ -14,7 +16,7 @@ class SubscriptionSeeder extends Seeder
         /*
          * create basic subscription which is default for all new users
          */
-        factory(App\Subscription::class)->create([
+        factory(Subscription::class)->create([
             'plan' => 'Basic',
             'cost_percentage' => 30
         ]);
