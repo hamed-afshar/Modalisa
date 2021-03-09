@@ -12,12 +12,12 @@
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
+        "laravel/legacy-factories": "^1.1",
         "laravel/tinker": "^2.0",
         "moneyphp/money": "^3.3",
         "ramsey/uuid": "^4.1",
         "scottlaurent/accounting": "^0.3.3",
         "tightenco/ziggy": "^0.9.4"
-
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.2",
