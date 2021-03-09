@@ -13,6 +13,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/legacy-factories": "^1.1",
+        "laravel/passport": "^10.1",
         "laravel/tinker": "^2.0",
         "moneyphp/money": "^3.3",
         "ramsey/uuid": "^4.1",
