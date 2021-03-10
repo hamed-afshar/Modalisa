@@ -7,6 +7,8 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -38,24 +40,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', User::class);
-        return response(['users' => UserResource::collection($user), 'message' => trans('translate.retrieved')], 200);
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param User $user
-     * @return Response
-     * @throws AuthorizationException
-     */
-    public function update(Request $request, User $user)
-    {
-        $this->authorize('update', $user);
-        $data = request()->all();
-        $user->update($data);
-        return response(['users' => UserResource::collection($user), 'message' => trans('translate.retrieved')], 200);
+        return response(['users' => new UserResource($user), 'message' => trans('translate.retrieved')], 200);
 
     }
 
@@ -63,6 +48,7 @@ class UserController extends Controller
      * users can update their profile
      * users can not update other user's profile
      * @param User $user
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function editProfile(User $user)
@@ -78,7 +64,7 @@ class UserController extends Controller
             'communication_media' => 'required'
         ]);
         $user->update($data);
-        return response(['users' => UserResource::collection($user), 'message' => trans('translate.retrieved')], 200);
+        return response(['users' => new UserResource($user), 'message' => trans('translate.retrieved')], 200);
 
     }
 
@@ -92,6 +78,5 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('delete', $user);
-        return response(['message' => trans('translate.deleted')]);
     }
 }
