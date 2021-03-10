@@ -66,16 +66,11 @@ class UserManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-costs', 'see-costs'], 0 , 1);
         $retailer = Auth::user();
         //System admin is able to see all users
-        $this->actingAs($SystemAdmin);
+        $this->actingAs($SystemAdmin, 'api');
         $this->get($retailer->path())->assertSeeText($retailer->name);
         //other users are not allowed to see users list
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->get($retailer->path())->assertForbidden();
-    }
-
-    /** This should be tested in VueJS */
-    public function form_is_available_to_update_users()
-    {
     }
 
     /** @test */
@@ -93,15 +88,16 @@ class UserManagementTest extends TestCase
             'country' => 'england',
             'communication_media' => 'whatsapp'
         ];
-        $this->patch('/edit-profile/' . $retailer1->id, $newAttributes);
+        $this->actingAs($retailer1, 'api');
+        $this->patch('api/edit-profile/' . $retailer1->id, $newAttributes);
         $user = User::find(1);
         //assert to see user record is updated
         $this->assertEquals($newAttributes['name'], $user->name);
         $this->prepNormalEnv('retailer2', ['edit-profile', 'create-costs'], 0, 1);
         //users can only update their own records
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
-        $this->patch('/edit-profile/' . $retailer1->id, $newAttributes)->assertForbidden();
+        $this->actingAs($retailer2, 'api');
+        $this->patch('api/edit-profile/' . $retailer1->id, $newAttributes)->assertForbidden();
     }
 
     /** @test */
