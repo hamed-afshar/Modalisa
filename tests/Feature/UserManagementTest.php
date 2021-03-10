@@ -16,19 +16,21 @@ class UserManagementTest extends TestCase
     /** @test */
     public function only_SystemAdmin_can_see_users_with_respective_role_and_subscription()
     {
+        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $SystemAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['create-costs', 'see-costs'], 0 , 1);
         $retailer = Auth::user();
         //System admin is able to see all users
         $this->actingAs($SystemAdmin);
-        $this->get('/users')->assertSeeText($SystemAdmin->name)
+        $this->get('api/users')
+            ->assertSeeText($SystemAdmin->name)
             ->assertSeeText($retailer->name)
             ->assertSeeText($retailer->role->name)
             ->assertSeeText($retailer->subscription->plan);
         //other users are not allowed to see users list
         $this->actingAs($retailer);
-        $this->get('/users')->assertForbidden();
+        $this->get('api/users')->assertForbidden();
     }
 
     /** @test */
@@ -53,7 +55,7 @@ class UserManagementTest extends TestCase
             'country' => 'Iran',
             'communication_media' => 'telegram'
         ];
-        $this->post('/register', $attributes);
+        $this->post('api/register', $attributes);
         $this->assertDatabaseHas('users', ['name' => 'Hamed Afshar']);
     }
 
