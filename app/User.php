@@ -53,7 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function path()
     {
-        return "/users/{$this->id}";
+        return "api/users/{$this->id}";
     }
 
 
