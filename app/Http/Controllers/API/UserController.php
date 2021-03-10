@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -19,6 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        dump('api user controller');
         $this->authorize('viewAny', User::class);
         //return user with subscriptions and roles
         $users = User::with(['subscription', 'role'])->get();
