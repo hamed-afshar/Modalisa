@@ -30,6 +30,8 @@ class UserSeeder extends Seeder
             'communication_media' => 'telegram'
         ]);
 
+        factory(User::class, 50)->create();
+
         /*
          * assign SystemAdmin role to user
          */
