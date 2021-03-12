@@ -13,11 +13,14 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        /*
+        /**
          * two user are essential for system to work.
-         * SystemAdmin is the main admin account with ID 0f 2
          * None is the default for new users with ID 0f 1
+         * SystemAdmin is the main admin account with ID 0f 2
+         * BuyerAdmin will be set for buyer admins
+         * Retailer will be set for normal retailers
          */
+
         factory(Role::class)->create([
             'name' => 'None',
             'label' => 'Without Role'
@@ -27,6 +30,17 @@ class RoleSeeder extends Seeder
             'name' => 'SystemAdmin',
             'label' => 'System Administrator'
         ]);
+
+        factory(Role::class)->create([
+            'name' => 'BuyerAdmin',
+            'label' => 'Buyer Administrator'
+        ]);
+
+        factory(Role::class)->create([
+            'name' => 'Retailer',
+            'label' => 'Retailer'
+        ]);
+
 
 
 

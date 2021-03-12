@@ -13,12 +13,23 @@ class SubscriptionSeeder extends Seeder
      */
     public function run()
     {
-        /*
+        /**
          * create basic subscription which is default for all new users
          */
         factory(Subscription::class)->create([
             'plan' => 'Basic',
-            'cost_percentage' => 30
+            'cost_percentage' => 10
         ]);
+
+        factory(Subscription::class)->create([
+            'plan' => 'Gold',
+            'cost_percentage' => 5
+        ]);
+
+        factory(Subscription::class)->create([
+            'plan' => 'Platinum',
+            'cost_percentage' => 0
+        ]);
+
     }
 }

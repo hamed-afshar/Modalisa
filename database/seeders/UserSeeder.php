@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        /*
+        /**
          * create SystemAdmin user first
          */
         factory(User::class)->create([
