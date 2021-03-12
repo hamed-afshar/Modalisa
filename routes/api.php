@@ -25,8 +25,10 @@ Route::get('/', function () {
 
 Route::post('/register', 'API\AuthController@register');
 Route::post('/login', 'API\AuthController@login');
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('/users', 'API\UserController@index')->name('users.index');
+    Route::get('/users/{user}', 'API\UserController@show')->name('users.show');
+    Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
+    Route::patch('/edit-profile/{user}', 'API\UserController@editProfile')->name('users.profile');
+});
 
-Route::get('/users', 'API\UserController@index')->name('users.index')->middleware('auth:api');
-Route::get('/users/{user}', 'API\UserController@show')->name('users.show')->middleware('auth:api');
-Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
-Route::patch('/edit-profile/{user}', 'API\UserController@editProfile')->name('users.profile')->middleware('auth:api');
