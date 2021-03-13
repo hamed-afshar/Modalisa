@@ -28,6 +28,6 @@ class SendWelcomeEmailListener implements ShouldQueue
      */
     public function handle(UserRegisteredEvent $event)
     {
-        Mail::to($event->user)->send(new WelcomeEmail($event->user));
+        //Mail::to($event->user)->send(new WelcomeEmail($event->user));
     }
 }
