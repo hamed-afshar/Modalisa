@@ -22,7 +22,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        dump('api user controller');
         $this->authorize('viewAny', User::class);
         //return user with subscriptions and roles
         $users = User::with(['subscription', 'role'])->get();
