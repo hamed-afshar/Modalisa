@@ -13,7 +13,7 @@ class Role extends Model
      */
     public function path()
     {
-        return "/roles/{$this->id}";
+        return "api/roles/{$this->id}";
     }
 
     /**

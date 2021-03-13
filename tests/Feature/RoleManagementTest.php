@@ -18,35 +18,36 @@ class RoleManagementTest extends TestCase
     public function only_SystemAdmin_can_see_roles()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $roles = Role::find(1);
-        $this->get('/roles')->assertSeeText($roles->name);
+        $this->get('api/roles')->assertSeeText($roles->name);
         //other users are not able to see roles
         $this->prepNormalEnv('retailer', ['create-order', 'see-costs'], 0, 1);
-        $this->get('/roles')->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->get('api/roles')->assertForbidden();
     }
 
-    /**
-     * this should be tested in VueJs
-     */
-    public function form_is_available_to_create_roles()
-    {
-
-    }
 
     /** @test */
     public
     function only_SystemAdmin_can_create_roles()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $attributes = factory('App\Role')->raw([
             'name' => 'retailer',
             'label' => 'test'
         ]);
-        $this->post('/roles', $attributes);
+        $this->post('api/roles', $attributes);
         $this->assertDatabaseHas('roles', $attributes);
         //other users are not allowed to create roles
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
-        $this->post('/roles', $attributes)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/roles', $attributes)->assertForbidden();
     }
 
     /** @test */
@@ -54,11 +55,13 @@ class RoleManagementTest extends TestCase
     function named_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $attributes = factory('App\Role')->raw([
             'name' => '',
             'label' => 'test'
         ]);
-        $this->post('/roles', $attributes)->assertSessionHasErrors('name');
+        $this->post('api/roles', $attributes)->assertSessionHasErrors('name');
     }
 
     /** @test */
@@ -66,10 +69,12 @@ class RoleManagementTest extends TestCase
     function label_is_required()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $attributes = factory('App\Role')->raw([
             'name' => 'retailer',
             'label' => '']);
-        $this->post('/roles', $attributes)->assertSessionHasErrors('label');
+        $this->post('api/roles', $attributes)->assertSessionHasErrors('label');
     }
 
     /** @test */
@@ -77,27 +82,26 @@ class RoleManagementTest extends TestCase
     function only_SystemAdmin_can_vew_a_single_role_with_all_assigned_permissions()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $role = Role::find(1);
         $permission = factory('App\Permission')->create();
         $role->allowTo($permission);
         $this->get($role->path())->assertSeeText($permission->name);
         //other users are not allowed to see a single role
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->get($role->path())->assertForbidden();
     }
 
-    /**
-     * this should be tested in VueJs
-     */
-    public function form_is_available_to_edit_a_role()
-    {
-
-    }
 
     /** @test */
     public function only_SystemAdmin_can_update_a_role()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $role = Role::find(1);
         $newAttributes = [
             'name' => 'New Name',
@@ -107,6 +111,8 @@ class RoleManagementTest extends TestCase
         $this->assertDatabaseHas('roles', $newAttributes);
         //other users are not allowed to update roles
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->get($role->path())->assertForbidden();
     }
 
@@ -121,10 +127,10 @@ class RoleManagementTest extends TestCase
         $role = Role::find(1);
         //other users are not allowed to delete roles
         //acting as the retailer to delete the role
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->delete($role->path())->assertForbidden();
         //acting as the SystemAdmin to delete the role
-        $this->actingAs($SystemAdmin);
+        $this->actingAs($SystemAdmin, 'api');
         $this->delete($role->path());
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
     }
@@ -134,14 +140,18 @@ class RoleManagementTest extends TestCase
     function SystemAdmin_can_allow_role_to_permission()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $role = Role::find(1);
         factory('App\Permission')->create();
         $permission = Permission::find(1);
-        $this->get('/allow-to/' . $role->id . '/' . $permission->id);
+        $this->post('api/allow-to/' . $role->id . '/' . $permission->id);
         $this->assertDatabaseHas('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
         //other users are not allowed to assign permissions to rols
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
-        $this->get('/allow-to/' . $role->id . '/' . $permission->id)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/allow-to/' . $role->id . '/' . $permission->id)->assertForbidden();
     }
 
     /** @test */
@@ -149,15 +159,19 @@ class RoleManagementTest extends TestCase
     function SystemAdmin_can_disallow_roles_to_permissions()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $role = Role::find(1);
         factory('App\Permission')->create();
         $permission = Permission::find(1);
         $role->allowTo($permission);
-        $this->get('/disallow-to/' . $role->id . '/' . $permission->id);
+        $this->post('api/disallow-to/' . $role->id . '/' . $permission->id);
         $this->assertDatabaseMissing('role_permissions', ['role_id' => $role->id, 'permission_id' => $permission->id]);
         //other users are not allowed to assign permissions to roles
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
-        $this->get('/disallow-to/' . $role->id . '/' . $permission->id)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/disallow-to/' . $role->id . '/' . $permission->id)->assertForbidden();
     }
 
     /** @test */
@@ -165,13 +179,17 @@ class RoleManagementTest extends TestCase
     function SystemAdmin_can_change_user_roles()
     {
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $oldUser = Auth::user();
         $newRole = factory('App\Role')->create(['name' => 'accountant']);
-        $this->get('/change-role/' . $newRole->id . '/' . $oldUser->id);
+        $this->post('api/change-role/' . $newRole->id . '/' . $oldUser->id);
         $this->assertDatabaseHas('users', ['id' => $oldUser->id, 'role_id' => $newRole->id]);
         //other users are not allowed to assign permissions to roles
         $this->prepNormalEnv('retailer-assistant', ['create-order', 'see-costs'], 0, 1);
-        $this->get('/change-role/' . $newRole->id . '/' . $oldUser->id)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/change-role/' . $newRole->id . '/' . $oldUser->id)->assertForbidden();
     }
 
     /** @test
@@ -201,11 +219,9 @@ class RoleManagementTest extends TestCase
     function guests_can_not_access_role_management()
     {
         $role = factory('App\Role')->create();
-        $this->get('/roles')->assertRedirect('login');
-        $this->get('/roles/create')->assertRedirect('login');
-        $this->post('/roles')->assertRedirect('login');
+        $this->get('api/roles')->assertRedirect('login');
+        $this->post('api/roles')->assertRedirect('login');
         $this->get($role->path())->assertRedirect('login');
-        $this->get($role->path() . '/edit')->assertRedirect('login');
         $this->patch($role->path())->assertRedirect('login');
         $this->delete($role->path())->assertRedirect('login');
     }
