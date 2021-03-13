@@ -15,7 +15,7 @@ class Permission extends Model
      */
     public function path()
     {
-        return "/permissions/{$this->id}";
+        return "api/permissions/{$this->id}";
     }
 
     /**
