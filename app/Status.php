@@ -13,7 +13,7 @@ class Status extends Model
      */
     public function path()
     {
-        return "/statuses/{$this->id}";
+        return "api/statuses/{$this->id}";
     }
 
 

@@ -51,6 +51,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/subscriptions/{subscription}', 'API\SubscriptionController@show')->name('subscriptions.show');
     Route::patch('/subscriptions/{subscription}', 'API\SubscriptionController@update')->name('subscriptions.update');
     Route::delete('/subscriptions/{subscription}', 'API\SubscriptionController@destroy')->name('subscriptions.destroy');
-    Route::get('/change-subscriptions/{subscription}/{user}', 'API\SubscriptionController@changeSubscription')->name('subscriptions.change');
+    Route::post('/change-subscriptions/{subscription}/{user}', 'API\SubscriptionController@changeSubscription')->name('subscriptions.change');
+
+    Route::get('/statuses', 'API\StatusController@index')->name('status.index');
+    Route::post('/statuses', 'API\StatusController@store')->name('status.store');
+    Route::get('/statuses/{status}', 'API\StatusController@show')->name('status.show');
+    Route::patch('/statuses/{status}', 'API\StatusController@update')->name('status.update');
+    Route::delete('/statuses/{status}', 'API\StatusController@destroy')->name('status.destroy');
 });
 

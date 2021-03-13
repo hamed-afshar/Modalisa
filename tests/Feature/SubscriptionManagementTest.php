@@ -141,13 +141,13 @@ class SubscriptionManagementTest extends TestCase
         $this->actingAs($SystemAdmin, 'api');
         $newUser = factory('App\User')->create();
         $newSubscription = factory('App\Subscription')->create(['plan' => 'Gold']);
-        $this->get('api/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
+        $this->post('api/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id);
         $this->assertDatabaseHas('users', ['id' => $newUser->id, 'subscription_id' => $newSubscription->id]);
         //other users are not allowed to change subscriptions
         $this->prepNormalEnv('retailer', ['create-orders', 'see-costs'], 0, 1);
         $retailer = Auth::user();
         $this->actingAs($retailer, 'api');
-        $this->get('api/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id)->assertForbidden();
+        $this->post('api/change-subscriptions/' . $newSubscription->id . '/' . $newUser->id)->assertForbidden();
     }
 
     /**
