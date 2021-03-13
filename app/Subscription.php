@@ -13,7 +13,7 @@ class Subscription extends Model
      */
     public function path()
     {
-        return "/subscriptions/{$this->id}";
+        return "api/subscriptions/{$this->id}";
     }
 
     /**
