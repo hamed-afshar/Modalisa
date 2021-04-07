@@ -96,5 +96,6 @@ return [
 
     //api
     "retrieved" => "Retrieved Successfully",
-    "deleted" => 'Deleted Successfully'
+    "deleted" => 'Deleted Successfully',
+    "user_updated" => 'User updated'
 ];
