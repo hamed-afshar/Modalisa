@@ -53,7 +53,7 @@ class UserController extends Controller
     {
         $this->authorize('update', User::Class);
         $data = [
-          'locked' => $request->input('locked'),
+          'locked' => (int)$request->input('locked'),
         ];
         $user->update($data);
         return response(['users' => new UserResource($user), 'message' => trans('translate.user_updated')]);
@@ -70,7 +70,7 @@ class UserController extends Controller
     {
         $this->authorize('update', User::Class);
         $data = [
-            'confirmed' => $request->input('confirmed'),
+            'confirmed' => (int)$request->input('confirmed'),
         ];
         $user->update($data);
         return response(['users' => new UserResource($user), 'message' => trans('translate.user_updated')]);
