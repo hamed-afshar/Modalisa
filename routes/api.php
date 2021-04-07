@@ -30,6 +30,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/users', 'API\UserController@index')->name('users.index');
     Route::get('/users/{user}', 'API\UserController@show')->name('users.show');
     Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
+    Route::patch('/lock/{user}', 'API\UserController@lock')->name('users.lock');
+    Route::patch('/confirm/{user}', 'API\UserController@confirm')->name('users.confirm');
     Route::patch('/edit-profile/{user}', 'API\UserController@editProfile')->name('users.profile');
 
     Route::get('/roles', 'API\RoleController@index')->name('roles.index');

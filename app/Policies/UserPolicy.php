@@ -61,12 +61,13 @@ class UserPolicy
      * Determine whether the SystemAdmin can update user's information.
      *
      * @param User $user
-     * @param User $model
      * @return mixed
      */
-    public function update(User $user, User $model)
+    public function update(User $user)
     {
-        //
+        if ($user->isAdmin()) {
+            return true;
+        }
     }
 
     /**

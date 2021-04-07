@@ -40,7 +40,40 @@ class UserController extends Controller
     {
         $this->authorize('view', User::class);
         return response(['users' => new UserResource($user), 'message' => trans('translate.retrieved')], 200);
+    }
 
+    /**
+     * lock a user
+     * @param Request $request
+     * @param User $user
+     * @return Application|ResponseFactory|Response
+     * @throws AuthorizationException
+     */
+    public function lock(Request $request,User $user)
+    {
+        $this->authorize('update', User::Class);
+        $data = [
+          'locked' => $request->input('locked'),
+        ];
+        $user->update($data);
+        return response(['users' => new UserResource($user), 'message' => trans('translate.user_updated')]);
+    }
+
+    /**
+     * confirm a user
+     * @param Request $request
+     * @param User $user
+     * @return Application|ResponseFactory|Response
+     * @throws AuthorizationException
+     */
+    public function confirm(Request $request,User $user)
+    {
+        $this->authorize('update', User::Class);
+        $data = [
+            'confirmed' => $request->input('confirmed'),
+        ];
+        $user->update($data);
+        return response(['users' => new UserResource($user), 'message' => trans('translate.user_updated')]);
     }
 
     /**

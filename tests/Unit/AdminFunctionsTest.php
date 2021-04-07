@@ -6,6 +6,7 @@ use App\Transaction;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class AdminFunctionsTest extends TestCase
@@ -73,17 +74,30 @@ class AdminFunctionsTest extends TestCase
 
 
     /** @test */
-    public function SystemAdmin_can_confirm_and_unlock_users()
+    public function SystemAdmin_can_lock_and_unlock_users()
     {
+        $this->withoutExceptionHandling();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
         $newUser = factory('App\User')->create();
-        $this->patch($newUser->path(), [
-            'confirmed' => 1,
-            'locked' => 0
-        ]);;
+        $this->patch('api/lock/' . $newUser->id, [
+            'locked' => 1
+        ]);
+        $this->assertEquals(1, User::where('id', $newUser->id)->value('locked'));
+    }
+    /** @test */
+    public function SystemAdmin_can_confirm_and_unconfirm_users()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepAdminEnv('SystemAdmin', 0, 1);
+        $SystemAdmin = Auth::user();
+        $this->actingAs($SystemAdmin, 'api');
+        $newUser = factory('App\User')->create();
+        $this->patch('api/confirm/' . $newUser->id, [
+            'confirmed' => 1
+        ]);
         $this->assertEquals(1, User::where('id', $newUser->id)->value('confirmed'));
-        $this->assertEquals(0, User::where('id', $newUser->id)->value('locked'));
-
     }
 
 
