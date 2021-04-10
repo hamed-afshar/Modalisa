@@ -59,7 +59,7 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         $this->authorize('view', $role);
-        return response(['roles' => new RoleResource($role), 'message' => trans('translate.retrieved')], 200);
+        return response(['roles' => new RoleResource($role->with('permissions')->get()), 'message' => trans('translate.retrieved')], 200);
 
     }
 
