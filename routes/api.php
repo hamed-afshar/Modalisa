@@ -26,7 +26,7 @@ Route::get('/', function () {
 Route::post('/register', 'API\AuthController@register');
 Route::post('/login', 'API\AuthController@login');
 
-Route::group(['middleware' => ['auth:api', 'cors']], function () {
+Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/users', 'API\UserController@index')->name('users.index');
     Route::get('/users/{user}', 'API\UserController@show')->name('users.show');
     Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
