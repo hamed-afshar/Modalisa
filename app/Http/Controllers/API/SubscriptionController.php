@@ -104,7 +104,7 @@ class SubscriptionController extends Controller
     {
         $this->authorize('delete', $subscription);
         $subscription->delete();
-        return response(['subscriptions' => new SubscriptionResource($subscription), 'message' => trans('translate.deleted')], 200 );
+        return response(['message' => trans('translate.deleted')], 200 );
     }
 
     /**
