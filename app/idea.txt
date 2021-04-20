@@ -3,3 +3,4 @@ important: exception handeling for unauthorized action msg must be configured
 important all permission should be reviewed and well documented
 Important: System generates 'server error' msg on duplicate permission entry. It may be the same for other models too.
 Important: Login process with plain username and password is very vulranable to security risks
+Important set APP_DEBUG to false in the real environment
