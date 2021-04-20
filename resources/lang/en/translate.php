@@ -97,5 +97,9 @@ return [
     //api
     "retrieved" => "Retrieved Successfully",
     "deleted" => 'Deleted Successfully',
-    "user_updated" => 'User updated'
+    "user_updated" => 'User updated',
+
+    //errors
+    "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
+    "role_is_already_exist" => "This role name is already exist in db, please choose another name"
 ];
