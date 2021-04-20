@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\LockIsNotAllowed;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
@@ -48,10 +49,14 @@ class UserController extends Controller
      * @param User $user
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws LockIsNotAllowed
      */
     public function lock(Request $request,User $user)
     {
         $this->authorize('update', User::Class);
+        if($user->isAdmin()) {
+            throw new LockIsNotAllowed();
+        }
         $data = [
           'locked' => (int)$request->input('locked'),
         ];
@@ -97,7 +102,6 @@ class UserController extends Controller
         ]);
         $user->update($data);
         return response(['users' => new UserResource($user), 'message' => trans('translate.retrieved')], 200);
-
     }
 
     /**
