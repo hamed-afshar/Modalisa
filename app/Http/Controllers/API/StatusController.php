@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\StatusExist;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StatusResource;
 use App\Status;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class StatusController extends Controller
 {
@@ -30,6 +32,7 @@ class StatusController extends Controller
      * store status
      * @param Request $request
      * @throws AuthorizationException
+     * @throws StatusExist
      */
     public function store(Request $request)
     {
@@ -44,6 +47,10 @@ class StatusController extends Controller
             'name' => $request->input('name'),
             'description' => $request->input('description'),
         ];
+        $check = DB::table('statuses')->where('name','=',$statusData['name'])->first();
+        if($check != null) {
+            throw new StatusExist();
+        }
         $status = Status::create($statusData);
         return response(['statuses' => new StatusResource($status), 'message' => trans('translate.retrieved')],200);
     }
@@ -67,6 +74,7 @@ class StatusController extends Controller
      * @param Status $status
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws StatusExist
      */
     public function update(Status $status)
     {
@@ -76,6 +84,10 @@ class StatusController extends Controller
             'name' => 'required',
             'description' => 'required'
         ]);
+        $check = DB::table('statuses')->where('name','=',$data['name'])->first();
+        if($check != null) {
+            throw new StatusExist();
+        }
         $status->update($data);
         return response(['statuses' => new StatusResource($status), 'message' => trans('translate.retrieved')],200);
 
@@ -85,6 +97,7 @@ class StatusController extends Controller
      * only SystemAdmin can delete statuses
      * delete status
      * @param Status $status
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function destroy(Status $status)

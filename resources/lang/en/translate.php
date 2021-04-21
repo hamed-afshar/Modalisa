@@ -104,5 +104,6 @@ return [
     "role_is_already_exist" => "This role name is already exist in db, please choose another name",
     "permission_is_already_exist" =>"This permission name is already exist in db, please choose another name",
     "subscription_is_already_exist" =>"This subscription name is already exist in db, please choose another name",
+    "status_is_already_exist" =>"This status name is already exist in db, please choose another name",
 
 ];
