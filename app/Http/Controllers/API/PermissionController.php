@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\PermissionExist;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PermissionResource;
 use App\Permission;
@@ -10,6 +11,8 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Exception\PcreException;
 
 class PermissionController extends Controller
 {
@@ -30,6 +33,7 @@ class PermissionController extends Controller
      * @param Request $request
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws PermissionExist
      */
     public function store(Request $request)
     {
@@ -42,6 +46,11 @@ class PermissionController extends Controller
             'name' => $request->input('name'),
             'label' => $request->input('label')
         ];
+        //check to see if permission name is already exists in db
+        $check = DB::table('permissions')->where('name','=',$permissionData['name'])->first();
+        if($check !=null) {
+            throw new PermissionExist();
+        }
         $permission = Permission::create($permissionData);
         return response(['permissions' => new PermissionResource($permission), 'message' => trans('translate.retrieved')], 200);
     }
@@ -65,6 +74,7 @@ class PermissionController extends Controller
      * @param Permission $permission
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws PermissionExist
      */
     public function update(Permission $permission)
     {
@@ -73,6 +83,11 @@ class PermissionController extends Controller
             'name' => 'required',
             'label' => 'required'
         ]);
+        //check to see if permission name is already exists in db
+        $check = DB::table('permissions')->where('name','=',$data['name'])->first();
+        if($check !=null) {
+            throw new PermissionExist();
+        }
         $permission->update($data);
         return response(['permissions' => new PermissionResource($permission), 'message' => trans('translate.retrieved')], 200);
     }
