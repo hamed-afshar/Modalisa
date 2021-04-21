@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\PermissionExist;
+use App\Exceptions\SubscriptionExist;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SubscriptionResource;
 use App\Subscription;
@@ -12,6 +14,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class SubscriptionController extends Controller
 {
@@ -35,6 +38,7 @@ class SubscriptionController extends Controller
      * @param Request $request
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws SubscriptionExist
      */
     public function store(Request $request)
     {
@@ -49,6 +53,11 @@ class SubscriptionController extends Controller
             'cost_percentage' => $request->input('cost_percentage'),
             'kargo_limit' => $request->input('kargo_limit')
         ];
+        //check to see if the subscription name is already exist in db
+        $check = DB::table('subscriptions')->where('plan','=',$subscriptionData['plan'])->first();
+        if($check != null) {
+            throw new SubscriptionExist();
+        }
         $subscription = Subscription::create($subscriptionData);
         return response(['subscriptions' => new SubscriptionResource($subscription), 'message' => trans('translate.retrieved')], 200 );
     }
@@ -74,6 +83,7 @@ class SubscriptionController extends Controller
      * @param Subscription $subscription
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws SubscriptionExist
      */
     public function update(Request $request, Subscription $subscription)
     {
@@ -88,6 +98,11 @@ class SubscriptionController extends Controller
             'cost_percentage' => $request->input('cost_percentage'),
             'kargo_limit' => $request->input('kargo_limit')
         ];
+        //check to see if the subscription name is already exist in db
+        $check = DB::table('subscriptions')->where('plan','=',$subscriptionData['plan'])->first();
+        if($check != null) {
+            throw new SubscriptionExist();
+        }
         $subscription->update($subscriptionData);
         return response(['subscriptions' => new SubscriptionResource($subscription), 'message' => trans('translate.retrieved')], 200 );
     }
