@@ -6,6 +6,7 @@ use App\Exceptions\PermissionExist;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PermissionResource;
 use App\Permission;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
