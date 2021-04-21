@@ -48,7 +48,7 @@ class RoleController extends Controller
             'name' => $request->input('name'),
             'label' => $request->input('label')
         ];
-        //check to see if the input name has already exist in db
+        //check to see if the role name is already exist in db
         $check = DB::table('roles')->where('name','=',$roleData['name'])->first();
         if($check != null) {
             throw new RoleExists();
