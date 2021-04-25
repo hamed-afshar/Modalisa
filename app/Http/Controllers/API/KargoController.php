@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Kargo;
 use App\Product;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
 
 class KargoController extends Controller
 {
@@ -163,5 +161,4 @@ class KargoController extends Controller
         $this->authorize('update', $kargo);
         $kargo->products()->delete($product);
     }
-
 }
