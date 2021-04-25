@@ -32,9 +32,11 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $this->prepOrder(3, 0);
+        $retailer = Auth::user();
+        $this->actingAs($retailer,'api');
         $product = Product::find(3);
         $customer = Customer::find(1);
-        $this->get('/orders')->assertSeeText($product->link)->assertSeeText($customer->name);
+        $this->get('api/orders')->assertSeeText($product->link)->assertSeeText($customer->name);
     }
 
     /**
@@ -505,10 +507,10 @@ class OrderManagementTest extends TestCase
         $this->actingAs($retailer);
         $this->prepOrder(10, 0);
         //acting as the BuyerAdmin to index orders
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $order = Order::find(1);
         $product = Product::find(5);
-        $this->get('/admin-index-orders')
+        $this->get('api/admin-index-orders')
             ->assertSeeText($order->id)
             ->assertSeeText($product->link)
             ->assertSeeText($product->size);
@@ -529,10 +531,10 @@ class OrderManagementTest extends TestCase
         $this->actingAs($retailer);
         $this->prepOrder(10, 0);
         //acting as the BuyerAdmin to index orders
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $order = Order::find(1);
         $product = Product::find(5);
-        $this->get('/admin-index-orders/' . $order->id)
+        $this->get('api/admin-index-orders/' . $order->id)
             ->assertSeeText($order->id)
             ->assertSeeText($product->link)
             ->assertSeeText($product->size);

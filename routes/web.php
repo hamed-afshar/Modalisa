@@ -28,40 +28,40 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/user-center', 'HomeController@user_center')->name('user-center');
 
 
-    Route::get('/users', 'UserController@index')->name('users.index');
-    Route::get('/users/{user}', 'UserController@show')->name('users.show');
-    Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit');
+//    Route::get('/users', 'UserController@index')->name('users.index');
+//    Route::get('/users/{user}', 'UserController@show')->name('users.show');
+//    Route::get('/users/{user}/edit', 'UserController@edit')->name('users.edit');
     Route::patch('/users/{user}', 'UserController@update')->name('users.update');
-    Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy');
-    Route::patch('/edit-profile/{user}', 'UserController@editProfile')->name('users.profile');
+//    Route::delete('/users/{user}', 'UserController@destroy')->name('users.destroy');
+//    Route::patch('/edit-profile/{user}', 'UserController@editProfile')->name('users.profile');
 
-    Route::get('/roles', 'RoleController@index')->name('roles.index');
-    Route::get('/roles/create', 'RoleController@create')->name('roles.create');
-    Route::post('/roles', 'RoleController@store')->name('roles.store');
-    Route::get('/roles/{role}', 'RoleController@show')->name('roles.show');
-    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
-    Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
-    Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
-    Route::get('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
-    Route::get('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
-    Route::get('/change-role/{role}/{user}', 'RoleController@changeRole')->name('roles.change');
+//    Route::get('/roles', 'RoleController@index')->name('roles.index');
+//    Route::get('/roles/create', 'RoleController@create')->name('roles.create');
+//    Route::post('/roles', 'RoleController@store')->name('roles.store');
+//    Route::get('/roles/{role}', 'RoleController@show')->name('roles.show');
+//    Route::get('/roles/{role}/edit', 'RoleController@edit')->name('roles.edit');
+//    Route::patch('/roles/{role}', 'RoleController@update')->name('roles.update');
+//    Route::delete('/roles/{role}', 'RoleController@destroy')->name('roles.destroy');
+//    Route::get('/allow-to/{role}/{permission}', 'RoleController@allowToPermission')->name('roles.allow');
+//    Route::get('/disallow-to/{role}/{permission}', 'RoleController@disallowToPermission')->name('roles.disallow');
+//    Route::get('/change-role/{role}/{user}', 'RoleController@changeRole')->name('roles.change');
 
-    Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
-    Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
-    Route::post('/permissions', 'PermissionController@store')->name('permissions.store');
-    Route::get('/permissions/{permission}', 'PermissionController@show')->name('permissions.show');
-    Route::get('/permissions/{permission}/edit', 'PermissionController@edit')->name('permissions.edit');
-    Route::patch('/permissions/{permission}', 'PermissionController@update')->name('permissions.update');
-    Route::delete('/permissions/{permission}', 'PermissionController@destroy')->name('permissions.destroy');
+//    Route::get('/permissions', 'PermissionController@index')->name('permissions.index');
+//    Route::get('/permissions/create', 'PermissionController@create')->name('permissions.create');
+//    Route::post('/permissions', 'PermissionController@store')->name('permissions.store');
+//    Route::get('/permissions/{permission}', 'PermissionController@show')->name('permissions.show');
+//    Route::get('/permissions/{permission}/edit', 'PermissionController@edit')->name('permissions.edit');
+//    Route::patch('/permissions/{permission}', 'PermissionController@update')->name('permissions.update');
+//    Route::delete('/permissions/{permission}', 'PermissionController@destroy')->name('permissions.destroy');
 
-    Route::get('/subscriptions', 'SubscriptionController@index')->name('subscriptions.index');
-    Route::get('/subscriptions/create', 'SubscriptionController@create')->name('subscriptions.create');
-    Route::post('/subscriptions', 'SubscriptionController@store')->name('subscriptions.store');
-    Route::get('/subscriptions/{subscription}', 'SubscriptionController@show')->name('subscriptions.show');
-    Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit');
-    Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update');
-    Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
-    Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
+//    Route::get('/subscriptions', 'SubscriptionController@index')->name('subscriptions.index');
+//    Route::get('/subscriptions/create', 'SubscriptionController@create')->name('subscriptions.create');
+//    Route::post('/subscriptions', 'SubscriptionController@store')->name('subscriptions.store');
+//    Route::get('/subscriptions/{subscription}', 'SubscriptionController@show')->name('subscriptions.show');
+//    Route::get('/subscriptions/{subscription}/edit', 'SubscriptionController@edit')->name('subscriptions.edit');
+//    Route::patch('/subscriptions/{subscription}', 'SubscriptionController@update')->name('subscriptions.update');
+//    Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
+//    Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
     Route::get('/transactions', 'TransactionController@index')->name('transactions.index');
     Route::get('/transactions/create', 'TransactionController@create')->name('transactions.create');
@@ -71,13 +71,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
     Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
 
-    Route::get('/statuses', 'StatusController@index')->name('status.index');
-    Route::get('/statuses/create', 'StatusController@create')->name('status.create');
-    Route::post('/statuses', 'StatusController@store')->name('status.store');
-    Route::get('/statuses/{status}', 'StatusController@show')->name('status.show');
-    Route::get('/statuses/{status}/edit', 'StatusController@edit')->name('status.edit');
-    Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
-    Route::delete('/statuses/{status}', 'StatusController@destroy')->name('status.destroy');
+//    Route::get('/statuses', 'StatusController@index')->name('status.index');
+//    Route::get('/statuses/create', 'StatusController@create')->name('status.create');
+//    Route::post('/statuses', 'StatusController@store')->name('status.store');
+//    Route::get('/statuses/{status}', 'StatusController@show')->name('status.show');
+//    Route::get('/statuses/{status}/edit', 'StatusController@edit')->name('status.edit');
+//    Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
+//    Route::delete('/statuses/{status}', 'StatusController@destroy')->name('status.destroy');
 
     Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
     Route::post('/histories', 'HistoryController@store')->name('history.store');
@@ -150,8 +150,8 @@ Route::group(['middleware' => 'auth'], function() {
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'AdminController@removeFromKargo')->name('admin.remove-from-kargo');
     Route::patch('/confirm-transaction/{transaction}', 'AdminController@confirmTransaction')->name('admin.confirm-transaction');
-    Route::get('/admin-index-orders', 'AdminController@indexOrders')->name('admin.index-order');
-    Route::get('/admin-index-orders/{order}', 'AdminController@indexSingleOrder')->name('admin.index-single-order');
+//    Route::get('/admin-index-orders', 'AdminController@indexOrders')->name('admin.index-order');
+//    Route::get('/admin-index-orders/{order}', 'AdminController@indexSingleOrder')->name('admin.index-single-order');
 
 });
 

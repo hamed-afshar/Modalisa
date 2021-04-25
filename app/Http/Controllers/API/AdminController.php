@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-use App\Admin;
 use App\Cost;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
 use App\Kargo;
 use App\Order;
 use App\Product;
@@ -11,18 +12,17 @@ use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use App\Transaction;
 use App\User;
+use http\Env\Response;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Container\RewindableGenerator;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
-
 class AdminController extends Controller
-
 {
     use KargoTrait, ImageTrait;
 
@@ -345,22 +345,26 @@ class AdminController extends Controller
     /**
      * index all orders with relative products
      * Super privilege users can index all orders
+     * @throws AuthorizationException
      */
     public function indexOrders()
     {
         $this->authorize('indexOrder', Admin::class);
-        return Order::with(['products'])->get();
+        $orders = Order::with(['products'])->get();
+        return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
      * index a single order with relative products
      * Super privilege users can index orders with relative product
      * @param Order $order
+     * @return Application|ResponseFactory|\Illuminate\Http\Response
      * @throws AuthorizationException
      */
     public function indexSingleOrder(Order $order)
     {
         $this->authorize('indexSingleOrder', Admin::class);
-        return $order->with('products')->get();
+        $order = $order->with('products')->get();
+        return response(['order' => new OrderResource($order), 'message' => trans('translate.retrieved')], 200);
     }
 }
