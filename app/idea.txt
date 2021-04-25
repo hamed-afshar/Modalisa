@@ -4,3 +4,5 @@ important all permission should be reviewed and well documented
 Important: System generates 'server error' msg on duplicate permission entry. It may be the same for other models too.
 Important: Login process with plain username and password is very vulranable to security risks
 Important set APP_DEBUG to false in the real environment
+Important System admin can not be unconfirmed
+Important Numbers validation for numeric inputs should be checked on the server
