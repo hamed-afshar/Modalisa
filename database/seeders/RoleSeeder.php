@@ -40,9 +40,5 @@ class RoleSeeder extends Seeder
             'name' => 'Retailer',
             'label' => 'Retailer'
         ]);
-
-
-
-
     }
 }
