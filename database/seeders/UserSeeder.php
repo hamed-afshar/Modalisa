@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use App\Role;
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
@@ -81,6 +82,33 @@ class UserSeeder extends Seeder
          */
         $Retailer = User::find(3);
         $role = Role::where('name', 'Retailer')->first();
+        //assign required permissions to the role
+        $permissionsArray =[
+            'see-transactions',
+            'create-transactions',
+            'delete-transactions',
+            'see-customers',
+            'create-customers',
+            'delete-customers',
+            'see-notes',
+            'create-notes',
+            'delete-notes',
+            'see-images',
+            'create-images',
+            'delete-images',
+            'see-histories',
+            'see-costs',
+            'see-kargos',
+            'create-kargos',
+            'delete-kargos',
+            'create-orders',
+            'see-orders',
+            'delete-orders'
+        ];
+        foreach ($permissionsArray as $permission) {
+            $permissionID = DB::table('permissions')->where('name', '=', $permission)->value('id');
+            $role->allowTo($permissionID);
+        }
         $role->changeRole($Retailer);
     }
 }

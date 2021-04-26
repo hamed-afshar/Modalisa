@@ -49,13 +49,15 @@ class KargoManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
         $this->prepOrder(10,0);
+        $retailer = Auth::user();
         $kargo = Kargo::find(1);
         $product = Product::find(1);
-        $this->get('/kargos')->assertSeeText($kargo->receiver_name)
+        $this->actingAs($retailer, 'api');
+        $this->get('api/kargos')->assertSeeText($kargo->receiver_name)
             ->assertSeeText($product->link);
         // users can not see other users records
         $this->prepNormalEnv('retailer2', ['see-kargos'], 0, 1);
-        $this->get('/kargos')->assertDontSeeText($kargo->receiver_name);
+        $this->get('api/kargos')->assertDontSeeText($kargo->receiver_name);
     }
 
     /** @test

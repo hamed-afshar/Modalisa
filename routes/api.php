@@ -27,7 +27,7 @@ Route::post('/register', 'API\AuthController@register');
 Route::post('/login', 'API\AuthController@login');
 
 Route::group(['middleware' => ['auth:api', 'cors']], function () {
-    //SystemAdmin routes
+
     Route::get('/users', 'API\UserController@index')->name('users.index');
     Route::get('/users/{user}', 'API\UserController@show')->name('users.show');
     Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
@@ -63,12 +63,15 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/statuses/{status}', 'API\StatusController@update')->name('status.update');
     Route::delete('/statuses/{status}', 'API\StatusController@destroy')->name('status.destroy');
 
-    //BuyerAdmin routes
+
+
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
 
 
-    //Retailers routes
+    Route::get('/kargos', 'API\KargoController@index')->name('kargos.index');
+
+
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
 });
 

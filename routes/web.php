@@ -125,7 +125,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
     Route::get('/costs-model/{id}/{model}', 'CostController@indexModel')->name('cost.indexModel');
 
-    Route::get('/kargos', 'KargoController@index')->name('kargos.index');
+    //Route::get('/kargos', 'KargoController@index')->name('kargos.index');
     Route::get('/kargos/create', 'KargoController@create')->name('kargos.create');
     Route::post('/kargos', 'KargoController@store')->name('kargos.store');
     Route::get('/kargos/{kargo}', 'KargoController@show')->name('kargos.show');

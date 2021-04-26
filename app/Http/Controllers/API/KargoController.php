@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\KargoResource;
 use App\Kargo;
 use App\Product;
 use App\Traits\ImageTrait;
@@ -19,11 +20,13 @@ class KargoController extends Controller
      * users should have see-kargos permission to be allowed
      * users can only see their own records
      * index kargos with all related products
+     * @throws AuthorizationException
      */
     public function index()
     {
         $this->authorize('viewAny', Kargo::class);
-        return Auth::user()->kargos()->with(['products'])->get();
+        $kargos = Auth::user()->kargos()->with(['products'])->get();
+        return response(['kargos' => KargoResource::collection($kargos), 'message' => trans('translate.retrieved')]);
     }
 
     /**
