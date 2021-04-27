@@ -6,3 +6,5 @@ Important: Login process with plain username and password is very vulranable to 
 Important set APP_DEBUG to false in the real environment
 Important System admin can not be unconfirmed
 Important Numbers validation for numeric inputs should be checked on the server
+Important Users can create as many kargo as they want before confirmation. So if a products exist in
+a kargo it will then can be removed from curren kargo and be added to the new created kargo.
