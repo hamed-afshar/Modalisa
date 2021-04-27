@@ -2,6 +2,7 @@
 namespace Database\Seeders;
 
 use App\Role;
+use App\Subscription;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -110,5 +111,8 @@ class UserSeeder extends Seeder
             $role->allowTo($permissionID);
         }
         $role->changeRole($Retailer);
+        //assign subscription to the retailer
+        $subscription = Subscription::find(1);
+        $subscription->changeSubscription($Retailer);
     }
 }
