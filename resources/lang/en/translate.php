@@ -98,6 +98,7 @@ return [
     "retrieved" => "Retrieved Successfully",
     "deleted" => 'Deleted Successfully',
     "user_updated" => 'User updated',
+    "kargo_created" => 'Kargo Created Successfully',
 
     //errors
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
@@ -105,5 +106,5 @@ return [
     "permission_is_already_exist" =>"This permission name is already exist in db, please choose another name",
     "subscription_is_already_exist" =>"This subscription name is already exist in db, please choose another name",
     "status_is_already_exist" =>"This status name is already exist in db, please choose another name",
-
+    "without_subscription" => "User does not have any subscription"
 ];

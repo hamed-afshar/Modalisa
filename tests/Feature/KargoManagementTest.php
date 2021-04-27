@@ -36,7 +36,7 @@ class KargoManagementTest extends TestCase
         $attributes = factory('App\Kargo')->raw([
             'kargo_list' => $kargoList,
         ]);
-        $this->post('/kargos', $attributes);
+        $this->post('api/kargos', $attributes);
     }
 
     /** @test
@@ -91,6 +91,8 @@ class KargoManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10, 0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
@@ -151,8 +153,10 @@ class KargoManagementTest extends TestCase
         $newSubscription = factory('App\Subscription')->create(['kargo_limit' => 20]);
         Auth::user()->subscription()->associate($newSubscription);
         Auth::user()->save();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         Kargo::latest()->orderBy('id', 'DESC')->first()->id;
-        $this->post('/kargos', $attributes);
+        $this->post('api/kargos', $attributes);
         $product = Product::find(5);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId + 1]);
@@ -232,6 +236,8 @@ class KargoManagementTest extends TestCase
     public function users_can_see_a_single_kargo()
     {
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $kargo = Kargo::find($lastKargoId);
@@ -239,8 +245,9 @@ class KargoManagementTest extends TestCase
         $this->get($kargo->path())->assertSeeText($kargo->receiver_name)->assertSeeText($product->link);
         //users can only access to their own records
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->get($kargo->path())->assertForbidden();
-
     }
 
     /** @test

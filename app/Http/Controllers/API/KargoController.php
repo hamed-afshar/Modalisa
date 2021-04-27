@@ -11,6 +11,7 @@ use App\Traits\KargoTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class KargoController extends Controller
 {
@@ -64,6 +65,7 @@ class KargoController extends Controller
         $user = Auth::user();
         $kargoList = $request->input('kargo_list');
         $this->createKargo($user, $kargoData, $kargoList);
+        return response(['message' => trans('translate.kargo_created')], 200);
     }
 
     /**
@@ -77,8 +79,8 @@ class KargoController extends Controller
     public function show(Kargo $kargo)
     {
         $this->authorize('view', $kargo);
-        $user = Auth::user();
-        return $user->kargos->find($kargo)->with('products')->get();
+        $kargo = $kargo->with('products')->where('id' , '=', $kargo->id)->get();
+        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.retrieved'), 200]);
     }
 
     /**

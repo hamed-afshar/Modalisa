@@ -70,7 +70,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
 
 
     Route::get('/kargos', 'API\KargoController@index')->name('kargos.index');
-
+    Route::post('/kargos', 'API\KargoController@store')->name('kargos.store');
+    Route::get('/kargos/{kargo}', 'API\KargoController@show')->name('kargos.show');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
 });

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Exceptions\SubscriptionExist;
+use App\Exceptions\WithoutSubscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +18,7 @@ class Kargo extends Model
      */
     public function path()
     {
-        return "/kargos/{$this->id}";
+        return "api/kargos/{$this->id}";
     }
 
     /**
@@ -71,9 +73,14 @@ class Kargo extends Model
      * @param User $user
      * @param $productList
      * @return bool
+     * @throws WithoutSubscription
      */
     public function checkLimit(User $user, $productList)
     {
+        //show error if user do not have any subscription
+        if($user->subscription == null) {
+            throw new WithoutSubscription();
+        }
         $kargoLimit = $user->subscription->kargo_limit;
         if (count($productList) < $kargoLimit) {
             return false;
