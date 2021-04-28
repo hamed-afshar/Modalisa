@@ -67,13 +67,16 @@ class KargoManagementTest extends TestCase
     {
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
         $this->prepOrder(10,0);
-        $user = Auth::user();
+        $privilegedUser = Auth::user();
         $kargo = Kargo::find(1);
-        $this->get('/admin-index-kargos/')->assertSeeText($kargo->receiver_name)
-            ->assertSeeText($user->name);
+        $this->actingAs($privilegedUser, 'api');
+        $this->get('api/admin-index-kargos/')->assertSeeText($kargo->receiver_name)
+            ->assertSeeText($privilegedUser->name);
         // other users are not allowed to index all kargos
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->get('/admin-index-kargos/')->assertForbidden();
+        $user = Auth::user();
+        $this->actingAs($user, 'api');
+        $this->get('api/admin-index-kargos/')->assertForbidden();
     }
 
     /**
@@ -112,6 +115,7 @@ class KargoManagementTest extends TestCase
         $BuyerAdmin = Auth::user();
         $this->prepNormalEnv('retailer', ['see-kargos', 'create-kargos'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         // retailer create 10 products
         $kargoList = array();
         $this->prepOrder(10, 0);
@@ -123,8 +127,8 @@ class KargoManagementTest extends TestCase
             'kargo_list' => $kargoList,
         ]);
         //acting as BuyerAdmin to create the kargo
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-kargo/' . $retailer->id, $attributes);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-kargo/' . $retailer->id, $attributes);
         //record for the created kargo must exist in db
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId, 'user_id' => $retailer->id]);
@@ -257,15 +261,18 @@ class KargoManagementTest extends TestCase
     function super_privilege_users_can_see_a_single_kargo()
     {
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
-        $user = Auth::user();
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         $this->prepOrder(10,0);
         $product = Product::find(1);
         $kargo = Kargo::find(1);
-        $this->get('/admin-index-single-kargo/' . $kargo->id )->assertSeeText($kargo->reciver_name)
-            ->assertSeeText($user->name)->assertSeeText($product->link);
+        $this->get('api/admin-index-single-kargo/' . $kargo->id )->assertSeeText($kargo->reciver_name)
+            ->assertSeeText($BuyerAdmin->name)->assertSeeText($product->link);
         // other users are not allowed to index a single kargo
         $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
-        $this->get('/admin-index-single-kargo/' . $kargo->id)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->get('api/admin-index-single-kargo/' . $kargo->id)->assertForbidden();
     }
 
     /** @test
@@ -278,7 +285,7 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
         // first create a kargo as a retailer
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
@@ -295,7 +302,7 @@ class KargoManagementTest extends TestCase
         //users can only update their own records
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
+        $this->actingAs($retailer2, 'api');
         $this->patch($kargo->path(), $updateAttributes)->assertForbidden();
     }
 
@@ -336,7 +343,7 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer = Auth::user();
         // first create a kargo as a retailer
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
@@ -344,10 +351,10 @@ class KargoManagementTest extends TestCase
         //users can only delete their own records
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
+        $this->actingAs($retailer2, 'api');
         $this->delete($kargo->path())->assertForbidden();
         // retailer can delete it's own records
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->delete($kargo->path());
         $this->assertDatabaseMissing('kargos', ['id' => $kargo->id]);
     }
@@ -443,6 +450,7 @@ class KargoManagementTest extends TestCase
         //acting as a retailer to create a kargo
         $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
@@ -453,20 +461,20 @@ class KargoManagementTest extends TestCase
         //users can not alter other user's kargos
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
-        $this->patch('/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id )->assertForbidden();
-        $this->patch('remove-from-kargo/' . $lastKargoId . '/' .$newProductID)->assertForbidden();
+        $this->actingAs($retailer2, 'api');
+        $this->patch('api/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id )->assertForbidden();
+        $this->patch('api/remove-from-kargo/' . $lastKargoId . '/' .$newProductID)->assertForbidden();
         //new product should be added to the kargo
-        $this->actingAs($retailer1);
-        $this->patch('/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id );
+        $this->actingAs($retailer1,'api');
+        $this->patch('api/add-to-kargo/' . $lastKargoId . '/' . $newProduct->id );
         $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
         //users can delete items from the kargo
-        $this->patch('remove-from-kargo/' . $lastKargoId . '/' .$newProductID);
+        $this->patch('api/remove-from-kargo/' . $lastKargoId . '/' .$newProductID);
         $this->assertDatabaseMissing('products', ['id' => $newProductID, 'kargo_id' => $lastKargoId]);
     }
 
     /** @test
-     * super privilege users can add items from the kargo
+     * super privilege users can add items to the kargo
      */
     public function super_privilege_users_can_add_items_to_kargos()
     {

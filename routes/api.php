@@ -72,7 +72,17 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/kargos', 'API\KargoController@index')->name('kargos.index');
     Route::post('/kargos', 'API\KargoController@store')->name('kargos.store');
     Route::get('/kargos/{kargo}', 'API\KargoController@show')->name('kargos.show');
+    Route::patch('/kargos/{kargo}', 'API\KargoController@update')->name('kargos.update');
+    Route::delete('/kargos/{kargo}', 'API\KargoController@destroy')->name('kargos.destroy');
+    Route::patch('/add-to-kargo/{kargo}/{product}', 'API\KargoController@addTO')->name('kargos.add');
+    Route::patch('/remove-from-kargo/{kargo}/{product}', 'API\KargoController@removeFrom')->name('kargos.remove');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
+
+    Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');
+    Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');
+    Route::post('/admin-create-kargo/{user}', 'API\AdminController@storeKargo')->name('admin.create-kargo');
+
+
 });
 

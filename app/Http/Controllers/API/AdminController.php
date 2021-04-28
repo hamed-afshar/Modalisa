@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Cost;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\KargoResource;
 use App\Http\Resources\OrderResource;
 use App\Kargo;
 use App\Order;
@@ -172,6 +173,7 @@ class AdminController extends Controller
 
     public function storeKargo(Request $request, User $user)
     {
+        dd('cont');
         $this->authorize('createKargo', Admin::class);
         $request->validate([
             'receiver_name' => 'required',
@@ -199,20 +201,22 @@ class AdminController extends Controller
     public function indexKargos()
     {
         $this->authorize('indexKargos', Admin::class);
-        return Kargo::with(['user'])->get();
+        $kargos =  Kargo::with('user','products')->get();
+        return response(['kargos' => KargoResource::collection($kargos), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
      * show a single kargo
      * super privilege users are able to see all kargos with all related user and products
      * @param Kargo $kargo
-     * @return Builder[]|Collection
+     * @return Application|ResponseFactory|Builder[]|Collection|\Illuminate\Http\Response
      * @throws AuthorizationException
      */
     public function showKargo(Kargo $kargo)
     {
         $this->authorize('indexSingleKargo', Admin::class);
-        return $kargo->with(['user', 'products'])->get();
+        $kargos =  $kargo->with('user','products')->get();
+        return response(['kargos' => KargoResource::collection($kargos), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**

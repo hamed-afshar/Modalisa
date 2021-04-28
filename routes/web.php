@@ -129,11 +129,11 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::get('/kargos/create', 'KargoController@create')->name('kargos.create');
 //    Route::post('/kargos', 'KargoController@store')->name('kargos.store');
 //    Route::get('/kargos/{kargo}', 'KargoController@show')->name('kargos.show');
-    Route::get('/kargos/{kargo}/edit', 'KargoController@edit')->name('edit');
-    Route::patch('/kargos/{kargo}', 'KargoController@update')->name('kargos.update');
-    Route::delete('/kargos/{kargo}', 'KargoController@destroy')->name('kargos.destroy');
-    Route::patch('/add-to-kargo/{kargo}/{product}', 'KargoController@addTO')->name('kargos.add');
-    Route::patch('/remove-from-kargo/{kargo}/{product}', 'KargoController@removeFrom')->name('kargos.remove');
+//    Route::get('/kargos/{kargo}/edit', 'KargoController@edit')->name('edit');
+//    Route::patch('/kargos/{kargo}', 'KargoController@update')->name('kargos.update');
+//    Route::delete('/kargos/{kargo}', 'KargoController@destroy')->name('kargos.destroy');
+//    Route::patch('/add-to-kargo/{kargo}/{product}', 'KargoController@addTO')->name('kargos.add');
+//    Route::patch('/remove-from-kargo/{kargo}/{product}', 'KargoController@removeFrom')->name('kargos.remove');
 
 
     Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
@@ -141,9 +141,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/admin-create-cost/', 'AdminController@storeCost')->name('admin.create-cost');
     Route::patch('/admin-update-cost/{cost}', 'AdminController@updateCost')->name('admin.update-cost');
     Route::delete('/admin-delete-cost/{cost}', 'AdminController@deleteCost')->name('admin.delete-cost');
-    Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
-    Route::get('/admin-index-single-kargo/{kargo}', 'AdminController@showKargo')->name('admin.show-kargo');
-    Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
+//    Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
+//    Route::get('/admin-index-single-kargo/{kargo}', 'AdminController@showKargo')->name('admin.show-kargo');
+//    Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
     Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirmKargo')->name('admin.confirm-kargo');
     Route::patch('/update-kargo/{user}/{kargo}', 'AdminController@updateKargo')->name('admin.update-kargo');
     Route::delete('/delete-kargo/{user}/{kargo}', 'AdminController@deleteKargo')->name('admin.delete-kargo');
