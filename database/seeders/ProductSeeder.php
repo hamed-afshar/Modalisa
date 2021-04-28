@@ -15,7 +15,7 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        // create three orders belongs to user id 3 which is a retailer
+        // create three orders, two belongs to user id of 3 and 1 to user id of 4
         $order1 = factory(Order::class)->create([
             'user_id' => 3
         ]);
@@ -25,8 +25,9 @@ class ProductSeeder extends Seeder
         ]);
 
         $order3 = factory(Order::class)->create([
-            'user_id' => 3
+            'user_id' => 4
         ]);
+
 
         //create product for each order
         factory(Product::class, 50)->create([

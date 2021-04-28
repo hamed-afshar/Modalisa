@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
         ]);
 
         /**
-         * create Retailer user
+         * create Retailer1 user
          */
         factory(User::class)->create([
             'name' => 'Amin',
@@ -58,6 +58,21 @@ class UserSeeder extends Seeder
             'locked' => 0,
             'language' => 'Persian',
             'tel' => '09122035389',
+            'country' => 'Iran',
+            'communication_media' => 'telegram'
+        ]);
+
+        /**
+         * create Retailer2 user
+         */
+        factory(User::class)->create([
+            'name' => 'Mohammad',
+            'email' => 'Mohammad@yahoo.com',
+            'password' => Hash::make('123456789'),
+            'confirmed' => 1,
+            'locked' => 0,
+            'language' => 'Persian',
+            'tel' => '09124445566',
             'country' => 'Iran',
             'communication_media' => 'telegram'
         ]);
@@ -81,9 +96,11 @@ class UserSeeder extends Seeder
         /**
          * assign Retailer role
          */
-        $Retailer = User::find(3);
-        $role = Role::where('name', 'Retailer')->first();
+        $Retailer1 = User::find(3);
+        $Retailer2 = User::find(4);
+
         //assign required permissions to the role
+        $role = Role::where('name', 'Retailer')->first();
         $permissionsArray =[
             'see-transactions',
             'create-transactions',
@@ -110,9 +127,11 @@ class UserSeeder extends Seeder
             $permissionID = DB::table('permissions')->where('name', '=', $permission)->value('id');
             $role->allowTo($permissionID);
         }
-        $role->changeRole($Retailer);
-        //assign subscription to the retailer
+        $role->changeRole($Retailer1);
+        $role->changeRole($Retailer2);
+        //assign subscription to the retailer1 and retailer2
         $subscription = Subscription::find(1);
-        $subscription->changeSubscription($Retailer);
+        $subscription->changeSubscription($Retailer1);
+        $subscription->changeSubscription($Retailer2);
     }
 }
