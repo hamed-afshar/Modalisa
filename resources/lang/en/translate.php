@@ -98,13 +98,18 @@ return [
     "retrieved" => "Retrieved Successfully",
     "deleted" => 'Deleted Successfully',
     "user_updated" => 'User updated',
-    "kargo_created" => 'Kargo Created Successfully',
+    "kargo_created" => 'Kargo created Successfully',
+    "added_to_kargo" => 'Item added to the kargo',
+    "remove_from_kargo" => 'Item removed from the kargo',
 
-    //errors
+    //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
     "role_is_already_exist" => "This role name is already exist in db, please choose another name",
     "permission_is_already_exist" =>"This permission name is already exist in db, please choose another name",
     "subscription_is_already_exist" =>"This subscription name is already exist in db, please choose another name",
     "status_is_already_exist" =>"This status name is already exist in db, please choose another name",
-    "without_subscription" => "User does not have any subscription"
+    "without_subscription" => "User does not have any subscription",
+    //in Kargo Policy
+    'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
+    'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted"
 ];
