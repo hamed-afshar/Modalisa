@@ -82,6 +82,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'API\AdminController@storeKargo')->name('admin.create-kargo');
+    Route::post('/confirm-kargo/{kargo}', 'API\AdminController@confirmKargo')->name('admin.confirm-kargo');
 
 
 });

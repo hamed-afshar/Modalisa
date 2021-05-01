@@ -144,7 +144,7 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
 //    Route::get('/admin-index-single-kargo/{kargo}', 'AdminController@showKargo')->name('admin.show-kargo');
 //    Route::post('/admin-create-kargo/{user}', 'AdminController@storeKargo')->name('admin.create-kargo');
-    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirmKargo')->name('admin.confirm-kargo');
+//    Route::patch('/confirm-kargo/{kargo}', 'AdminController@confirmKargo')->name('admin.confirm-kargo');
     Route::patch('/update-kargo/{user}/{kargo}', 'AdminController@updateKargo')->name('admin.update-kargo');
     Route::delete('/delete-kargo/{user}/{kargo}', 'AdminController@deleteKargo')->name('admin.delete-kargo');
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'AdminController@addTOKargo')->name('admin.add-to-kargo');

@@ -101,6 +101,7 @@ return [
     "kargo_created" => 'Kargo created Successfully',
     "added_to_kargo" => 'Item added to the kargo',
     "remove_from_kargo" => 'Item removed from the kargo',
+    "confirm_kargo" => 'Kargo is Confirmed',
 
     //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
@@ -109,6 +110,7 @@ return [
     "subscription_is_already_exist" =>"This subscription name is already exist in db, please choose another name",
     "status_is_already_exist" =>"This status name is already exist in db, please choose another name",
     "without_subscription" => "User does not have any subscription",
+    "image_is_required" => "Image file has not selected, please select an image",
     //in Kargo Policy
     'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
     'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted"

@@ -176,19 +176,19 @@ class KargoManagementTest extends TestCase
         $retailer = Auth::user();
         $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         //acting as BuyerAdmin to confirm this kargo
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $kargo = Kargo::find($lastKargoId);
         $confirmAttributes = [
             'confirmed' => 1,
             'weight' => 100,
             'image' => UploadedFile::fake()->create('kargo-pic.jpg')
         ];
-        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        $this->post('api/confirm-kargo/' . $kargo->id, $confirmAttributes);
         $this->assertDatabaseHas('kargos', [
             'id' => $lastKargoId,
             'weight' => $confirmAttributes['weight'],
@@ -196,7 +196,7 @@ class KargoManagementTest extends TestCase
         ]);
         //other users are not allowed to confirm kargos
         $this->actingAs($retailer);
-        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes)->assertForbidden();
+        $this->post('api/confirm-kargo/' . $kargo->id, $confirmAttributes)->assertForbidden();
     }
 
     /** @test
@@ -210,19 +210,19 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         // first create a kargo as a retailer
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0 );
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         $this->assertDatabaseHas('kargos', ['id' => $lastKargoId]);
         // acting as BuyerAdmin to confirm this kargo
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $confirmAttributes = [
             'confirmed' => 1,
             'weight' => 100,
             'image' => UploadedFile::fake()->create('kargo-pic.jpg')
         ];
         $kargo = Kargo::find($lastKargoId);
-        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        $this->post('api/confirm-kargo/' . $kargo->id, $confirmAttributes);
         $this->assertDatabaseHas('kargos', [
             'id' => $lastKargoId,
             'weight' => $confirmAttributes['weight'],

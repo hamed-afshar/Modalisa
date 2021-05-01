@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Cost;
+use App\Exceptions\ImageIsRequired;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\OrderResource;
@@ -173,7 +174,6 @@ class AdminController extends Controller
 
     public function storeKargo(Request $request, User $user)
     {
-        dd('cont');
         $this->authorize('createKargo', Admin::class);
         $request->validate([
             'receiver_name' => 'required',
@@ -190,6 +190,8 @@ class AdminController extends Controller
         ];
         $kargoList = $request->input('kargo_list');
         $this->createKargo($user, $kargoData, $kargoList);
+        return response(['message' => trans('translate.kargo_created')], 200);
+
     }
 
 
@@ -226,6 +228,7 @@ class AdminController extends Controller
      * @param Kargo $kargo
      * @return string
      * @throws AuthorizationException
+     * @throws ImageIsRequired
      */
     public function confirmKargo(Request $request, Kargo $kargo)
     {
@@ -243,7 +246,7 @@ class AdminController extends Controller
             'confirmed' => $request->input('confirmed'),
         ];
         $kargo->update($data);
-        // upload image for the kargo
+        // upload image for the kargo, if request doest not contain image then throw an exception
         $image = $request->file('image');
         $imageName = date('mdYHis') . uniqid();
         $folder = '/images/';
@@ -257,6 +260,7 @@ class AdminController extends Controller
             'image_name' => $filePath
         ];
         $user->images()->create($imageData);
+        return response(['message' => trans('translate.confirm_kargo')], 200);
     }
 
     /**
