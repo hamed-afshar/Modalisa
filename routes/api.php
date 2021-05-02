@@ -83,6 +83,10 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'API\AdminController@storeKargo')->name('admin.create-kargo');
     Route::post('/confirm-kargo/{kargo}', 'API\AdminController@confirmKargo')->name('admin.confirm-kargo');
+    Route::patch('/update-kargo/{user}/{kargo}', 'API\AdminController@updateKargo')->name('admin.update-kargo');
+    Route::delete('/delete-kargo/{user}/{kargo}', 'API\AdminController@deleteKargo')->name('admin.delete-kargo');
+    Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'API\AdminController@addTOKargo')->name('admin.add-to-kargo');
+    Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'API\AdminController@removeFromKargo')->name('admin.remove-from-kargo');
 
 
 });

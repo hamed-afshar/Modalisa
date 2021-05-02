@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Cost;
-use App\Exceptions\ImageIsRequired;
+use App\Exceptions\WrongProduct;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\OrderResource;
@@ -14,7 +14,6 @@ use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use App\Transaction;
 use App\User;
-use http\Env\Response;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -273,7 +272,6 @@ class AdminController extends Controller
      */
     public function updateKargo(Request $request, User $user, Kargo $kargo)
     {
-
         $this->authorize('updateKargo', Admin::class);
         $request->validate([
             'receiver_name' => 'required',
@@ -288,6 +286,7 @@ class AdminController extends Controller
             'sending_date' => $request->input('sending_date')
         ];
         $kargo->update($kargoData);
+        return response(['message' => 'kargo updated'], 200);
     }
 
     /**
@@ -309,6 +308,7 @@ class AdminController extends Controller
             //delete the given kargo record
             $kargo->delete();
         }, 1);
+        return response(['message' => trans('translate.deleted')]);
     }
 
     /**
@@ -319,23 +319,27 @@ class AdminController extends Controller
      * @param Product $product
      * @return string
      * @throws AuthorizationException
+     * @throws WrongProduct
      */
     public function addToKargo(User $user, Kargo $kargo, Product $product)
     {
         $this->authorize('updateKargo', Admin::class);
-        if ($product->user()->value('id') != $user->id) {
-            return Redirect::back()->withErrors('msg', trans('translate.wrong_kargo_add'));
+        if ($product->user()->id != $user->id) {
+            throw new WrongProduct();
         } else {
             $kargo->products()->save($product);
             $kargo->refresh();
         }
+        return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.added_to_kargo')], 200);
     }
 
     public function removeFromKargo(Kargo $kargo, Product $product)
     {
         $this->authorize('updateKargo', Admin::class);
-        $kargo->products()->delete($product);
+        $kargo->products()->where('id','=', $product->id)->delete($product);
         $kargo->refresh();
+        return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
+
     }
 
     /**

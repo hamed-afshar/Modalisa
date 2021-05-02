@@ -311,25 +311,24 @@ class KargoManagementTest extends TestCase
      */
     public function super_privilege_users_can_update_kargos()
     {
-
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-kargos' , 'create-kargos', 'delete-kargos'], 0 , 1);
         $retailer = Auth::user();
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos', 'create-kargos', 'delete-kargos'], 0 , 1);
         $BuyerAdmin = Auth::user();
         //create a kargo as a retailer
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         //acting as a BuyerAdmin to update the kargo
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $updateAttributes = [
             'receiver_name' => 'new ramin admin',
             'receiver_tel' => '0923333333',
             'receiver_address' => 'new address',
             'sending_date' => '2020-10-20'
         ];
-        $this->patch('/update-kargo/' . $retailer->id . '/' . $lastKargoId, $updateAttributes);
+        $this->patch('api/update-kargo/' . $retailer->id . '/' . $lastKargoId, $updateAttributes);
         $this->assertDatabaseHas('kargos', $updateAttributes);
     }
 
@@ -371,18 +370,18 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('BuyerAdmin', ['see-kargos', 'create-kargos', 'delete-kargos'], 0 , 1);
         $BuyerAdmin = Auth::user();
         //create a kargo as a retailer
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10,0);
         $lastKargoId = Kargo::latest()->orderBy('id', 'DESC')->first()->id;
         //acting as a BuyerAdmin to confirm the kargo
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $confirmAttributes = [
             'confirmed' => 1,
             'weight' => 100,
             'image' => UploadedFile::fake()->create('kargo-pic.jpg')
         ];
         $kargo = Kargo::find($lastKargoId);
-        $this->patch('/confirm-kargo/' . $kargo->id, $confirmAttributes);
+        $this->post('api/confirm-kargo/' . $kargo->id, $confirmAttributes);
         // assert to see the confirmed kargo
         $this->assertDatabaseHas('kargos', [
             'id' => $lastKargoId,
@@ -394,7 +393,7 @@ class KargoManagementTest extends TestCase
         $this->assertFileExists(public_path('storage' . $imageName));
         $this->assertDatabaseHas('images', ['imagable_id' => $kargo->id, 'imagable_type' => 'App\Kargo']);
         //assert missing of the deleted kargo records
-        $this->delete('/delete-kargo/' . $retailer->id . '/' . $lastKargoId);
+        $this->delete('api/delete-kargo/' . $retailer->id . '/' . $lastKargoId);
         $this->assertDatabaseMissing('kargos', ['id' => $lastKargoId]);
         //assert missing of deleted image files and respective record
         $this->assertFileDoesNotExist(public_path('storage' . $imageName));
@@ -484,7 +483,7 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         //acting as a retailer to create a kargo
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10, 0);
         $kargo= Kargo::find(1);
         //assert existence of the created kargo
@@ -494,19 +493,19 @@ class KargoManagementTest extends TestCase
         $newProductID = Product::latest()->orderBy('id', 'DESC')->first()->id;
         $newProduct = Product::find($newProductID);
         //acting as a BuyerAdmin to add items to the kargo
-        $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct->id );
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->patch('api/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct->id );
         $this->assertDatabaseHas('products', ['id' => $newProductID, 'kargo_id' => $kargo->id]);
         //given product must belongs to the right owner
         //and if it doesn't then this new product will not be added to the kargo
         $this->prepNormalEnv('retailer2', ['create-kargos', 'see-kargos'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
+        $this->actingAs($retailer2, 'api');
         $this->prepOrder(0,1);
         $newProductID2 = Product::latest()->orderBy('id', 'DESC')->first()->id;
         $newProduct2 = Product::find($newProductID2);
-        $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct2->id);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->patch('api/admin-add-to-kargo/'. $retailer->id . '/' . $kargo->id . '/' . $newProduct2->id);
         $this->assertDatabaseHas('products', ['id' => $newProductID2, 'kargo_id' => null]);
     }
 
@@ -521,15 +520,15 @@ class KargoManagementTest extends TestCase
         $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
         $BuyerAdmin = Auth::user();
         //acting as a retailer to create a kargo
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->prepKargo(10, 0);
         $kargo= Kargo::find(1);
         //assert existence of the created kargo
         $this->assertDatabaseHas('kargos', ['id' => $kargo->id]);
         //acting as a BuyerAdmin to delete items from the kargo
         $deleteProduct = Product::find(5);
-        $this->actingAs($BuyerAdmin);
-        $this->patch('/admin-remove-from-kargo/' . $kargo->id . '/' . $deleteProduct->id );
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->patch('api/admin-remove-from-kargo/' . $kargo->id . '/' . $deleteProduct->id );
         $this->assertDatabaseMissing('products', ['id' => $deleteProduct, 'kargo_id' => $kargo->id]);
     }
 
