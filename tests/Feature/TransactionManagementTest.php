@@ -23,11 +23,14 @@ class TransactionManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer1', ['see-transactions', 'see-costs'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1,'api');
         $transaction = factory('App\Transaction')->create(['user_id' => $retailer1->id]);
-        $this->get('/transactions')->assertSeeText($transaction->comment);
+        $this->get('api/transactions')->assertSeeText($transaction->comment);
         //users are only able to see their own transactions
         $this->prepNormalEnv('retailer2', ['see-transactions', 'see-costs'], 0, 1);
-        $this->get('/transactions')->assertDontSeeText($transaction->comment);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/transactions')->assertDontSeeText($transaction->comment);
     }
 
 
@@ -47,8 +50,10 @@ class TransactionManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Transaction')->raw(['user_id' => Auth::user()->id]);
-        $this->post('/transactions', $attributes);
+        $this->post('api/transactions', $attributes);
         $this->assertDatabaseHas('transactions', $attributes);
     }
 
@@ -83,12 +88,14 @@ class TransactionManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-transactions', 'see-costs'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $attributes = factory('App\Transaction')->raw(
             [
                 'user_id' => Auth::user()->id,
                 'image' => UploadedFile::fake()->create('pic.jpg')
             ]);
-        $this->post('/transactions', $attributes);
+        $this->post('api/transactions', $attributes);
         $transaction = Transaction::find(1);
         $image = $transaction->images()->find($transaction->id);
         $image_name = $image->image_name;
@@ -107,10 +114,14 @@ class TransactionManagementTest extends TestCase
     public function retailer_can_see_a_single_transaction()
     {
         $this->prepNormalEnv('retailer1', ['see-transactions', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         $this->get($transaction->path())->assertSeeText($transaction->comment);
         // users are not allowed to see other retailers transaction records
         $this->prepNormalEnv('retailer2', ['see-transactions', 'see-costs'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->get($transaction->path())->assertForbidden();
     }
 
@@ -129,6 +140,8 @@ class TransactionManagementTest extends TestCase
     public function retailer_can_update_not_confirmed_transactions()
     {
         $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         // create a transaction
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id]);
         // create image for this transaction
@@ -184,6 +197,8 @@ class TransactionManagementTest extends TestCase
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'image_name' => $image_name, 'imagable_type' => 'App\Transaction' , 'imagable_id' => $transaction->id]);
         //users can only update their own transactions
         $this->prepNormalEnv('retailer2', ['create-transactions'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->patch($transaction->path(), $newAttributesWithImage)->assertForbidden();
     }
 
@@ -193,6 +208,8 @@ class TransactionManagementTest extends TestCase
     public function retailer_can_not_delete_or_update_confirmed_transactions()
     {
         $this->prepNormalEnv('retailer', ['create-transactions'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $transaction = factory('App\Transaction')->create(['user_id' => Auth::user()->id, 'confirmed' => 1]);
         $this->patch($transaction->path())->assertForbidden();
         $this->delete($transaction->path())->assertForbidden();

@@ -63,13 +63,13 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::delete('/subscriptions/{subscription}', 'SubscriptionController@destroy')->name('subscriptions.destroy');
 //    Route::get('/change-subscriptions/{subscription}/{user}', 'SubscriptionController@changeSubscription')->name('subscriptions.change');
 
-    Route::get('/transactions', 'TransactionController@index')->name('transactions.index');
-    Route::get('/transactions/create', 'TransactionController@create')->name('transactions.create');
-    Route::post('/transactions', 'TransactionController@store')->name('transactions.store');
-    Route::get('/transactions/{transaction}', 'TransactionController@show')->name('transactions.show');
-    Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
-    Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
-    Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
+//    Route::get('/transactions', 'TransactionController@index')->name('transactions.index');
+//    Route::get('/transactions/create', 'TransactionController@create')->name('transactions.create');
+//    Route::post('/transactions', 'TransactionController@store')->name('transactions.store');
+//    Route::get('/transactions/{transaction}', 'TransactionController@show')->name('transactions.show');
+//    Route::get('/transactions/{transaction}/edit', 'TransactionController@edit')->name('transactions.edit');
+//    Route::patch('/transactions/{transaction}', 'TransactionController@update')->name('transactions.update');
+//    Route::delete('/transactions/{transaction}', 'TransactionController@destroy')->name('transactions.destroy');
 
 //    Route::get('/statuses', 'StatusController@index')->name('status.index');
 //    Route::get('/statuses/create', 'StatusController@create')->name('status.create');

@@ -14,7 +14,7 @@ class Transaction extends Model
      */
     public function path()
     {
-        return "/transactions/{$this->id}";
+        return "api/transactions/{$this->id}";
     }
 
     /**

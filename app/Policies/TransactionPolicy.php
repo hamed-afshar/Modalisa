@@ -76,7 +76,7 @@ class TransactionPolicy
     public function update(User $user, Transaction $transaction)
     {
         if($user->checkPermission('create-transactions') && $user->id == $transaction->user->id) {
-            return $transaction->confirmed ? Response::deny('deny') : Response::allow();
+            return $transaction->confirmed ? Response::deny(trans('translate.can_not_update_transaction')) : Response::allow();
         }
     }
 
@@ -92,7 +92,7 @@ class TransactionPolicy
     public function delete(User $user, Transaction $transaction)
     {
         if($user->checkPermission('delete-transactions') && $user->id == $transaction->user->id) {
-            return $transaction->confirmed ? Response::deny('deny') : Response::allow();
+            return $transaction->confirmed ? Response::deny(trans('translate.can_not_delete_transaction')) : Response::allow();
         }
     }
 

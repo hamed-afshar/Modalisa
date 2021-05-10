@@ -102,6 +102,8 @@ return [
     "added_to_kargo" => 'Item added to the kargo',
     "remove_from_kargo" => 'Item removed from the kargo',
     "confirm_kargo" => 'Kargo is Confirmed',
+    "transaction_created" => 'Transaction Created Successfully',
+    "transaction_updated" => 'Transaction Updated Successfully',
 
     //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
@@ -113,5 +115,7 @@ return [
     "image_is_required" => "Image file has not selected, please select an image",
     //in Kargo Policy
     'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
-    'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted"
+    'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted",
+    'can_not_update_transaction' => "This transaction is confirmed and can not be updated",
+    'can_not_delete_transaction' => "This transaction is confirmed and can not be deleted"
 ];
