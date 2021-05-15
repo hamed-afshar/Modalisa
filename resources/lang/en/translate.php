@@ -95,15 +95,18 @@ return [
     "wrong_kargo_add" => "This product does not belongs to the given user",
 
     //api
-    "retrieved" => "Retrieved Successfully",
-    "deleted" => 'Deleted Successfully',
+    "retrieved" => "Retrieved successfully",
+    "deleted" => 'Deleted successfully',
     "user_updated" => 'User updated',
-    "kargo_created" => 'Kargo created Successfully',
+    "kargo_created" => 'Kargo created successfully',
     "added_to_kargo" => 'Item added to the kargo',
     "remove_from_kargo" => 'Item removed from the kargo',
-    "confirm_kargo" => 'Kargo is Confirmed',
-    "transaction_created" => 'Transaction Created Successfully',
-    "transaction_updated" => 'Transaction Updated Successfully',
+    "confirm_kargo" => 'Kargo is confirmed',
+    "transaction_created" => 'Transaction created successfully',
+    "transaction_updated" => 'Transaction updated successfully',
+    "customer_created" => 'Customer created successfully',
+    "customer_updated" => 'Customer updated successfully',
+    "customer_deleted" => 'Customer deleted successfully',
 
     //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",

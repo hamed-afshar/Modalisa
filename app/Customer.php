@@ -13,7 +13,7 @@ class Customer extends Model
      */
     public function path()
     {
-        return "/customers/{$this->id}";
+        return "api/customers/{$this->id}";
     }
 
     /**

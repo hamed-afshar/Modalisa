@@ -92,13 +92,13 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/assign-customer/{customer}/{order}', 'OrderController@assignCustomer')->name('orders.assignCustomer');
     Route::patch('/edit-product/{product}', 'OrderController@editProduct')->name('orders.editProduct');
 
-    Route::get('/customers', 'CustomerController@index')->name('customers.index');
-    Route::get('/customers/create', 'CustomerController@create')->name('customers.create');
-    Route::post('/customers', 'CustomerController@store')->name('customers.store');
-    Route::get('/customers/{customer}', 'CustomerController@show')->name('customers.show');
-    Route::get('/customers/{customer}/edit', 'CustomerController@edit')->name('customers.edit');
-    Route::patch('/customers/{customer}', 'CustomerController@update')->name('customers.update');
-    Route::delete('/customers/{customer}', 'CustomerController@destroy')->name('customers.destroy');
+//    Route::get('/customers', 'CustomerController@index')->name('customers.index');
+//    Route::get('/customers/create', 'CustomerController@create')->name('customers.create');
+//    Route::post('/customers', 'CustomerController@store')->name('customers.store');
+//    Route::get('/customers/{customer}', 'CustomerController@show')->name('customers.show');
+//    Route::get('/customers/{customer}/edit', 'CustomerController@edit')->name('customers.edit');
+//    Route::patch('/customers/{customer}', 'CustomerController@update')->name('customers.update');
+//    Route::delete('/customers/{customer}', 'CustomerController@destroy')->name('customers.destroy');
 
     Route::get('/notes/{id}/{model}' , 'NoteController@index')->name('notes.index');
     Route::get('/notes/create', 'NoteController@create')->name('notes.create');

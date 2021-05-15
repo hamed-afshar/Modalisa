@@ -69,6 +69,12 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/transactions/{transaction}', 'API\TransactionController@update')->name('transactions.update');
     Route::delete('/transactions/{transaction}', 'API\TransactionController@destroy')->name('transactions.destroy');
 
+    Route::get('/customers', 'API\CustomerController@index')->name('customers.index');
+    Route::post('/customers', 'API\CustomerController@store')->name('customers.store');
+    Route::get('/customers/{customer}', 'API\CustomerController@show')->name('customers.show');
+    Route::patch('/customers/{customer}', 'API\CustomerController@update')->name('customers.update');
+    Route::delete('/customers/{customer}', 'API\CustomerController@destroy')->name('customers.destroy');
+
 
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');

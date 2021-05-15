@@ -19,12 +19,17 @@ class CustomerManagementTest extends TestCase
      */
     public function retailers_can_see_its_own_customers()
     {
+        $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
-        $this->get('/customers')->assertSeeText($customer->name);
+        $this->get('api/customers')->assertSeeText($customer->name);
         // users can only see their own records
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
-        $this->get('/customers')->assertDontSeeText($customer->name);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/customers')->assertDontSeeText($customer->name);
     }
 
     /** this should be tested in VueJs */
@@ -40,8 +45,10 @@ class CustomerManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Customer')->raw(['user_id' => Auth::user()->id]);
-        $this->post('/customers', $attributes);
+        $this->post('api/customers', $attributes);
         $this->assertDatabaseHas('customers', ['name' => $attributes['name']]);
     }
 
@@ -49,42 +56,54 @@ class CustomerManagementTest extends TestCase
     public function name_is_required()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'name' => '']);
-        $this->post('/customers', $attributes)->assertSessionHasErrors('name');
+        $this->post('api/customers', $attributes)->assertSessionHasErrors('name');
     }
 
     /** @test */
     public function tel_is_required()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'tel' => '']);
-        $this->post('/customers', $attributes)->assertSessionHasErrors('tel');
+        $this->post('api/customers', $attributes)->assertSessionHasErrors('tel');
     }
 
     /** @test */
     public function communication_media_is_required()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'communication_media' => '']);
-        $this->post('/customers', $attributes)->assertSessionHasErrors('communication_media');
+        $this->post('api/customers', $attributes)->assertSessionHasErrors('communication_media');
     }
 
     /** @test */
     public function communication_id_is_required()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $attributes = factory('App\Customer')->raw(['user_id'=>Auth::user()->id, 'communication_id' => '']);
-        $this->post('/customers', $attributes)->assertSessionHasErrors('communication_id');
+        $this->post('api/customers', $attributes)->assertSessionHasErrors('communication_id');
     }
 
     /** @test */
     public function retailer_can_see_a_single_customer()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $this->get($customer->path())->assertSeeText($customer->name);
         // users can only see their own records
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->get($customer->path())->assertForbidden();
     }
 
@@ -102,6 +121,8 @@ class CustomerManagementTest extends TestCase
     public function retailers_can_update_customers()
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $newAttributes = [
             'name' => 'new Name',
@@ -115,6 +136,8 @@ class CustomerManagementTest extends TestCase
         $this->assertDatabaseHas('customers', $newAttributes);
         //users can only update their own records
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers'], 0 , 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->patch($customer->path(), $newAttributes)->assertForbidden();
     }
 
@@ -126,13 +149,15 @@ class CustomerManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-customers', 'create-customers', 'delete-customers'], 0 , 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer1->id]);
         // users can not delete records belong to others
         $this->prepNormalEnv('retailer2', ['see-customers', 'create-customers', 'delete-customers'], 0 , 1);
         $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->delete($customer->path())->assertForbidden();
         // users can delete their own records
-        $this->actingAs($retailer1);
+        $this->actingAs($retailer1, 'api');
         $this->delete($customer->path());
         $this->assertDatabaseMissing('customers', ['id'=>$customer->id]);
     }

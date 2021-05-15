@@ -1,17 +1,18 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
 use App\Customer;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Customer::class, function (Faker $faker) {
     return [
-        'name' => 'Shadi Rahbari',
-        'tel' => '09121111111',
-        'communication_media' => 'Telegram',
-        'communication_id' => 'shadi_rahbari',
-        'address' => 'Niyavaran St',
-        'email' => 'customer@yahoo.com'
+        'name' => $faker->name,
+        'tel' => $faker->phoneNumber,
+        'communication_media' => $faker->randomElement($array = array('Telegram', 'WhatsApp', 'Instagram')),
+        'communication_id' => $faker->name,
+        'address' => $faker->address,
+        'email' => $faker->unique()->safeEmail
     ];
 });
