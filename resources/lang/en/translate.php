@@ -104,6 +104,7 @@ return [
     "confirm_kargo" => 'Kargo is confirmed',
     "transaction_created" => 'Transaction created successfully',
     "transaction_updated" => 'Transaction updated successfully',
+    "transaction_confirmed" => 'Transaction confirmed successfully',
     "customer_created" => 'Customer created successfully',
     "customer_updated" => 'Customer updated successfully',
     "customer_deleted" => 'Customer deleted successfully',

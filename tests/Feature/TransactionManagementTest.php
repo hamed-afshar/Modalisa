@@ -268,10 +268,10 @@ class TransactionManagementTest extends TestCase
         $retailer = Auth::user();
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $SystemAdmin = Auth::user();
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $transaction = factory('App\Transaction')->create(['user_id' => $retailer->id]);
-        $this->actingAs($SystemAdmin);
-        $this->patch('/confirm-transaction/' . $transaction->id);
+        $this->actingAs($SystemAdmin, 'api');
+        $this->post('api/confirm-transaction/' . $transaction->id);
         $this->assertEquals(1, Transaction::where('id', $transaction->id)->value('confirmed'));
     }
 

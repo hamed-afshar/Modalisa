@@ -20,6 +20,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
@@ -168,6 +169,7 @@ class AdminController extends Controller
      * super privilege users are able to create kargo for the given user
      * @param Request $request
      * @param User $user
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
 
@@ -210,7 +212,7 @@ class AdminController extends Controller
      * show a single kargo
      * super privilege users are able to see all kargos with all related user and products
      * @param Kargo $kargo
-     * @return Application|ResponseFactory|Builder[]|Collection|\Illuminate\Http\Response
+     * @return Application|ResponseFactory|Builder[]|Collection|Response
      * @throws AuthorizationException
      */
     public function showKargo(Kargo $kargo)
@@ -268,6 +270,7 @@ class AdminController extends Controller
      * @param Request $request
      * @param User $user
      * @param Kargo $kargo
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function updateKargo(Request $request, User $user, Kargo $kargo)
@@ -294,6 +297,7 @@ class AdminController extends Controller
      * super privilege users are able to delete both confirmed and not confirmed kargos
      * @param User $user
      * @param Kargo $kargo
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function deleteKargo(User $user, Kargo $kargo)
@@ -346,12 +350,15 @@ class AdminController extends Controller
      * confirm transactions
      * only SystemAdmin can confirm transactions
      * @param Transaction $transaction
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function confirmTransaction(Transaction $transaction)
     {
+        dd('here');
         $this->authorize('confirmTransaction', Admin::class);
         $transaction->update(['confirmed' => 1]);
+        return response(['message' => trans('translate.transaction_confirmed')], 200);
     }
 
     /**
@@ -370,7 +377,7 @@ class AdminController extends Controller
      * index a single order with relative products
      * Super privilege users can index orders with relative product
      * @param Order $order
-     * @return Application|ResponseFactory|\Illuminate\Http\Response
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function indexSingleOrder(Order $order)
