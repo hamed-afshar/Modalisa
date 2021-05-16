@@ -28,29 +28,32 @@ class NoteManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1, 0);
-        $user = Auth::user();
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $order = Order::find(1);
         $note1 = factory('App\Note')->create([
-            'user_id' => $user->id,
+            'user_id' => $retailer1->id,
             'notable_type' => 'App\Order',
             'notable_id' => $order->id,
             'body' => 'first note'
         ]);
 
         $note2 = factory('App\Note')->create([
-            'user_id' => $user->id,
+            'user_id' => $retailer1->id,
             'notable_type' => 'App\Order',
             'notable_id' => $order->id,
             'body' => 'second note'
         ]);
         $model = 'App\Order';
         $id = $order->id;
-        $this->get('/notes/' . $id . '/' . $model)->assertSeeText($note1->body);
-        $this->get('/notes/' . $id . '/' . $model)->assertSeeText($note2->body);
+        $this->get('api/notes/' . $id . '/' . $model)->assertSeeText($note1->body);
+        $this->get('api/notes/' . $id . '/' . $model)->assertSeeText($note2->body);
         //users can only index their own records
         $this->prepNormalEnv('retailer2', ['create-notes', 'see-notes'], 0 , 1);
-        $this->get('/notes/' . $id . '/' . $model)->assertDontSeeText($note1->body);
-        $this->get('/notes/' . $id . '/' . $model)->assertDontSeeText($note2->body);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/notes/' . $id . '/' . $model)->assertDontSeeText($note1->body);
+        $this->get('api/notes/' . $id . '/' . $model)->assertDontSeeText($note2->body);
     }
 
 
@@ -71,13 +74,14 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1,0);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
             'user_id' => $user->id,
             'notable_type' => 'App\Order',
             'notable_id' => $order->id
         ]);
-        $this->post('/notes', $attributes);
+        $this->post('api/notes', $attributes);
         $this->assertDatabaseHas('notes', $attributes);
     }
 
@@ -87,6 +91,7 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1, 0);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
             'title' => '',
@@ -95,7 +100,7 @@ class NoteManagementTest extends TestCase
             'notable_type' => 'App\Order',
             'notable_id' => $order->id
         ]);
-        $this->post('/notes', $attributes)->assertSessionHasErrors('title');
+        $this->post('api/notes', $attributes)->assertSessionHasErrors('title');
     }
 
     /** @test */
@@ -104,6 +109,7 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1,0);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
             'title' => 'note title',
@@ -112,7 +118,7 @@ class NoteManagementTest extends TestCase
             'notable_type' => 'App\Order',
             'notable_id' => $order->id
         ]);
-        $this->post('/notes', $attributes)->assertSessionHasErrors('body');
+        $this->post('api/notes', $attributes)->assertSessionHasErrors('body');
     }
 
     /** @test */
@@ -121,6 +127,7 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1,0);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
             'title' => 'some title',
@@ -129,7 +136,7 @@ class NoteManagementTest extends TestCase
             'notable_type' => '',
             'notable_id' => $order->id
         ]);
-        $this->post('/notes', $attributes)->assertSessionHasErrors('notable_type');
+        $this->post('api/notes', $attributes)->assertSessionHasErrors('notable_type');
     }
 
     /** @test */
@@ -138,6 +145,7 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1,0);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $order = Order::find(1);
         $attributes = factory('App\Note')->raw([
             'title' => 'note title',
@@ -146,7 +154,7 @@ class NoteManagementTest extends TestCase
             'notable_type' => 'App\Order',
             'notable_id' => ''
         ]);
-        $this->post('/notes', $attributes)->assertSessionHasErrors('notable_id');;
+        $this->post('api/notes', $attributes)->assertSessionHasErrors('notable_id');;
     }
 
     /** @test
@@ -158,15 +166,18 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes'], 0 , 1);
         $this->prepOrder(1,0);
         $order = Order::find(1);
-        $user = Auth::user();
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $note = factory('App\Note')->create([
-            'user_id' => $user->id,
+            'user_id' => $retailer1->id,
             'notable_type' => 'App\Order',
             'notable_id' => $order->id
         ]);
         $this->get($note->path())->assertSeeText($note->body);
         // users can only see their own records
         $this->prepNormalEnv('retailer2', ['create-notes', 'see-notes'], 0 , 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->get($note->path())->assertForbidden();
     }
 
@@ -187,6 +198,7 @@ class NoteManagementTest extends TestCase
         $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $note = factory('App\Note')->create([
             'user_id' => $user->id,
             'notable_type' => 'App\Order',
@@ -201,9 +213,11 @@ class NoteManagementTest extends TestCase
         $this->prepNormalEnv('retailer1', ['create-notes', 'see-notes', 'delete-notes'], 0 , 1);
         $retailer1 = Auth::user();
         factory('App\Status')->create();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(1,0);
         $order = Order::find(1);
         $user = Auth::user();
+        $this->actingAs($user, 'api');
         $note = factory('App\Note')->create([
             'user_id' => $user->id,
             'notable_type' => 'App\Order',
@@ -212,10 +226,10 @@ class NoteManagementTest extends TestCase
         //users can not delete other user's notes
         $this->prepNormalEnv('retailer2', ['create-notes', 'see-notes', 'delete-notes'], 0 , 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
+        $this->actingAs($retailer2, 'api');
         $this->delete($note->path())->assertForbidden();
         //users can delete their own notes
-        $this->actingAs($retailer1);
+        $this->actingAs($retailer1, 'api');
         $this->delete($note->path());
         $this->assertDatabaseMissing('notes', ['id' => $note->id, 'notable_type' => 'App\Order', 'notable_id' => $order->id]);
     }

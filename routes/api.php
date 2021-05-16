@@ -75,6 +75,11 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/customers/{customer}', 'API\CustomerController@update')->name('customers.update');
     Route::delete('/customers/{customer}', 'API\CustomerController@destroy')->name('customers.destroy');
 
+    Route::get('/notes/{id}/{model}' , 'API\NoteController@index')->name('notes.index');
+    Route::post('/notes', 'API\NoteController@store')->name('note.store');
+    Route::get('/notes/{note}' , 'API\NoteController@show')->name('notes.show');
+    Route::patch('/notes/{note}', 'API\NoteController@update')->name('notes.update');
+    Route::delete('/notes/{note}', 'API\NoteController@destroy')->name('notes.destroy');
 
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
@@ -99,6 +104,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'API\AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'API\AdminController@removeFromKargo')->name('admin.remove-from-kargo');
     Route::post('/confirm-transaction/{transaction}', 'API\AdminController@confirmTransaction')->name('admin.confirm-transaction');
+
 
 
 });

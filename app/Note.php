@@ -12,7 +12,7 @@ class Note extends Model
      */
     public function path()
     {
-        return "/notes/{$this->id}";
+        return "api/notes/{$this->id}";
     }
 
     /**

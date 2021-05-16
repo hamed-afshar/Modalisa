@@ -97,7 +97,6 @@ class KargoController extends Controller
         $this->authorize('update', $kargo);
     }
 
-
     /**
      * update a kargo
      * users with create-kargos permission are allowed

@@ -36,27 +36,28 @@ class NotePolicy
     /**
      * Determine whether the user can view the note.
      * Use can only see its own notes
-     *
+     * privileged users are also able to see notes
      * @param User $user
      * @param Note $note
      * @return mixed
      */
     public function view(User $user, Note $note)
     {
-        if($user->checkPermission('see-notes') && $user->id == $note->user->id) {
+        if(($user->checkPermission('see-notes') && $user->id == $note->user->id) || $user->checkPrivilegeRole()) {
             return true;
         }
     }
 
     /**
      * Determine whether the user can create notes.
+     * retailer with create-notes permission and privilege users are allowed to create notes
      *
      * @param User $user
      * @return mixed
      */
     public function create(User $user)
     {
-       if($user->checkPermission('create-notes')) {
+       if($user->checkPermission('create-notes') || $user->checkPrivilegeRole()) {
            return true;
        }
     }
@@ -82,7 +83,7 @@ class NotePolicy
      */
     public function delete(User $user, Note $note)
     {
-        if($user->checkPermission('delete-notes') && $note->notable->user_id == $user->id) {
+        if(($user->checkPermission('delete-notes') && $note->notable->user_id == $user->id) || $user->checkPrivilegeRole()) {
             return true;
         }
     }
