@@ -114,6 +114,6 @@ class NoteController extends Controller
     {
         $this->authorize('delete', $note);
         $note->delete();
-        return response(['message' => trans('translate.deleted')], 200);
+        return response(['message' => trans('translate.note_deleted')], 200);
     }
 }

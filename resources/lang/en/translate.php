@@ -109,6 +109,7 @@ return [
     "customer_updated" => 'Customer updated successfully',
     "customer_deleted" => 'Customer deleted successfully',
     "note_created" => 'Note created successfully',
+    "note_deleted" => 'Note deleted successfully',
 
     //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
