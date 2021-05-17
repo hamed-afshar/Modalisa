@@ -112,7 +112,6 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        dd('here');
         $this->authorize('delete', $note);
         $note->delete();
         return response(['message' => trans('translate.deleted')], 200);
