@@ -110,6 +110,8 @@ return [
     "customer_deleted" => 'Customer deleted successfully',
     "note_created" => 'Note created successfully',
     "note_deleted" => 'Note deleted successfully',
+    "order_saved" => 'Order created successfully',
+    "product_updated" => 'Product updated successfully',
 
     //in Exceptions
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
@@ -119,6 +121,7 @@ return [
     "status_is_already_exist" =>"This status name is already exist in db, please choose another name",
     "without_subscription" => "User does not have any subscription",
     "image_is_required" => "Image file has not selected, please select an image",
+    "product_delete_is_not_allowed" => "Order has bought and delete is not possible!",
     //in Kargo Policy
     'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
     'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted",

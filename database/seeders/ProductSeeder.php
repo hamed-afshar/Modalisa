@@ -17,19 +17,24 @@ class ProductSeeder extends Seeder
     {
         // create three orders, two belongs to user id of 3 and two belongs to user id of 4
         $order1 = factory(Order::class)->create([
-            'user_id' => 3
+            'user_id' => 3,
+            'customer_id' => 2
         ]);
 
         $order2 = factory(Order::class)->create([
-            'user_id' => 3
+            'user_id' => 3,
+            'customer_id' => 3
+
         ]);
 
         $order3 = factory(Order::class)->create([
-            'user_id' => 4
+            'user_id' => 4,
+            'customer_id' => 25
         ]);
 
         $order4 = factory(Order::class)->create([
-            'user_id' => 4
+            'user_id' => 4,
+            'customer_id' => 26
         ]);
 
         //create product for each order

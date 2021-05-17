@@ -83,9 +83,9 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('/histories', 'HistoryController@store')->name('history.store');
     Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.destroy');
 
-    Route::get('/orders', 'OrderController@index')->name('orders.index');
-    Route::get('/orders/create', 'OrderController@create')->name('orders.create');
-    Route::post('/orders', 'OrderController@store')->name('orders.store');
+//    Route::get('/orders', 'OrderController@index')->name('orders.index');
+//    Route::get('/orders/create', 'OrderController@create')->name('orders.create');
+//    Route::post('/orders', 'OrderController@store')->name('orders.store');
 
     Route::post('/add-to-order/{order}', 'OrderController@addToOrder')->name('orders.addTo');
     Route::delete('/delete-product/{product}', 'OrderController@deleteProduct')->name('orders.deleteProduct');

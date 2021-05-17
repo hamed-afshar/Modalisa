@@ -3,13 +3,19 @@
 namespace App\Http\Controllers\API;
 
 use App\Customer;
+use App\Exceptions\ProductDeleteNotAllowed;
 use App\Helper\StatusManager;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\OrderResource;
+use App\Http\Resources\ProductResource;
 use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -59,7 +65,8 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        return Auth::user()->orders()->with(['products', 'customer'])->get();
+        $orders =  Auth::user()->orders()->with(['products', 'customer'])->get();
+        return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -79,6 +86,7 @@ class OrderController extends Controller
      * all order by default set retailers as default customer
      * but retailer can change this customer later
      * @param Request $request
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function store(Request $request)
@@ -94,7 +102,9 @@ class OrderController extends Controller
             'quantity' => 'required',
             'country' => 'required',
             'currency' => 'required',
+            'customer_id' => 'required'
         ]);
+
         $productData = [
             'size' => $request->input('size'),
             'color' => $request->input('color'),
@@ -103,15 +113,20 @@ class OrderController extends Controller
             'quantity' => $request->input('quantity'),
             'country' => $request->input('country'),
             'currency' => $request->input('currency'),
+
+        ];
+        $customerData = [
+            'customer_id' => $request->input('customer_id')
         ];
         //first create record for the order then add products
         //create record for the order
-        $order = $user->orders()->create();
+        $order = $user->orders()->create($customerData);
         //create record for the product
         $product = $order->products()->create($productData);
         //upload image for the created product and create a record in the images table
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
+        return response(['message' => trans('translate.order_saved')]);
     }
 
     /**
@@ -213,10 +228,13 @@ class OrderController extends Controller
      * status will change from current status to Order Edit status:10
      * @param Request $request
      * @param Product $product
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws ProductDeleteNotAllowed
      */
     public function editProduct(Request $request, Product $product)
     {
+        dd('here');
         $this->authorize('create', Order::class);
         $user = Auth::user();
         $request->validate([
@@ -258,8 +276,9 @@ class OrderController extends Controller
                 $this->deleteOne('public', [$oldImageName]);
                 $this->uploadImage($user, $product, $image);
             }
+            return response(['product' => new ProductResource($product) ,'message' => trans('translate.product_updated')], 200);
         } else {
-            abort(403, 'Access Denied');
+            throw new ProductDeleteNotAllowed();
         }
     }
 }

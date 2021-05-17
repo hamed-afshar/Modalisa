@@ -16,7 +16,7 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             //if users do not assign any customer, then 1 would be the default customer id
-            $table->unsignedBigInteger('customer_id')->nullable()->default(1);
+            $table->unsignedBigInteger('customer_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

@@ -94,6 +94,9 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/remove-from-kargo/{kargo}/{product}', 'API\KargoController@removeFrom')->name('kargos.remove');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
+    Route::post('/orders', 'API\OrderController@store')->name('orders.store');
+    Route::patch('/edit-product/{product}', 'API\OrderController@editProduct')->name('orders.editProduct');
+
 
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');

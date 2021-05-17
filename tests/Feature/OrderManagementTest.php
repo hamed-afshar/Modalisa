@@ -57,6 +57,7 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         //default customer_id for all created orders will be 1, which means it belongs to the retailer.
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status', 2)->create();
@@ -69,9 +70,11 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'Turkey',
             'currency' => 'TL',
-            'image' => UploadedFile::fake()->create('pic.jpg')
+            'image' => UploadedFile::fake()->create('pic.jpg'),
+            'customer_id' => $customer->id,
         ];
-        $this->post('/orders', $attributes);
+
+        $this->post('api/orders', $attributes);
         $order = Order::find(1);
         $product = Product::find(1);
         $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
@@ -79,6 +82,7 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseHas('orders', ['user_id' => $retailer->id, 'customer_id' => $customer->id]);
         $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
         $this->assertDatabaseHas('Images', ['imagable_id' => $product->id, 'imagable_type' => 'App\Product']);
+        $this->assertDatabaseHas('orders', ['user_id' => $retailer->id, 'customer_id' => $customer->id]);
         $this->assertFileExists(public_path('storage' . $image_name));
     }
 
@@ -88,6 +92,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -102,7 +107,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('size');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('size');
     }
 
     /** @test */
@@ -110,6 +115,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -124,7 +130,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('color');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('color');
     }
 
     /** @test */
@@ -132,6 +138,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -146,7 +153,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('link');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('link');
     }
 
     /** @test */
@@ -154,6 +161,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -168,7 +176,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('price');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('price');
     }
 
     /** @test */
@@ -176,6 +184,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -190,7 +199,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('quantity');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('quantity');
     }
 
     /** @test */
@@ -198,6 +207,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -212,7 +222,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('country');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('country');
     }
 
     /** @test */
@@ -220,6 +230,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -234,7 +245,7 @@ class OrderManagementTest extends TestCase
             'currency' => '',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('currency');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('currency');
     }
 
     /** @test */
@@ -242,6 +253,7 @@ class OrderManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status')->create();
         //prepare attributes
@@ -256,7 +268,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => ''
         ];
-        $this->post('/orders', $attributes)->assertSessionHasErrors('image');
+        $this->post('api/orders', $attributes)->assertSessionHasErrors('image');
     }
 
     /**
@@ -401,6 +413,7 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(0, 1);
         $product = Product::find(1);
         //create all possible statuses in db
@@ -415,7 +428,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'Pound',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->patch('/edit-product/' . $product->id, $newProductAttributes);
+        $this->patch('api/edit-product/' . $product->id, $newProductAttributes);
         $image_name = $product->images()
             ->where('imagable_id', $product->id)
             ->where('imagable_type', 'App\Product')
