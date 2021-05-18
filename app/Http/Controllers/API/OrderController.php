@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Customer;
 use App\Exceptions\ProductDeleteNotAllowed;
+use App\Exceptions\ProductEditNotAllowed;
 use App\Helper\StatusManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
@@ -52,7 +53,7 @@ class OrderController extends Controller
      */
     public function getStatus(Product $product): int
     {
-        $latestHistory = DB::table('histories')->latest()->first();
+        $latestHistory = DB::table('histories')->orderBy('id', 'desc')->first();
         return $latestHistory->status_id;
     }
 
@@ -65,7 +66,7 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        $orders =  Auth::user()->orders()->with(['products', 'customer'])->get();
+        $orders = Auth::user()->orders()->with(['products', 'customer'])->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -189,7 +190,8 @@ class OrderController extends Controller
      */
     public function deleteProduct(Product $product)
     {
-        $this->authorize('create', Order::class);
+        dd('here');
+        $this->authorize('delete', $product);
         //nextStatus will be Order Deleted
         $nextStatus = 1;
         $currentStatus = $this->getStatus($product);
@@ -234,7 +236,6 @@ class OrderController extends Controller
      */
     public function editProduct(Request $request, Product $product)
     {
-        dd('here');
         $this->authorize('create', Order::class);
         $user = Auth::user();
         $request->validate([
@@ -276,9 +277,9 @@ class OrderController extends Controller
                 $this->deleteOne('public', [$oldImageName]);
                 $this->uploadImage($user, $product, $image);
             }
-            return response(['product' => new ProductResource($product) ,'message' => trans('translate.product_updated')], 200);
+            return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
         } else {
-            throw new ProductDeleteNotAllowed();
+            throw new ProductEditNotAllowed();
         }
     }
 }

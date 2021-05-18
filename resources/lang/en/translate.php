@@ -114,6 +114,7 @@ return [
     "product_updated" => 'Product updated successfully',
 
     //in Exceptions
+    "action_not_allowed" => "This action is not allowed",
     "lock_is_not_allowed" => "Lock function is not allowed for SuperAdmin user",
     "role_is_already_exist" => "This role name is already exist in db, please choose another name",
     "permission_is_already_exist" =>"This permission name is already exist in db, please choose another name",
@@ -122,6 +123,7 @@ return [
     "without_subscription" => "User does not have any subscription",
     "image_is_required" => "Image file has not selected, please select an image",
     "product_delete_is_not_allowed" => "Order has bought and delete is not possible!",
+    "product_edit_is_not_allowed" => "Order has bought and edit is not possible!",
     //in Kargo Policy
     'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
     'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted",

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Customer;
+use App\Exceptions\ProductEditNotAllowed;
 use App\Kargo;
 use App\Order;
 use App\Product;
@@ -326,9 +327,10 @@ class OrderManagementTest extends TestCase
     public function delete_product_from_orders_with_more_than_two_products()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders', 'delete-orders'], 0, 1);
         $retailer = Auth::user();
-        factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $this->actingAs($retailer, 'api');
+        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status', 2)->create();
         $attributesProduct1 = [
             'size' => 'X-Large',
@@ -338,9 +340,10 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'Turkey',
             'currency' => 'TL',
+            'customer_id' => $customer->id,
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributesProduct1);
+        $this->post('api/orders', $attributesProduct1);
         $order1 = Order::find(1);
         $attributesProduct2 = [
             'size' => 'Large',
@@ -350,12 +353,13 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'Turkey',
             'currency' => 'TL',
+            'customer_id' => $customer->id,
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/add-to-order/' . $order1->id, $attributesProduct2);
+        $this->post('api/add-to-order/' . $order1->id, $attributesProduct2);
         $product2 = Product::find(2);
         $image_name = $product2->images()->where('imagable_id', $product2->id)->value('image_name');
-        $this->delete('/delete-product/' . $product2->id);
+        $this->delete('api/delete-product/' . $product2->id);
         //keep the order and delete the product
         $this->assertDatabaseMissing('products', ['id' => $product2->id]);
         $this->assertDatabaseHas('orders', ['id' => $order1->id]);
@@ -446,7 +450,9 @@ class OrderManagementTest extends TestCase
         $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => 10]);
         //assert to check existence of the new uploaded file
         $this->assertFileExists(public_path('storage' . $image_name));
+
     }
+
 
     /**
      * @test

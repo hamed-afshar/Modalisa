@@ -14,6 +14,6 @@ class ProductDeleteNotAllowed extends Exception
 
     public function render($request)
     {
-        return response(['error' => new ErrorResource($request), 'message' => trans('translate.product_delete_is_not_allowed')]);
+        return response(['error' => trans('translate.action_not_allowed'), 'message' => trans('translate.product_delete_is_not_allowed')]);
     }
 }
