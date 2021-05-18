@@ -13,3 +13,5 @@ It should indicate that this item is currently has assigned to another kargo.
 
 # we must consider a way for bulk orders, because current design is just for
 products with 1 quantity.
+
+# we should also think about including query parameters in the body instead of header
