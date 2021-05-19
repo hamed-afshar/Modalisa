@@ -112,6 +112,9 @@ return [
     "note_deleted" => 'Note deleted successfully',
     "order_saved" => 'Order created successfully',
     "product_updated" => 'Product updated successfully',
+    "product_deleted" => 'Product deleted successfully',
+    "product_added" => 'Product added successfully',
+    "customer_assigned" => 'Customer assigned to the order successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

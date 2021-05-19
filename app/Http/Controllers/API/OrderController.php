@@ -53,7 +53,9 @@ class OrderController extends Controller
      */
     public function getStatus(Product $product): int
     {
-        $latestHistory = DB::table('histories')->orderBy('id', 'desc')->first();
+        $latestHistory = DB::table('histories')
+            ->where('product_id', '=', $product->id)
+            ->orderBy('id', 'desc')->first();
         return $latestHistory->status_id;
     }
 
@@ -66,7 +68,7 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        $orders = Auth::user()->orders()->with(['products', 'customer'])->get();
+        $orders = Auth::user()->orders()->with(['products', 'customer', 'images'])->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -127,7 +129,7 @@ class OrderController extends Controller
         //upload image for the created product and create a record in the images table
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
-        return response(['message' => trans('translate.order_saved')]);
+        return response(['message' => trans('translate.order_saved')], 200);
     }
 
     /**
@@ -135,12 +137,14 @@ class OrderController extends Controller
      * users should have create-orders permission to be allowed
      * @param Customer $customer
      * @param Order $order
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function assignCustomer(Customer $customer, Order $order)
     {
         $this->authorize('create', Order::class);
         $order->update(['customer_id' => $customer->id]);
+        return response(['message' => trans('translate.customer_assigned')], 200);
     }
 
     /**
@@ -148,6 +152,7 @@ class OrderController extends Controller
      * users should have create-orders permission to be allowed
      * @param Request $request
      * @param Order $order
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function addToOrder(Request $request, Order $order)
@@ -176,6 +181,7 @@ class OrderController extends Controller
         $product = $order->products()->create($productData);
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
+        return response(['message' => trans('translate.product_added')], 200);
     }
 
     /**
@@ -186,12 +192,13 @@ class OrderController extends Controller
      * it is not possible to delete products if they have bought
      * status will change from current status to deleted status:0
      * @param Product $product
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
+     * @throws ProductDeleteNotAllowed
      */
     public function deleteProduct(Product $product)
     {
-        dd('here');
-        $this->authorize('delete', $product);
+        $this->authorize('create', Order::class);
         //nextStatus will be Order Deleted
         $nextStatus = 1;
         $currentStatus = $this->getStatus($product);
@@ -212,13 +219,15 @@ class OrderController extends Controller
                 $product->images()->delete($oldImage);
                 $order->delete();
                 $this->deleteOne('public', [$oldImageName]);
+                return response(['message' => trans('translate.product_deleted')]);
             } else {
                 $product->images()->delete($oldImage);
-                $order->products()->delete($product);
+                $order->products()->where('id', '=', $product->id)->delete();
                 $this->deleteOne('public', [$oldImageName]);
+                return response(['message' => trans('translate.product_deleted')], 200);
             }
         } else {
-            abort(403, 'Access Denied');
+            throw new ProductDeleteNotAllowed();
         }
     }
 
@@ -232,7 +241,7 @@ class OrderController extends Controller
      * @param Product $product
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
-     * @throws ProductDeleteNotAllowed
+     * @throws ProductEditNotAllowed
      */
     public function editProduct(Request $request, Product $product)
     {

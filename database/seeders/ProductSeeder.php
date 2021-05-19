@@ -37,6 +37,11 @@ class ProductSeeder extends Seeder
             'customer_id' => 26
         ]);
 
+        $order5 = factory(Order::class)->create([
+           'user_id' => 3,
+           'customer_id' => 2
+        ]);
+
         //create product for each order
         factory(Product::class, 50)->create([
             'order_id' => $order1
@@ -52,6 +57,10 @@ class ProductSeeder extends Seeder
 
         factory(Product::class, 40)->create([
             'order_id' => $order4
+        ]);
+
+        factory(Product::class, 1)->create([
+            'order_id' => $order5
         ]);
     }
 }

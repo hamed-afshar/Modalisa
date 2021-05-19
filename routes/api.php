@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::post('/add-to-order/{order}', 'API\OrderController@addToOrder')->name('orders.addTo');
     Route::patch('/edit-product/{product}', 'API\OrderController@editProduct')->name('orders.editProduct');
     Route::delete('/delete-product/{product}', 'API\OrderController@deleteProduct')->name('orders.deleteProduct');
+    Route::post('/assign-customer/{customer}/{order}', 'API\OrderController@assignCustomer')->name('orders.assignCustomer');
 
 
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');

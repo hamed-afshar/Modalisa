@@ -282,11 +282,12 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         //create an order then assign new customer
         $this->prepOrder(0, 1);
         $newCustomer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         $order = Order::find(1);
-        $this->post('/assign-customer/' . $newCustomer->id . '/' . $order->id);
+        $this->post('api/assign-customer/' . $newCustomer->id . '/' . $order->id);
         $this->assertDatabaseHas('orders', ['id' => $order->id, 'customer_id' => $newCustomer->id]);
     }
 
@@ -299,6 +300,8 @@ class OrderManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(0, 1);
         $order = Order::find(1);
         $attributes = [
@@ -311,7 +314,7 @@ class OrderManagementTest extends TestCase
             'currency' => 'TL',
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/add-to-order/' . $order->id, $attributes);
+        $this->post('api/add-to-order/' . $order->id, $attributes);
         $product = Product::find(2);
         $this->assertDatabaseHas('products', ['id' => $product->id, 'order_id' => $order->id]);
         $image_name = $product->images()->where('imagable_id', $product->id)->value('image_name');
@@ -378,7 +381,8 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
-        factory('App\Customer')->create(['user_id' => $retailer->id]);
+        $this->actingAs($retailer, 'api');
+        $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status', 2)->create();
         $attributes = [
             'size' => 'X-Large',
@@ -388,16 +392,17 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'Turkey',
             'currency' => 'TL',
+            'customer_id' => $customer->id,
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
-        $this->post('/orders', $attributes);
+        $this->post('api/orders', $attributes);
         $order = Order::find(1);
         $product = Product::find(1);
         $image_name = $product->images()
             ->where('imagable_id', $product->id)
             ->where('imagable_type', 'App\Product')
             ->value('image_name');
-        $this->delete('/delete-product/' . $product->id);
+        $this->delete('api/delete-product/' . $product->id);
         //Both order and product will be deleted
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
@@ -462,6 +467,7 @@ class OrderManagementTest extends TestCase
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         //first create a product with image
         $customer = factory('App\Customer')->create(['user_id' => $retailer->id]);
         factory('App\Status', 2)->create();
@@ -473,11 +479,12 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'Turkey',
             'currency' => 'TL',
+            'customer_id' => $customer->id,
             'image' => UploadedFile::fake()->create('product1.jpg')
         ];
         //create image file
         Storage::disk('public')->put('/images/product1.jpg', 'Contents');
-        $this->post('/orders/', $attributes);
+        $this->post('api/orders/', $attributes);
         $order = Order::find(1);
         $product = Product::find(1);
         $oldImageName = $product->images()->where('imagable_id', $product->id)->value('image_name');
@@ -493,9 +500,10 @@ class OrderManagementTest extends TestCase
             'quantity' => '1',
             'country' => 'UK',
             'currency' => 'Pound',
+            'customer_id' => $customer->id,
             'image' => UploadedFile::fake()->create('newProduct1.jpg')
         ];
-        $this->patch('/edit-product/' . $product->id, $newAttributes);
+        $this->patch('api/edit-product/' . $product->id, $newAttributes);
         //check the new image existence
         $newImageName = $product->images()
             ->where('imagable_id', $product->id)

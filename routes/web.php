@@ -87,9 +87,9 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::get('/orders/create', 'OrderController@create')->name('orders.create');
 //    Route::post('/orders', 'OrderController@store')->name('orders.store');
 
-    Route::post('/add-to-order/{order}', 'OrderController@addToOrder')->name('orders.addTo');
-    Route::delete('/delete-product/{product}', 'OrderController@deleteProduct')->name('orders.deleteProduct');
-    Route::post('/assign-customer/{customer}/{order}', 'OrderController@assignCustomer')->name('orders.assignCustomer');
+//    Route::post('/add-to-order/{order}', 'OrderController@addToOrder')->name('orders.addTo');
+//    Route::delete('/delete-product/{product}', 'OrderController@deleteProduct')->name('orders.deleteProduct');
+//    Route::post('/assign-customer/{customer}/{order}', 'OrderController@assignCustomer')->name('orders.assignCustomer');
 //    Route::patch('/edit-product/{product}', 'OrderController@editProduct')->name('orders.editProduct');
 
 //    Route::get('/customers', 'CustomerController@index')->name('customers.index');
@@ -106,7 +106,7 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::get('/notes/{note}' , 'NoteController@show')->name('notes.show');
 //    Route::get('/notes/{note}/edit' , 'NoteController@edit')->name('note.edit');
 //    Route::patch('/notes/{note}', 'NoteController@update')->name('notes.update');
-    Route::delete('/notes/{note}', 'NoteController@destroy')->name('notes.destroy');
+//    Route::delete('/notes/{note}', 'NoteController@destroy')->name('notes.destroy');
 
     Route::get('/images' , 'ImageController@index')->name('images.index');
     Route::get('/images/create', 'Imagecontroller@create')->name('images.create');
