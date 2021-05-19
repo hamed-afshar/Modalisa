@@ -274,6 +274,23 @@ class OrderManagementTest extends TestCase
 
     /**
      * @test
+     * show a single product
+     * users should have see-orders permission to be allowed
+     */
+    public function show_a_single_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->prepOrder(0,1);
+        $product = Product::find(1);
+        $this->get('api/products/' . $product->id)
+            ->assertSeeText($product->link);
+    }
+
+    /**
+     * @test
      * users can assign customers for orders
      * users should have create-orders permission to be allowed
      */

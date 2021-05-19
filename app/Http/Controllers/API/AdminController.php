@@ -368,7 +368,7 @@ class AdminController extends Controller
     public function indexOrders()
     {
         $this->authorize('indexOrder', Admin::class);
-        $orders = Order::with(['products'])->get();
+        $orders = Order::with(['products.images'])->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -382,7 +382,7 @@ class AdminController extends Controller
     public function indexSingleOrder(Order $order)
     {
         $this->authorize('indexSingleOrder', Admin::class);
-        $order = $order->with('products')->get();
+        $order = $order->with('products.images')->get();
         return response(['order' => new OrderResource($order), 'message' => trans('translate.retrieved')], 200);
     }
 }

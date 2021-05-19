@@ -16,4 +16,4 @@ products with 1 quantity.
 
 # we should also think about including query parameters in the body instead of header
 
-#image records also should return when index orders.
+

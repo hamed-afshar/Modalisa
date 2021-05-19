@@ -68,9 +68,12 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        $orders = Auth::user()->orders()->with(['products', 'customer', 'images'])->get();
+        $orders = Auth::user()->orders()->with(['products.images', 'customer'])->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
+
+
+
 
     /**
      * form to create order
@@ -133,7 +136,16 @@ class OrderController extends Controller
     }
 
     /**
-     * assign the customer to the given order
+     * show a single product
+     * users should have see-orders permission to be allowed
+     */
+    public function showProduct()
+    {
+        dd('cont');
+    }
+
+    /**
+     * assign a customer to the given order
      * users should have create-orders permission to be allowed
      * @param Customer $customer
      * @param Order $order
