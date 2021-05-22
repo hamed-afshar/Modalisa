@@ -218,7 +218,8 @@ class OrderController extends Controller
      */
     public function deleteProduct(Product $product)
     {
-        $this->authorize('create', Order::class);
+        $order = $product->order;
+        $this->authorize('delete', $order);
         //nextStatus will be Order Deleted
         $nextStatus = 1;
         $currentStatus = $this->getStatus($product);
@@ -265,7 +266,8 @@ class OrderController extends Controller
      */
     public function editProduct(Request $request, Product $product)
     {
-        $this->authorize('create', Order::class);
+        $order = $product->order;
+        $this->authorize('update', $order);
         $user = Auth::user();
         $request->validate([
             'size' => 'required',

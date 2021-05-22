@@ -71,7 +71,9 @@ class OrderPolicy
      */
     public function update(User $user, Order $order)
     {
-        //
+        if($user->checkPermission('create-orders') && $order->user->id == $user->id) {
+            return true;
+        }
     }
 
     /**
@@ -83,7 +85,9 @@ class OrderPolicy
      */
     public function delete(User $user, Order $order)
     {
-        //
+        if($user->checkPermission('see-orders') && $order->user->id == $user->id) {
+            return true;
+        }
     }
 
     /**
