@@ -79,8 +79,8 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::patch('/statuses/{status}', 'StatusController@update')->name('status.update');
 //    Route::delete('/statuses/{status}', 'StatusController@destroy')->name('status.destroy');
 
-    Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
-    Route::post('/histories', 'HistoryController@store')->name('history.store');
+//    Route::get('/histories/{product}', 'HistoryController@index')->name('history.index');
+//    Route::post('/histories', 'HistoryController@store')->name('history.store');
     Route::delete('/histories/{history}', 'HistoryController@destroy')->name('history.destroy');
 
 //    Route::get('/orders', 'OrderController@index')->name('orders.index');

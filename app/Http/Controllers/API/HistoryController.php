@@ -1,13 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Exceptions\ViewHistoryDenied;
+use App\Helper\StatusManager;
 use App\History;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\HistoryResource;
 use App\Product;
 use App\Status;
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class HistoryController extends Controller
@@ -19,7 +25,7 @@ class HistoryController extends Controller
      * users can only index their own records
      * @param Product $product
      * @return mixed
-     * @throws AuthorizationException
+     * @throws AuthorizationException|ViewHistoryDenied
      */
     public function index(Product $product)
     {
@@ -27,9 +33,10 @@ class HistoryController extends Controller
         $owner = $product->order->user;
         //if products belongs to the current authenticated user then return all related histories, otherwise returns null
         if($owner->id == Auth::user()->id) {
-            return $product->histories;
+            $histories = $product->histories()->with('status')->get();
+            return response(['histories' => HistoryResource::collection($histories), 'message'=>trans('translate.retrieved')], 200);
         } else {
-            return null;
+            throw new ViewHistoryDenied();
         }
     }
 
@@ -39,6 +46,7 @@ class HistoryController extends Controller
      * @param Request $request
      * @param Product $product
      * @param Status $status
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function store(Request $request, Product $product, Status $status)
@@ -52,7 +60,9 @@ class HistoryController extends Controller
             'product_id' => $request->input('product_id'),
             'status_id' => $request->input('status_id')
         ];
-        History::create($historyData);
+        
+        $history = History::create($historyData);
+        return response(['history' => new HistoryResource($history), 'message' => trans('translate.history_changed')], 200);
     }
 
     /**

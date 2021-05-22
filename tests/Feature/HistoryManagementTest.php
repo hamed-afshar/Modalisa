@@ -20,8 +20,9 @@ class HistoryManagementTest extends TestCase
      */
     public function retailers_can_check_their_product_histories()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['see-histories','create-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1,0);
         $status1 = Status::find(1);
         $product = Product::find(1);
@@ -37,12 +38,14 @@ class HistoryManagementTest extends TestCase
             'product_id' => $product->id,
             'status_id' => $status2->id,
         ]);
-        $this->get('/histories/' . $product->id)->assertSeeText($history1->created_at)
-            ->assertSeeText($history2->created_at);
+        $this->get('api/histories/' . $product->id)->assertSeeText($history1->status_id)
+            ->assertSeeText($history2->status_id);
         // users can only see their own records
         $this->prepNormalEnv('retailer2', ['see-histories','create-orders'], 0, 1);
-        $this->get('/histories/' . $product->id)->assertDontSeeText($history1->created_at)
-        ->assertDontSeeText($history2->created_at);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/histories/' . $product->id)->assertDontSeeText($history1->status_id)
+        ->assertDontSeeText($history2->status_id);
     }
 
     /** @test
@@ -51,7 +54,9 @@ class HistoryManagementTest extends TestCase
     public function product_model_observes_to_create_history_on_product_creation()
     {
         $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['make-order', 'see-orders'], 0, 1);
+        $this->prepNormalEnv('retailer', ['create-orders', 'see-orders'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1,0);
         $product = Product::find(1);
         $status = Status::find(2);
@@ -63,7 +68,10 @@ class HistoryManagementTest extends TestCase
      */
     public function only_privilege_users_can_create_history()
     {
+        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         $this->prepOrder(1,0);
         $status = factory('App\Status')->create([
                 'description' => 'in-office'
@@ -74,11 +82,13 @@ class HistoryManagementTest extends TestCase
           'status_id' => $status->id,
           'product_id' => $product->id
         ];
-        $this->post('/histories', $attributes );
+        $this->post('api/histories', $attributes );
         $this->assertDatabaseHas('histories', $attributes);
         //other users are not allowed to create history
         $this->prepNormalEnv('retailer', ['create-transactions', 'see-histories'], 0, 1);
-        $this->post('/histories' , $attributes)->assertForbidden();
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/histories' , $attributes)->assertForbidden();
     }
 
     /** @test

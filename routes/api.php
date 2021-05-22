@@ -81,9 +81,6 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/notes/{note}', 'API\NoteController@update')->name('notes.update');
     Route::delete('/notes/{note}', 'API\NoteController@destroy')->name('notes.destroy');
 
-
-
-
     Route::get('/kargos', 'API\KargoController@index')->name('kargos.index');
     Route::post('/kargos', 'API\KargoController@store')->name('kargos.store');
     Route::get('/kargos/{kargo}', 'API\KargoController@show')->name('kargos.show');
@@ -92,6 +89,10 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/add-to-kargo/{kargo}/{product}', 'API\KargoController@addTO')->name('kargos.add');
     Route::patch('/remove-from-kargo/{kargo}/{product}', 'API\KargoController@removeFrom')->name('kargos.remove');
 
+    Route::get('/histories/{product}', 'API\HistoryController@index')->name('history.index');
+    Route::post('/histories', 'API\HistoryController@store')->name('history.store');
+
+
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
     Route::post('/orders', 'API\OrderController@store')->name('orders.store');
     Route::post('/add-to-order/{order}', 'API\OrderController@addToOrder')->name('orders.addTo');
@@ -99,7 +100,6 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/edit-product/{product}', 'API\OrderController@editProduct')->name('orders.editProduct');
     Route::delete('/delete-product/{product}', 'API\OrderController@deleteProduct')->name('orders.deleteProduct');
     Route::post('/assign-customer/{customer}/{order}', 'API\OrderController@assignCustomer')->name('orders.assignCustomer');
-
 
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
@@ -112,8 +112,5 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'API\AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'API\AdminController@removeFromKargo')->name('admin.remove-from-kargo');
     Route::post('/confirm-transaction/{transaction}', 'API\AdminController@confirmTransaction')->name('admin.confirm-transaction');
-
-
-
 });
 
