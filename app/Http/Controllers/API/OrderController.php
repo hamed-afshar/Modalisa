@@ -138,10 +138,18 @@ class OrderController extends Controller
     /**
      * show a single product
      * users should have see-orders permission to be allowed
+     * @param Product $product
+     * @return Application|ResponseFactory|Response
+     * @throws AuthorizationException
      */
-    public function showProduct()
+    public function showProduct(Product $product)
     {
-        dd('cont');
+        $order = $product->order;
+        $this->authorize('view', $order);
+        $product = $product->with('images')
+            ->where('id', '=', $product->id)
+            ->get();
+        return response(['product' => new ProductResource($product), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**

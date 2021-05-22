@@ -44,7 +44,9 @@ class OrderPolicy
      */
     public function view(User $user, Order $order)
     {
-        //
+        if($user->checkPermission('see-orders') && $order->user->id == $user->id) {
+            return true;
+        }
     }
 
     /**

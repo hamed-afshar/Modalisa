@@ -279,14 +279,18 @@ class OrderManagementTest extends TestCase
      */
     public function show_a_single_product()
     {
-        $this->withoutExceptionHandling();
-        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'], 0, 1);
-        $retailer = Auth::user();
-        $this->actingAs($retailer, 'api');
+        $this->prepNormalEnv('retailer1', ['see-orders', 'create-orders'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(0,1);
         $product = Product::find(1);
         $this->get('api/products/' . $product->id)
             ->assertSeeText($product->link);
+        //users can only view their own product
+        $this->prepNormalEnv('retailer2', ['see-orders', 'create-orders'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/products/' . $product->id)->assertForbidden();
     }
 
     /**
