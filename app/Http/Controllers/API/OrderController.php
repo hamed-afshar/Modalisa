@@ -11,6 +11,7 @@ use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
 use App\Order;
 use App\Product;
+use App\Traits\HistoryTrait;
 use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    use  ImageTrait;
+    use  ImageTrait, HistoryTrait;
 
     /**
      * function to upload images
@@ -47,19 +48,6 @@ class OrderController extends Controller
     }
 
     /**
-     * function to return the current status
-     * @param Product $product
-     * @return int
-     */
-    public function getStatus(Product $product): int
-    {
-        $latestHistory = DB::table('histories')
-            ->where('product_id', '=', $product->id)
-            ->orderBy('id', 'desc')->first();
-        return $latestHistory->status_id;
-    }
-
-    /**
      * index all orders with related products and customers
      * users with see-orders permission are allowed
      * users can only see their own records
@@ -71,9 +59,6 @@ class OrderController extends Controller
         $orders = Auth::user()->orders()->with(['products.images', 'customer'])->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
-
-
-
 
     /**
      * form to create order
