@@ -4,6 +4,9 @@
 namespace App\Helper;
 
 
+use App\Product;
+use Illuminate\Support\Facades\DB;
+
 class StatusManager
 {
 
@@ -45,18 +48,18 @@ class StatusManager
         $this->next = $next;
 
         //variable to holds the corresponding value for the current and next status in the matrix
-        $this->currentInMatrix = $current-1;
-        $this->nextInMatrix = $next-1;
+        $this->currentInMatrix = $current - 1;
+        $this->nextInMatrix = $next - 1;
     }
 
 
     /**
-     * function ro check validity of the status movement from current to the next.
+     * function to check validity of the status movement from current to the next.
      * @return bool
      */
     public function check(): bool
     {
-        if($this->statusMatrix[$this->currentInMatrix][$this->nextInMatrix]) {
+        if ($this->statusMatrix[$this->currentInMatrix][$this->nextInMatrix]) {
             return true;
         } else {
             return false;
