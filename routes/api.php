@@ -81,8 +81,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/notes/{note}', 'API\NoteController@update')->name('notes.update');
     Route::delete('/notes/{note}', 'API\NoteController@destroy')->name('notes.destroy');
 
-    Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
-    Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
+
 
 
     Route::get('/kargos', 'API\KargoController@index')->name('kargos.index');
@@ -102,6 +101,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::post('/assign-customer/{customer}/{order}', 'API\OrderController@assignCustomer')->name('orders.assignCustomer');
 
 
+    Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
+    Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'API\AdminController@storeKargo')->name('admin.create-kargo');

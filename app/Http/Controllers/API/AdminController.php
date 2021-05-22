@@ -382,7 +382,9 @@ class AdminController extends Controller
     public function indexSingleOrder(Order $order)
     {
         $this->authorize('indexSingleOrder', Admin::class);
-        $order = $order->with('products.images')->get();
+        $order = $order->with('products.images')
+            ->where('id', '=', $order->id)
+            ->get();
         return response(['order' => new OrderResource($order), 'message' => trans('translate.retrieved')], 200);
     }
 }
