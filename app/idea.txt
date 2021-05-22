@@ -16,4 +16,4 @@ products with 1 quantity.
 
 # we should also think about including query parameters in the body instead of header
 
-
+#check all returns messages in all controllers and also all errors in exceptions
