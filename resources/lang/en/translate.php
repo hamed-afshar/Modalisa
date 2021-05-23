@@ -117,6 +117,7 @@ return [
     "customer_assigned" => 'Customer assigned to the order successfully',
     'history_changed' => 'History changed successfully!',
     'history_deleted' => 'History deleted successfully',
+    'image_uploaded' => 'Image uploaded successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

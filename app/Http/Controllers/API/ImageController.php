@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Image;
+use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use function Couchbase\basicEncoderV1;
 
 class ImageController extends Controller
 {
@@ -58,6 +58,7 @@ class ImageController extends Controller
             'imagable_id' => $request->input('imagable_id')
         ];
         $user->images()->create($data);
+        return response(['message' => trans('translate.image_uploaded')], 200);
     }
 
     /**
@@ -69,8 +70,10 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
+        dd('show');
         $this->authorize('view', $image);
-        return Auth::user()->images->find($image);
+        $image =  Auth::user()->images->find($image);
+        return $image->image_name;
     }
 
     /**

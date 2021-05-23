@@ -44,6 +44,8 @@ class ImageManagementTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1,0);
         $order = Order::find(1);
         $attributes = [
@@ -51,7 +53,7 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => UploadedFile::fake()->create('image.jpg'),
         ];
-        $this->post('/images', $attributes);
+        $this->post('api/images', $attributes);
         $image_name = Image::find(1)->image_name;
         $this->assertDatabaseHas('images', ['imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
         $this->assertFileExists(public_path('storage') . $image_name);
@@ -61,6 +63,8 @@ class ImageManagementTest extends TestCase
     public function image_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
@@ -68,13 +72,15 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => '',
         ];
-        $this->post('/images', $attributes)->assertSessionHasErrors('image');
+        $this->post('api/images', $attributes)->assertSessionHasErrors('image');
     }
 
     /** @test */
     public function only_valid_extensions_for_images_are_acceptable()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         factory('App\Status')->create();
         $this->prepOrder(1, 0);
         $order = Order::find(1);
@@ -83,13 +89,15 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => UploadedFile::fake()->create('image.pnghj'),
         ];
-        $this->post('/images', $attributes)->assertSessionHasErrors('image');
+        $this->post('api/images', $attributes)->assertSessionHasErrors('image');
     }
 
     /** @test */
     public function imagable_type_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
@@ -98,13 +106,15 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => UploadedFile::fake()->create('image.png'),
         ];
-        $this->post('/images', $attributes)->assertSessionHasErrors('imagable_type');
+        $this->post('api/images', $attributes)->assertSessionHasErrors('imagable_type');
     }
 
     /** @test */
     public function imagable_id_is_required()
     {
         $this->prepNormalEnv('retailer', ['create-images', 'see-costs'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1, 0);
         $attributes = [
             'user_id' => Auth::user()->id,
@@ -112,7 +122,7 @@ class ImageManagementTest extends TestCase
             'imagable_id' => '',
             'image' => UploadedFile::fake()->create('image.png'),
         ];
-        $this->post('/images', $attributes)->assertSessionHasErrors('imagable_id');
+        $this->post('api/images', $attributes)->assertSessionHasErrors('imagable_id');
     }
 
     /** @test
@@ -123,6 +133,7 @@ class ImageManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(1,0);
         $order = Order::find(1);
         $image = factory('App\Image')->create([
