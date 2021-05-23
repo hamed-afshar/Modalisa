@@ -116,6 +116,7 @@ return [
     "product_added" => 'Product added successfully',
     "customer_assigned" => 'Customer assigned to the order successfully',
     'history_changed' => 'History changed successfully!',
+    'history_deleted' => 'History deleted successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",
@@ -129,6 +130,8 @@ return [
     "product_delete_is_not_allowed" => "Order has bought and delete is not possible!",
     "product_edit_is_not_allowed" => "Order has bought and edit is not possible!",
     "view_history_denied" => "This action is not authorized",
+    "change_history_denied" => 'Changing history is not allowed, check all previous histories carefully!',
+
     //in Kargo Policy
     'can_not_update_kargo' => "This kargo is confirmed and can not be updated",
     'can_not_delete_kargo' => "This kargo is confirmed and can not be deleted",

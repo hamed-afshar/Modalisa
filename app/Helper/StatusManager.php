@@ -59,7 +59,7 @@ class StatusManager
      */
     public function check(): bool
     {
-        if ($this->statusMatrix[$this->currentInMatrix][$this->nextInMatrix]) {
+        if ($this->statusMatrix[$this->currentInMatrix][$this->nextInMatrix] == 1) {
             return true;
         } else {
             return false;

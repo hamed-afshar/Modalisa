@@ -13,7 +13,7 @@ class History extends Model
      */
     public function path()
     {
-        return "/histories/{$this->id}";
+        return "api/histories/{$this->id}";
     }
 
     /**

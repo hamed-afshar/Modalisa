@@ -90,8 +90,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/remove-from-kargo/{kargo}/{product}', 'API\KargoController@removeFrom')->name('kargos.remove');
 
     Route::get('/histories/{product}', 'API\HistoryController@index')->name('history.index');
-    Route::post('/histories', 'API\HistoryController@store')->name('history.store');
-
+    Route::post('/histories/{product}/{status}', 'API\HistoryController@store')->name('history.store');
+    Route::delete('/histories/{history}', 'API\HistoryController@destroy')->name('history.destroy');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
     Route::post('/orders', 'API\OrderController@store')->name('orders.store');

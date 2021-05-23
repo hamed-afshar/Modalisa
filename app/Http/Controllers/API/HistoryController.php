@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\ChangeHistoryNotAllowed;
 use App\Exceptions\ViewHistoryDenied;
 use App\Helper\StatusManager;
 use App\History;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\HistoryResource;
 use App\Product;
 use App\Status;
+use App\Traits\HistoryTrait;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 
 class HistoryController extends Controller
 {
+    use HistoryTrait;
     /**
      * index histories
      * users should have see-histories permission to be allowed
@@ -47,28 +50,27 @@ class HistoryController extends Controller
      * @param Product $product
      * @param Status $status
      * @return Application|ResponseFactory|Response
-     * @throws AuthorizationException
+     * @throws AuthorizationException|ChangeHistoryNotAllowed
      */
     public function store(Request $request, Product $product, Status $status)
     {
         $this->authorize('create', History::class);
-        $request->validate([
-            'product_id' => 'required',
-            'status_id' => 'required'
-        ]);
-        $historyData = [
-            'product_id' => $request->input('product_id'),
-            'status_id' => $request->input('status_id')
-        ];
-        
-        $history = History::create($historyData);
-        return response(['history' => new HistoryResource($history), 'message' => trans('translate.history_changed')], 200);
+        $currentStatus = $this->getStatus($product);
+        $nextStatus = $status->id;
+        $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
+        if($statusManager->check()) {
+            $statusManager->changeHistory();
+        } else {
+            throw new ChangeHistoryNotAllowed();
+        }
+        return response(['message' => trans('translate.history_changed')], 200);
     }
 
     /**
      * delete history
      * BuyerAdmin and users with privilege permissions are allowed
      * @param History $history
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      * @throws Exception
      */
@@ -76,5 +78,6 @@ class HistoryController extends Controller
     {
         $this->authorize('delete', $history);
         $history->delete();
+        return response(['messaage' => trans('translate.history_deleted')], 200);
     }
 }
