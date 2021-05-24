@@ -13,7 +13,7 @@ class Image extends Model
      */
     public function path()
     {
-        return "/images/{$this->id}";
+        return "api/images/{$this->id}";
     }
 
     /**

@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ImageResource;
 use App\Image;
 use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -65,15 +69,14 @@ class ImageController extends Controller
      * show a single Image
      * users should have see-images permission to be allowed
      * @param Image $image
-     * @return Image
+     * @return Image|Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function show(Image $image)
     {
-        dd('show');
         $this->authorize('view', $image);
-        $image =  Auth::user()->images->find($image);
-        return $image->image_name;
+        $image = Auth::user()->images->find($image);
+        return response(['image' => new ImageResource($image)], 200);
     }
 
     /**
@@ -108,6 +111,7 @@ class ImageController extends Controller
             'image_name' => $filePath
         ];
         $oldImage->update($data);
+        return response(['image' => new ImageResource($oldImage), 'message' => trans('translate.image_updated')], 200);
     }
 
     /**
@@ -115,15 +119,15 @@ class ImageController extends Controller
      * users should have delete-images to be allowed
      * users can only delete their own images
      * @param Image $image
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function destroy(Image $image)
     {
         $this->authorize('delete', $image);
-        $imageNameArray = [$image];
-        DB::transaction(function () use ($image, $imageNameArray) {
-            $this->deleteOne('public', $imageNameArray);
-            $image->delete();
-        }, 1);
+        $imageNameArray = [$image->image_name];
+        $this->deleteOne('public', [$imageNameArray]);
+        $image->delete();
+        return response(['message' => trans('translate.image_deleted')], 200);
     }
 }

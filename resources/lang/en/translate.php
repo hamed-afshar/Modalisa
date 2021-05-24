@@ -118,6 +118,8 @@ return [
     'history_changed' => 'History changed successfully!',
     'history_deleted' => 'History deleted successfully',
     'image_uploaded' => 'Image uploaded successfully',
+    'image_updated' => 'Image updated successfully',
+    'image_deleted' => 'Image deleted successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

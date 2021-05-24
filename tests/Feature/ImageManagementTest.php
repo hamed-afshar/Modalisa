@@ -164,6 +164,8 @@ class ImageManagementTest extends TestCase
     public function user_can_update_a_photo()
     {
         $this->prepNormalEnv('retailer1', ['create-images', 'see-images'], 0, 1);
+        $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1, 0);
         $order = Order::find(1);
         $attributes = [
@@ -172,7 +174,7 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => UploadedFile::fake()->create('image1.jpg'),
         ];
-        $this->post('/images', $attributes);
+        $this->post('api/images', $attributes);
         $oldImage = Image::find(1);
         $oldImageName = $oldImage->image_name;
         $newImage = UploadedFile::fake()->create('image2.jpg');
@@ -182,7 +184,7 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image' => $newImage
         ];
-        $this->patch($oldImage->path(), $newAttributes);
+        $this->post($oldImage->path(), $newAttributes);
         $newImageName = $order->images()->where(['imagable_id' => $order->id, 'imagable_type' => 'App\Order'])->value('image_name');
         //assert image updated in db
         $this->assertDatabaseHas('images', ['user_id' => Auth::user()->id, 'imagable_type' => 'App\Order' ,'image_name' => $newImageName]);
@@ -192,7 +194,9 @@ class ImageManagementTest extends TestCase
         $this->assertFileDoesNotExist(public_path('storage' . $oldImageName));
         // users can only update their own records
         $this->prepNormalEnv('retailer2', ['create-images', 'see-images'], 0, 1);
-        $this->patch($oldImage->path(), $newAttributes)->assertForbidden();
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
+        $this->post($oldImage->path(), $newAttributes)->assertForbidden();
 
     }
 
@@ -204,6 +208,7 @@ class ImageManagementTest extends TestCase
     {
         $this->prepNormalEnv('retailer1', ['create-images', 'delete-images'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(1, 0);
         $order = Order::find(1);
         factory('App\Image')->create([
@@ -212,15 +217,17 @@ class ImageManagementTest extends TestCase
             'imagable_id' => $order->id,
             'image_name' => 'images/image1.jpg',
         ]);
-        Storage::disk('public')->put('/images/image1.jpg', 'contents');
+        Storage::disk('public')->put('api/images/image1.jpg', 'contents');
         // first create an image
         $image = Image::find(1);
         $imageName = $image->image_name;
         //users can only delete their own records
         $this->prepNormalEnv('retailer2', ['create-images', 'delete-images'], 0, 1);
+        $retailer2 = Auth::user();
+        $this->actingAs($retailer2, 'api');
         $this->delete($image->path())->assertForbidden();
         //delete the image and respective record
-        $this->actingAs($retailer1);
+        $this->actingAs($retailer1, 'api');
         $this->delete($image->path());
         $this->assertDatabaseMissing('images', ['id' => $image->id, 'imagable_type' => 'App\Order', 'imagable_id' => $order->id]);
         $this->assertFileDoesNotExist(public_path('storage' . $imageName));
