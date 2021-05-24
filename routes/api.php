@@ -110,6 +110,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/costs-model/{id}/{model}', 'API\CostController@indexModel')->name('cost.indexModel');
     Route::post('/costs', 'API\CostController@store')->name('costs.store');
     Route::get('/costs/{cost}', 'API\CostController@show')->name('costs.show');
+    Route::patch('/costs/{cost}', 'API\CostController@update')->name('costs.update');
+    Route::delete('/costs/{cost}', 'API\CostController@destroy')->name('costs.destroy');
 
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
@@ -125,6 +127,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
 
     Route::get('/admin-index-costs/{user}', 'API\AdminController@indexCosts')->name('admin.index-costs');
     Route::post('/admin-create-cost/{user}', 'API\AdminController@storeCost')->name('admin.create-cost');
+    Route::get('/admin-index-single-cost/{cost}', 'API\AdminController@showCost' )->name('admin.show-cost');
+    Route::post('/admin-update-cost/{cost}', 'API\AdminController@updateCost')->name('admin.update-cost');
 
 });
 

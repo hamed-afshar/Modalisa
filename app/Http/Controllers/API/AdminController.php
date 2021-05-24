@@ -24,6 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use mysql_xdevapi\Table;
 
 class AdminController extends Controller
 {
@@ -46,15 +47,15 @@ class AdminController extends Controller
     /**
      * show a single cost for the given user
      * super privilege users are able to see a single cost for a specific user
-     * @param User $user
      * @param Cost $cost
      * @return mixed
      * @throws AuthorizationException
      */
-    public function showCost(User $user, Cost $cost)
+    public function showCost(Cost $cost)
     {
         $this->authorize('indexSingleCost', Admin::class);
-        return $user->costs;
+        $cost = DB::table('costs')->where('id', '=', $cost->id)->get();
+        return response(['cost' => new CostResource($cost), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -116,15 +117,17 @@ class AdminController extends Controller
     {
         $this->authorize('updateCost', Admin::class);
         $request->validate([
-            'user' => 'required',
             'amount' => 'required',
             'description' => 'required',
+            'costable_type' => 'required',
+            'costable_id' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
-        $user = $request->input('user');
         $costData = [
             'amount' => $request->input('amount'),
             'description' => $request->input('description'),
+            'costable_type' => $request->input('costable_type'),
+            'costable_id' => $request->input('costable_id')
         ];
         //update the cost record
         $cost->update($costData);
@@ -149,8 +152,8 @@ class AdminController extends Controller
             ];
             // update image record for the given user
             $oldImage->update($imageData);
-
         }
+        return response(['message' => trans('translate.cost_updated')], 200);
     }
 
     public function deleteCost(Cost $cost)

@@ -330,7 +330,7 @@ class CostManagementTest extends TestCase
     /** @test
      * All super privilege users are able to see a single cost for a specific user
      */
-    public function super_privilege_users_can_see_a_single_cost_for_a_specific_user()
+    public function super_privilege_users_can_see_a_single_cost()
     {
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
@@ -349,10 +349,11 @@ class CostManagementTest extends TestCase
         ]);
         $cost = Cost::find(1);
         //assert to see the cost's description created for the retailer
-        $this->get('/admin-index-single-cost/' . $retailer->id . '/' . $cost->id)->assertSeeText($cost->description);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->get('api/admin-index-single-cost/' . $cost->id)->assertSeeText($cost->description);
         //other users are not allowed to see costs for a specific user
-        $this->actingAs($retailer);
-        $this->get('/admin-index-single-cost/' . $retailer->id . '/' . $cost->id)->assertForbidden();
+        $this->actingAs($retailer, 'api');
+        $this->get('api/admin-index-single-cost/' . $cost->id)->assertForbidden();
     }
 
     /**
@@ -396,14 +397,12 @@ class CostManagementTest extends TestCase
         //get uploaded image name for created cost record
         $oldImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
         $newAttributesWithoutImage = [
-            'user' => $retailer,
             'amount' => 2000,
             'description' => 'new cost for product',
             'costable_type' => 'App\Product',
             'costable_id' => $product->id,
         ];
         $newAttributesWithImage = [
-            'user' => $retailer,
             'amount' => 2000,
             'description' => 'new cost for product',
             'costable_type' => 'App\Product',
@@ -411,9 +410,9 @@ class CostManagementTest extends TestCase
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
         // acting as BuyerAdmin to have permission for update costs records
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         // update the cost record without new image
-        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithoutImage);
+        $this->post('api/admin-update-cost/' . $cost->id, $newAttributesWithoutImage);
         $this->assertDatabaseHas('costs', [
             'amount' => 2000,
             'description' => 'new cost for product',
@@ -423,7 +422,7 @@ class CostManagementTest extends TestCase
         // old image should remain intact
         $this->assertFileExists(public_path('storage' . $oldImageName));
         // update cost record with new image
-        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithImage);
+        $this->post('api/admin-update-cost/' . $cost->id, $newAttributesWithImage);
         $this->assertDatabaseHas('costs', [
             'amount' => 2000,
             'description' => 'new cost for product',
@@ -435,8 +434,8 @@ class CostManagementTest extends TestCase
         $newImageName = $cost->images()->where('imagable_id', $cost->id)->value('image_name');
         $this->assertFileExists(public_path('storage' . $newImageName));
         // only BuyerAdmin is allowed to update cost records
-        $this->actingAs($retailer);
-        $this->patch('/admin-update-cost/' . $cost->id, $newAttributesWithImage)->assertForbidden();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/admin-update-cost/' . $cost->id, $newAttributesWithImage)->assertForbidden();
     }
 
     /** @test
@@ -479,10 +478,10 @@ class CostManagementTest extends TestCase
         Storage::disk('public')->put('/images/cost2.jpg', 'Contents');
         $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
         //other users are not allowed to delete costs
-        $this->actingAs($retailer);
+        $this->actingAs($retailer, 'api');
         $this->delete('/admin-delete-cost/' . $cost->id)->assertForbidden();
         //acting as BuyerAdmin to delete cost
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin,'api');
         $this->delete('/admin-delete-cost/' . $cost->id);
         //cost record must be deleted
         $this->assertDatabaseMissing('costs', ['id' => $cost->id]);

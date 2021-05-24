@@ -120,9 +120,9 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::get('/costs/create', 'CostController@create')->name('costs.create');
 //    Route::post('/costs', 'CostController@store')->name('costs.store');
 //    Route::get('/costs/{cost}', 'CostController@show')->name('costs.show');
-    Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
-    Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
-    Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
+//    Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
+//    Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
+//    Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
 //    Route::get('/costs-model/{id}/{model}', 'CostController@indexModel')->name('cost.indexModel');
 
 //    Route::get('/kargos', 'KargoController@index')->name('kargos.index');
@@ -137,9 +137,9 @@ Route::group(['middleware' => 'auth'], function() {
 
 
 //    Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
-    Route::get('/admin-index-single-cost/{user}/{cost}', 'AdminController@showCost' )->name('admin.show-cost');
+//    Route::get('/admin-index-single-cost/{cost}', 'AdminController@showCost' )->name('admin.show-cost');
 //    Route::post('/admin-create-cost/', 'AdminController@storeCost')->name('admin.create-cost');
-    Route::patch('/admin-update-cost/{cost}', 'AdminController@updateCost')->name('admin.update-cost');
+//    Route::patch('/admin-update-cost/{cost}', 'AdminController@updateCost')->name('admin.update-cost');
     Route::delete('/admin-delete-cost/{cost}', 'AdminController@deleteCost')->name('admin.delete-cost');
 //    Route::get('/admin-index-kargos', 'AdminController@indexKargos')->name('admin.index-kargos');
 //    Route::get('/admin-index-single-kargo/{kargo}', 'AdminController@showKargo')->name('admin.show-kargo');
