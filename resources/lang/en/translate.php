@@ -120,6 +120,7 @@ return [
     'image_uploaded' => 'Image uploaded successfully',
     'image_updated' => 'Image updated successfully',
     'image_deleted' => 'Image deleted successfully',
+    'cost_created' => 'Cost created successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

@@ -11,7 +11,7 @@ class Cost extends Model
     /** return path */
     public function path()
     {
-        return "/costs/{$this->id}";
+        return "api/costs/{$this->id}";
     }
 
     /**

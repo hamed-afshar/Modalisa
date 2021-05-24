@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Cost;
 use App\Exceptions\WrongProduct;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CostResource;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\OrderResource;
 use App\Kargo;
@@ -38,7 +39,8 @@ class AdminController extends Controller
     public function indexCosts(User $user)
     {
         $this->authorize('indexCosts', Admin::class);
-        return $user->costs;
+        $costs =  $user->costs;
+        return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -58,17 +60,17 @@ class AdminController extends Controller
     /**
      * Determine whether admin can create cost for the given user
      * @param Request $request
+     * @param User $user
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
-    public function storeCost(Request $request)
+    public function storeCost(Request $request, User $user)
     {
         $this->authorize('createCost', Admin::class);
         // first cost record must be created and get cost_id to be used in image creation model
-        // cost will be created for this user
-        $user = $request->input('user');
+
         // prepare cost's data to create record in db
         $request->validate([
-            'user' => 'required',
             'amount' => 'required',
             'description' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg|max:2048',
@@ -100,6 +102,7 @@ class AdminController extends Controller
             ];
             $user->images()->create($imageData);
         }
+        return response(['cost' => new CostResource($cost) ,'message' => trans('translate.cost_created')], 200);
     }
 
     /**

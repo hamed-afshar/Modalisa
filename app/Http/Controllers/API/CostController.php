@@ -7,7 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CostResource;
 use App\Traits\ImageTrait;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class CostController extends Controller
@@ -34,14 +37,14 @@ class CostController extends Controller
      * retailers can only see its own records
      * @param $id
      * @param $model
-     * @return Cost
+     * @return Cost|Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function indexModel($id, $model)
     {
-        dd('index model');
         $this->authorize('viewAny', Cost::class);
-        return Auth::user()->costs()->where(['costable_type' => $model, 'costable_id' => $id])->get();
+        $costs =  Auth::user()->costs()->where(['costable_type' => $model, 'costable_id' => $id])->get();
+        return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -70,13 +73,14 @@ class CostController extends Controller
      * show a single cost
      * users with see-costs permission only can see cost records belong to them
      * @param Cost $cost
-     * @return Cost
+     * @return Cost|Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function show(Cost $cost)
     {
         $this->authorize('view', $cost);
-        return Auth::user()->costs->find($cost);
+        $cost =  Auth::user()->costs->find($cost);
+        return response(['cost' => new CostResource($cost), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**

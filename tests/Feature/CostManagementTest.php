@@ -109,23 +109,25 @@ class CostManagementTest extends TestCase
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         //create a retailer with just see-costs permission
         $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1,0);
         $product = Product::find(1);
         //acting as the BuyerAdmin to create a cost for retailer.
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $cost = factory('App\Cost')->create([
             'user_id' => $retailer->id,
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ]);
         //assert to see the cost's description created for the retailer
-        $this->get('/admin-index-costs/' . $retailer->id)->assertSeeText($cost->description);
+        $this->get('api/admin-index-costs/' . $retailer->id)->assertSeeText($cost->description);
         //other users are not allowed to index costs for a specific user
-        $this->actingAs($retailer);
-        $this->get('/admin-index-costs/' . $retailer->id)->assertForbidden();
+        $this->actingAs($retailer,'api');
+        $this->get('api/admin-index-costs/' . $retailer->id)->assertForbidden();
     }
 
     /**
@@ -144,49 +146,28 @@ class CostManagementTest extends TestCase
     {
         $this->prepNormalEnv('BuyerAdmin', ['create-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1, 0 );
         $product = Product::find(1);
         $attributes = [
-            'user' => $retailer,
             'amount' => 1000,
             'description' => 'cost for product',
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
         // acting as a BuyerAdmin to create cost for retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         // other users are not allowed to create costs
-        $this->actingAs($retailer);
-        $this->post('/costs', $attributes)->assertForbidden();
+        $this->actingAs($retailer, 'api');
+        $this->post('api/costs', $attributes)->assertForbidden();
     }
 
-    /** @test */
-    public function user_is_required()
-    {
-        $this->prepNormalEnv('BuyerAdmin', ['create-costs'], 0, 1);
-        $BuyerAdmin = Auth::user();
-        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
-        // cost will be created for this user
-        $retailer = Auth::user();
-        factory('App\Status')->create();
-        $this->prepOrder(1,0);
-        $product = Product::find(1);
-        $attributes = [
-            'user' => '',
-            'amount' => '',
-            'description' => 'cost for product',
-            'costable_type' => 'App\Product',
-            'costable_id' => $product->id
-        ];
-        // acting as a BuyerAdmin to create cost for the retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('user');
-    }
 
     /** @test */
     public function amount_is_required()
@@ -200,15 +181,14 @@ class CostManagementTest extends TestCase
         $this->prepOrder(1,0);
         $product = Product::find(1);
         $attributes = [
-            'user' => $retailer,
             'amount' => '',
             'description' => 'cost for product',
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ];
         // acting as a BuyerAdmin to create cost for the retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('amount');
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes)->assertSessionHasErrors('amount');
     }
 
     /** @test */
@@ -230,8 +210,8 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id
         ];
         // acting as a BuyerAdmin to create cost for the retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('description');
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes)->assertSessionHasErrors('description');
     }
 
     /** @test */
@@ -253,8 +233,8 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id
         ];
         // acting as a BuyerAdmin to create cost for the retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('costable_type');
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes)->assertSessionHasErrors('costable_type');
     }
 
     /** @test */
@@ -276,8 +256,8 @@ class CostManagementTest extends TestCase
             'costable_id' => ''
         ];
         // acting as a BuyerAdmin to create cost for the retailer
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes)->assertSessionHasErrors('costable_id');
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes)->assertSessionHasErrors('costable_id');
     }
 
     /** @test
@@ -302,8 +282,8 @@ class CostManagementTest extends TestCase
             'image' => UploadedFile::fake()->create('pic.jpg')
         ];
         // acting as BuyerAdmin to create a cost record
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer->id, $attributes);
         $cost = Cost::find(1);
         $image = $cost->images()->find($cost->id);
         $image_name = $image->image_name;
@@ -333,17 +313,17 @@ class CostManagementTest extends TestCase
             'costable_id' => $product->id
         ];
         //first assert to see that cost created successfully by BuyerAdmin
-        $this->actingAs($BuyerAdmin);
-        $this->post('/admin-create-cost', $attributes);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->post('api/admin-create-cost/' . $retailer1->id, $attributes);
         $this->assertDatabaseHas('costs', ['amount' => 1000, 'description' => 'cost for product', 'costable_type' => 'App\Product', 'costable_id' => $product->id]);
         // acting as a retailer to check single record for the created cost
-        $this->actingAs($retailer1);
+        $this->actingAs($retailer1, 'api');
         $cost = Cost::find(1);
         $this->get($cost->path())->assertSeeText($cost->description);
         // retailers are not allowed to see other retailer's costs
         $this->prepNormalEnv('retailer2', ['see-costs'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
+        $this->actingAs($retailer2, 'api');
         $this->get($cost->path())->assertForbidden();
     }
 
