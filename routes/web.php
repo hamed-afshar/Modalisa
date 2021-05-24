@@ -116,14 +116,14 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::patch('/images/{image}', 'ImageController@update')->name('images.update');
 //    Route::delete('/images/{image}', 'ImageController@destroy')->name('images.destroy');
 
-    Route::get('/costs', 'CostController@index')->name('costs.index');
+//    Route::get('/costs', 'CostController@index')->name('costs.index');
     Route::get('/costs/create', 'CostController@create')->name('costs.create');
     Route::post('/costs', 'CostController@store')->name('costs.store');
     Route::get('/costs/{cost}', 'CostController@show')->name('costs.show');
     Route::get('/costs/{cost}/edit', 'CostController@edit')->name('costs.edit');
     Route::patch('/costs/{cost}', 'CostController@update')->name('costs.update');
     Route::delete('/costs/{cost}', 'CostController@destroy')->name('costs.destroy');
-    Route::get('/costs-model/{id}/{model}', 'CostController@indexModel')->name('cost.indexModel');
+//    Route::get('/costs-model/{id}/{model}', 'CostController@indexModel')->name('cost.indexModel');
 
 //    Route::get('/kargos', 'KargoController@index')->name('kargos.index');
 //    Route::get('/kargos/create', 'KargoController@create')->name('kargos.create');

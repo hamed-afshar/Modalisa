@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Cost;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CostResource;
 use App\Traits\ImageTrait;
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CostController extends Controller
 {
@@ -24,7 +24,8 @@ class CostController extends Controller
     {
         $this->authorize('viewAny', Cost::class);
         //users can only index costs belongs to them
-        return Auth::user()->costs;
+        $costs =  Auth::user()->costs;
+        return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -38,6 +39,7 @@ class CostController extends Controller
      */
     public function indexModel($id, $model)
     {
+        dd('index model');
         $this->authorize('viewAny', Cost::class);
         return Auth::user()->costs()->where(['costable_type' => $model, 'costable_id' => $id])->get();
     }

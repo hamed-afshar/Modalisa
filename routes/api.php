@@ -106,6 +106,9 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::post('/images/{image}', 'API\ImageController@update')->name('images.update');
     Route::delete('/images/{image}', 'API\ImageController@destroy')->name('images.destroy');
 
+    Route::get('/costs', 'API\CostController@index')->name('costs.index');
+    Route::get('/costs-model/{id}/{model}', 'API\CostController@indexModel')->name('cost.indexModel');
+
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');

@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
         $this->call(\Database\Seeders\KargoSeeder::class);
         $this->call(\Database\Seeders\TransactionSeeder::class);
         $this->call(\Database\Seeders\NoteSeeder::class);
+        $this->call(\Database\Seeders\CostSeeder::class);
     }
 }

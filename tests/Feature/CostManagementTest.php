@@ -30,26 +30,28 @@ class CostManagementTest extends TestCase
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         //create a retailer with just see-costs permission
         $this->prepNormalEnv('retailer1', ['see-costs'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(1,0);
         $product = Product::find(1);
         //acting as the BuyerAdmin to create a cost for the retailer.
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $cost = factory('App\Cost')->create([
             'user_id' => $retailer1->id,
             'costable_type' => 'App\Product',
             'costable_id' => $product->id
         ]);
         //acting as the retailer to check created costs existence
-        $this->actingAs($retailer1);
-        $this->get('/costs')->assertSeeText($cost->description);
+        $this->actingAs($retailer1, 'api');
+        $this->get('api/costs')->assertSeeText($cost->description);
         //retailers are only able to see costs created just for them
         $this->prepNormalEnv('retailer2', ['see-costs'], 0, 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
-        $this->get('/costs')->assertDontSeeText($cost->description);
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/costs')->assertDontSeeText($cost->description);
     }
 
     /** @test
@@ -64,13 +66,15 @@ class CostManagementTest extends TestCase
         //create BuyerAdmin with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
         //create retailer with permission only to see costs
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
         $this->prepOrder(1,0);
         $product = Product::find(1);
         // acting as BuyerAdmin to create a costs for retailer.
-        $this->actingAs($BuyerAdmin);
+        $this->actingAs($BuyerAdmin, 'api');
         $cost1 = factory('App\Cost')->create([
             'user_id' => $retailer1->id,
             'costable_type' => 'App\Product',
@@ -84,17 +88,17 @@ class CostManagementTest extends TestCase
             'description' => 'cost2'
         ]);
         // acting as a retailer to check created cost existence for the product
-        $this->actingAs($retailer1);
+        $this->actingAs($retailer1, 'api');
         $model = 'App\Product';
         $id = $product->id;
-        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
-        $this->get('/costs-model/' . $id . '/' . $model)->assertSeeText($cost2->description);
+        $this->get('api/costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
+        $this->get('api/costs-model/' . $id . '/' . $model)->assertSeeText($cost2->description);
         // all retailers are only able to see their own records
         $this->prepNormalEnv('retailer2', ['see-costs'], 0 , 1);
         $retailer2 = Auth::user();
-        $this->actingAs($retailer2);
-        $this->get('/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost1->description);
-        $this->get('/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost2->description);
+        $this->actingAs($retailer2, 'api');
+        $this->get('api/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost1->description);
+        $this->get('api/costs-model/' . $id . '/' . $model)->assertdontSeeText($cost2->description);
     }
 
     /** @test
