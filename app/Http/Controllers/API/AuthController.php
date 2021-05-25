@@ -26,9 +26,9 @@ class AuthController extends Controller
 
         $user = User::create($validatedData);
 
-        $accessToken = $user->createToken('authToken')->accessToken;
+        $user->createToken('authToken')->accessToken;
 
-        return response([ 'user' => $user, 'access_token' => $accessToken]);
+        return response(['user' => $user, 'message' => trans('translate.user_registered')], 200);
     }
 
     public function login(Request $request)
