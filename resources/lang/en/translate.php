@@ -123,6 +123,7 @@ return [
     'cost_created' => 'Cost created successfully',
     'cost_updated' => 'Cost updated successfully',
     'cost_deleted' => 'Cost deleted successfully',
+    'profile_updated' => 'Profile updated successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

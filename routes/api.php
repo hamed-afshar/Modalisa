@@ -33,7 +33,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::delete('/users/{user}', 'API\UserController@destroy')->name('users.destroy');
     Route::patch('/lock/{user}', 'API\UserController@lock')->name('users.lock');
     Route::patch('/confirm/{user}', 'API\UserController@confirm')->name('users.confirm');
-    Route::patch('/edit-profile/{user}', 'API\UserController@editProfile')->name('users.profile');
+    Route::post('/edit-profile/{user}', 'API\UserController@editProfile')->name('users.profile');
 
     Route::get('/roles', 'API\RoleController@index')->name('roles.index');
     Route::post('/roles', 'API\RoleController@store')->name('roles.store');
@@ -124,7 +124,6 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'API\AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'API\AdminController@removeFromKargo')->name('admin.remove-from-kargo');
     Route::post('/confirm-transaction/{transaction}', 'API\AdminController@confirmTransaction')->name('admin.confirm-transaction');
-
     Route::get('/admin-index-costs/{user}', 'API\AdminController@indexCosts')->name('admin.index-costs');
     Route::post('/admin-create-cost/{user}', 'API\AdminController@storeCost')->name('admin.create-cost');
     Route::get('/admin-index-single-cost/{cost}', 'API\AdminController@showCost' )->name('admin.show-cost');

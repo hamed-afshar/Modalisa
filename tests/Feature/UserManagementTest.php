@@ -80,16 +80,13 @@ class UserManagementTest extends TestCase
         $retailer1 = Auth::user();
         $newAttributes = [
             'name' => 'amin test',
-            'email' => 'amintest@yahoo.com',
-            'password' => '987654321',
-            'password_confirmation' => '987654321',
             'language' => 'Turkey',
             'tel' => '989122211334',
             'country' => 'england',
             'communication_media' => 'whatsapp'
         ];
         $this->actingAs($retailer1, 'api');
-        $this->patch('api/edit-profile/' . $retailer1->id, $newAttributes);
+        $this->post('api/edit-profile/' . $retailer1->id, $newAttributes);
         $user = User::find(1);
         //assert to see user record is updated
         $this->assertEquals($newAttributes['name'], $user->name);
@@ -97,7 +94,7 @@ class UserManagementTest extends TestCase
         //users can only update their own records
         $retailer2 = Auth::user();
         $this->actingAs($retailer2, 'api');
-        $this->patch('api/edit-profile/' . $retailer1->id, $newAttributes)->assertForbidden();
+        $this->post('api/edit-profile/' . $retailer1->id, $newAttributes)->assertForbidden();
     }
 
     /** @test */

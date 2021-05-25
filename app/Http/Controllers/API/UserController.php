@@ -51,14 +51,14 @@ class UserController extends Controller
      * @throws AuthorizationException
      * @throws LockIsNotAllowed
      */
-    public function lock(Request $request,User $user)
+    public function lock(Request $request, User $user)
     {
         $this->authorize('update', User::Class);
-        if($user->isAdmin()) {
+        if ($user->isAdmin()) {
             throw new LockIsNotAllowed();
         }
         $data = [
-          'locked' => (int)$request->input('locked'),
+            'locked' => (int)$request->input('locked'),
         ];
         $user->update($data);
         return response(['users' => new UserResource($user), 'message' => trans('translate.user_updated')]);
@@ -71,7 +71,7 @@ class UserController extends Controller
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
-    public function confirm(Request $request,User $user)
+    public function confirm(Request $request, User $user)
     {
         $this->authorize('update', User::Class);
         $data = [
@@ -84,24 +84,30 @@ class UserController extends Controller
     /**
      * users can update their profile
      * users can not update other user's profile
+     * @param Request $request
      * @param User $user
      * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
-    public function editProfile(User $user)
+    public function editProfile(Request $request, User $user)
     {
         $this->authorize('profile', $user);
-        $data = request()->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'language' => 'required',
-            'tel' => 'required',
-            'country' => 'required',
-            'communication_media' => 'required'
+        $request->validate([
+            'name' => ['required', 'string', 'min:5', 'max:255'],
+            'language' => ['required'],
+            'tel' => ['required'],
+            'country' => ['required'],
+            'communication_media' => ['required'],
         ]);
-        $user->update($data);
-        return response(['users' => new UserResource($user), 'message' => trans('translate.retrieved')], 200);
+        $profileData = [
+            'name' => $request->input('name'),
+            'language' => $request->input('language'),
+            'tel' => $request->input('tel'),
+            'country' => $request->input('country'),
+            'communication_media' => $request->input('communication_media')
+        ];
+        $user->update($profileData);
+        return response(['users' => new UserResource($user), 'message' => trans('translate.profile_updated')], 200);
     }
 
     /**
