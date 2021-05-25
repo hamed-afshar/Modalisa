@@ -122,6 +122,7 @@ return [
     'image_deleted' => 'Image deleted successfully',
     'cost_created' => 'Cost created successfully',
     'cost_updated' => 'Cost updated successfully',
+    'cost_deleted' => 'Cost deleted successfully',
 
     //in Exceptions
     "action_not_allowed" => "This action is not allowed",

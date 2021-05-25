@@ -11,6 +11,9 @@ a kargo it will then can be removed from curren kargo and be added to the new cr
 Important: Users should see a message when they want to change or update a kargo for an item.
 It should indicate that this item is currently has assigned to another kargo.
 
+Important: for some models like cost and kargo we might need to upload multiple photos.
+but system is not well coded to do this!
+
 # we must consider a way for bulk orders, because current design is just for
 products with 1 quantity.
 

@@ -449,6 +449,7 @@ class CostManagementTest extends TestCase
         $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
         // cost will be created for this user
         $retailer = Auth::user();
+        $this->actingAs($retailer, 'api');
         $this->prepOrder(1,0);
         $product = Product::find(1);
         // create a cost record for the product
@@ -479,10 +480,10 @@ class CostManagementTest extends TestCase
         $imageNameArray = $cost->images()->where('imagable_id', $cost->id)->pluck('image_name');
         //other users are not allowed to delete costs
         $this->actingAs($retailer, 'api');
-        $this->delete('/admin-delete-cost/' . $cost->id)->assertForbidden();
+        $this->delete('api/admin-delete-cost/' . $cost->id)->assertForbidden();
         //acting as BuyerAdmin to delete cost
         $this->actingAs($BuyerAdmin,'api');
-        $this->delete('/admin-delete-cost/' . $cost->id);
+        $this->delete('api/admin-delete-cost/' . $cost->id);
         //cost record must be deleted
         $this->assertDatabaseMissing('costs', ['id' => $cost->id]);
         //cost's image records also must be deleted

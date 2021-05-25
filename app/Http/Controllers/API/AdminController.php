@@ -168,6 +168,7 @@ class AdminController extends Controller
             //delete the given cost records
             $cost->delete();
         }, 1);
+        return response(['message' => trans('translate.cost_deleted')], 200);
     }
 
     /**
