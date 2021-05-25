@@ -649,14 +649,13 @@ class CostManagementTest extends TestCase
     /** @test */
     public function guests_can_not_access_cost_management()
     {
-        $this->get('/costs')->assertRedirect('login');
-        $this->get('/costs/create')->assertRedirect('login');
-        $this->post('/costs')->assertRedirect('login');
-        $this->get('/costs/1')->assertRedirect('login');
-        $this->get('/costs/1' . '/edit')->assertRedirect('login');
-        $this->patch('/costs/1')->assertRedirect('login');
-        $this->delete('/costs/1')->assertRedirect('login');
-        $this->get('/admin-index-costs/1')->assertRedirect('login');
-        $this->get('/admin-index-single-cost/1/1')->assertRedirect('login');
+        $this->get('api/costs')->assertRedirect('login');
+        $this->get('api/costs/create')->assertRedirect('login');
+        $this->post('api/costs')->assertRedirect('login');
+        $this->get('api/costs/1')->assertRedirect('login');
+        $this->patch('api/costs/1')->assertRedirect('login');
+        $this->delete('api/costs/1')->assertRedirect('login');
+        $this->get('api/admin-index-costs/1')->assertRedirect('login');
+        $this->get('api/admin-index-single-cost/1')->assertRedirect('login');
     }
 }
