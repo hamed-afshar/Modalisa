@@ -1,13 +1,13 @@
-important: each user should have a customer for it's own orders
-important: exception handeling for unauthorized action msg must be configured
+important: each user should have a customer for it's own orders [Solved]
+important: exception handeling for unauthorized action msg must be configured [Solved]
 important all permission should be reviewed and well documented
 Important: System generates 'server error' msg on duplicate permission entry. It may be the same for other models too.
-Important: Login process with plain username and password is very vulranable to security risks
-Important set APP_DEBUG to false in the real environment
-Important System admin can not be unconfirmed
+Important: Login process with plain username and password is very vulranable to security risks [solved]
+Important set APP_DEBUG to false in the real environment [solved]
+Important System admin can not be unconfirmed [solved]
 Important Numbers validation for numeric inputs should be checked on the server
 Important Users can create as many kargo as they want before confirmation. So if a products exist in
-a kargo it will then can be removed from curren kargo and be added to the new created kargo.
+a kargo it will then can be removed from current kargo and be added to the new created kargo.
 Important: Users should see a message when they want to change or update a kargo for an item.
 It should indicate that this item is currently has assigned to another kargo.
 
