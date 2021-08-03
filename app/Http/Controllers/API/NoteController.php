@@ -65,8 +65,8 @@ class NoteController extends Controller
             'notable_type' => $request->input('notable_type'),
             'notable_id' => $request->input('notable_id')
         ];
-        $user->notes()->create($noteData);
-        return response(['message' => trans('translate.note_created')]);
+        $note = $user->notes()->create($noteData);
+        return response(['note' => new NoteResource($note),'message' => trans('translate.note_created')]);
     }
 
     /**
