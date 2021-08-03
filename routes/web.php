@@ -136,7 +136,7 @@ Route::group(['middleware' => 'auth'], function() {
 //    Route::patch('/remove-from-kargo/{kargo}/{product}', 'KargoController@removeFrom')->name('kargos.remove');
 
 
-//    Route::get('/admin-index-costs/{user}', 'AdminController@indexCosts')->name('admin.index-costs');
+//    Route::get('/admin-index-costs', 'AdminController@indexCosts')->name('admin.index-costs');
 //    Route::get('/admin-index-single-cost/{cost}', 'AdminController@showCost' )->name('admin.show-cost');
 //    Route::post('/admin-create-cost/', 'AdminController@storeCost')->name('admin.create-cost');
 //    Route::patch('/admin-update-cost/{cost}', 'AdminController@updateCost')->name('admin.update-cost');

@@ -31,16 +31,15 @@ class AdminController extends Controller
     use KargoTrait, ImageTrait;
 
     /**
-     * index costs for the given user
+     * index all costs for all users
      * super privilege users are able to see all costs created for any retailer
-     * @param User $user
      * @return mixed
      * @throws AuthorizationException
      */
-    public function indexCosts(User $user)
+    public function indexCosts()
     {
         $this->authorize('indexCosts', Admin::class);
-        $costs =  $user->costs;
+        $costs = Cost::all();
         return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
