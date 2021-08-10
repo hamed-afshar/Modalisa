@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KargoResource;
+use App\Http\Resources\ProductResource;
 use App\Kargo;
 use App\Product;
 use App\Traits\ImageTrait;
@@ -47,6 +48,7 @@ class KargoController extends Controller
      * store kargos
      * only users with create-kargos permission are allowed
      * @param Request $request
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function store(Request $request)
@@ -174,5 +176,23 @@ class KargoController extends Controller
         $this->authorize('update', $kargo);
         $kargo->products()->where('id', '=', $product->id)->delete();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
+    }
+
+    /**
+     * check to see whether products has binded to any kargo or not
+     * users should have see-kargos permission to be allowed
+     * key parameter will determine to check for null or not-null kargo fields
+     */
+    public function kargoAssignment($key)
+    {
+      $this->authorize('viewAny', Kargo::class);
+      if($key == 1) {
+          $condition = !null;
+      }
+      if($key == 0) {
+          $condition = null;
+      }
+      $products = Auth::user()->products()->where('kargo_id', $condition)->get();
+      return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
     }
 }

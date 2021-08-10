@@ -79,6 +79,56 @@ class KargoManagementTest extends TestCase
         $this->get('api/admin-index-kargos/')->assertForbidden();
     }
 
+    /** @test
+     * users can check product assignments with kargos
+     * users can only see their own records
+     * users should have see-kargos permission to be allowed
+     */
+    public function users_can_check_products_assignments_with_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-kargos'], 0, 1);
+        $this->prepOrder(10, 10);
+        $retailer = Auth::user();
+        $kargo = Kargo::find(1);
+        $this->actingAs($retailer, 'api');
+        $withoutKargoProducts = Product::where('kargo_id', null)->get();
+        $withKargoProducts = Product::where('kargo_id', !null)->get();
+        $nullKey = 0;
+        $notNullKey = 1;
+        //assert to see products without kargo
+        $key = $nullKey;
+        $this->get('api/kargos/index-kargo-bind/' . $key)->assertSeeText($withoutKargoProducts[1]->id);
+        //assert to see products with kargo
+        $key = $notNullKey;
+        $this->get('api/kargos/index-kargo-bind/' . $key)->assertSeeText($withKargoProducts[1]->id);
+    }
+
+    /** @test
+     * super privilege users can check kargo assignment with products
+     */
+    public function super_privilege_users_can_check_product_assignment_with_kargos()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('BuyerAdmin', ['see-kargos'], 0, 1);
+        $privilegedUser = Auth::user();
+        $this->prepOrder(10, 10);
+        $kargo = Kargo::find(1);
+        $this->actingAs($privilegedUser, 'api');
+        $withoutKargoProducts = Product::where('kargo_id', null)->get();
+        $withKargoProducts = Product::where('kargo_id', !null)->get();
+        $nullKey = 0;
+        $notNullKey = 1;
+        //assert to see products without kargo
+        $key = $nullKey;
+        $this->get('api/kargos/admin-index-kargo-assignment/' . $key)->assertSeeText($withoutKargoProducts[1]->id);
+        //assert to see products with kargo
+        $key = $notNullKey;
+        $this->get('api/kargos/admin-index-kargo-assignment/' . $key)->assertSeeText($withKargoProducts[1]->id);
+    }
+
+
+
     /**
      * this should be tested in VueJs
      */

@@ -9,6 +9,7 @@ use App\Http\Resources\CostResource;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\NoteResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\ProductResource;
 use App\Kargo;
 use App\Note;
 use App\Order;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use mysql_xdevapi\Table;
@@ -352,6 +354,24 @@ class AdminController extends Controller
         $kargo->refresh();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
 
+    }
+
+    /**
+     * check to see whether products has binded to any kargo or not
+     * users should have see-kargos permission to be allowed
+     * key parameter will determine to check for null or not-null kargo fields
+     */
+    public function kargoAssignment($key)
+    {
+        $this->authorize('indexOrder', Admin::class);
+        if($key == 1) {
+            $condition = !null;
+        }
+        if($key == 0) {
+            $condition = null;
+        }
+        $products = Product::where('kargo_id', $condition)->get();
+        return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
