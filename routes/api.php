@@ -123,6 +123,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::delete('/delete-kargo/{user}/{kargo}', 'API\AdminController@deleteKargo')->name('admin.delete-kargo');
     Route::patch('/admin-add-to-kargo/{user}/{kargo}/{product}', 'API\AdminController@addTOKargo')->name('admin.add-to-kargo');
     Route::patch('/admin-remove-from-kargo/{kargo}/{product}', 'API\AdminController@removeFromKargo')->name('admin.remove-from-kargo');
+    Route::get('/admin-index-notes/{id}/{model}', 'API\AdminController@indexNotes')->name('admin.index-notes');
     Route::post('/confirm-transaction/{transaction}', 'API\AdminController@confirmTransaction')->name('admin.confirm-transaction');
     Route::get('/admin-index-costs', 'API\AdminController@indexCosts')->name('admin.index-costs');
     Route::post('/admin-create-cost/{user}', 'API\AdminController@storeCost')->name('admin.create-cost');

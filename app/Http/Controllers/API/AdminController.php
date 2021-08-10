@@ -7,8 +7,10 @@ use App\Exceptions\WrongProduct;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CostResource;
 use App\Http\Resources\KargoResource;
+use App\Http\Resources\NoteResource;
 use App\Http\Resources\OrderResource;
 use App\Kargo;
+use App\Note;
 use App\Order;
 use App\Product;
 use App\Traits\ImageTrait;
@@ -218,7 +220,7 @@ class AdminController extends Controller
      * show a single kargo
      * super privilege users are able to see all kargos with all related user and products
      * @param Kargo $kargo
-     * @return Application|ResponseFactory|Builder[]|Collection|Response
+     * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      */
     public function showKargo(Kargo $kargo)
@@ -350,6 +352,16 @@ class AdminController extends Controller
         $kargo->refresh();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
 
+    }
+
+    /**
+     * index all notes related to a model
+     */
+    public function indexNotes($id, $model)
+    {
+        $this->authorize('indexNotes', Admin::class);
+        $notes = Note::where(['notable_type' => $model, 'notable_id' => $id])->get();
+        return response(['notes' => NoteResource::collection($notes), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**

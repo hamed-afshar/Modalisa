@@ -7,6 +7,7 @@ use App\Cost;
 use App\User;
 use http\Env\Request;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use phpDocumentor\Reflection\Types\True_;
 
 class AdminPolicy
 {
@@ -149,6 +150,16 @@ class AdminPolicy
      * @return bool
      */
     public function deleteKargo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
+     * determine whether admin can index notes
+     */
+    public function indexNotes(User $user)
     {
         if($user->checkPrivilegeRole()) {
             return true;

@@ -56,6 +56,28 @@ class NoteManagementTest extends TestCase
         $this->get('api/notes/' . $id . '/' . $model)->assertDontSeeText($note2->body);
     }
 
+    /** @test
+     * super privilage users are able to see all notes related to the given model
+     */
+    public function super_privilege_users_can_see_all_notes_related_to_a_model()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('BuyerAdmin', ['see-notes'], 0 , 1);
+        $this->prepOrder(1, 0);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
+        $product = Product::find(1);
+        $id = $product->id;
+        $model = 'App\Product';
+        $note1 = factory('App\Note')->create([
+            'user_id' => $BuyerAdmin->id,
+            'notable_type' => 'App\Product',
+            'notable_id' => $product->id,
+            'body' => 'product note'
+        ]);
+        $this->get('api/admin-index-notes/' . $id . '/' .$model)->assertSeeText($note1->body);
+    }
+
 
     /**
      * this should be tested in VueJs
