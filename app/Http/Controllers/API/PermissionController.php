@@ -25,7 +25,7 @@ class PermissionController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Permission::class);
-        $permissions =  $permissions = Permission::all();
+        $permissions = Permission::all();
         return response(['permissions' => PermissionResource::collection($permissions), 'message' => trans('translate.retrieved')], 200);
     }
 
