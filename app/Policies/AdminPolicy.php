@@ -167,6 +167,16 @@ class AdminPolicy
     }
 
     /**
+     * determine whether admin can index histories
+     */
+    public function indexHistories(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
      * determine whether admin can confirm Transaction
      * @param User $user
      * @return bool

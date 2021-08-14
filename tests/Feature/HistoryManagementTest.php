@@ -50,6 +50,26 @@ class HistoryManagementTest extends TestCase
             ->assertDontSeeText($history2->status_id);
     }
 
+    /**
+     * @test
+     * privileged users can index all histories for a specific product
+     */
+    public function privileged_users_can_index_histories_for_a_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-historie'], 0 , 1);
+        $BuyerAdmin = Auth::user();
+        $this->prepOrder(1,0);
+        $product = Product::find(1);
+        $status = Status::find(1);
+        $history = factory('App\History')->create([
+           'product_id' => $product->id,
+           'status_id' => $status
+        ]);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->get('api/admin-index-histories/' . $product->id)->assertSeeText($history->status_id);
+    }
+
     /** @test
      * ProductObserver is responsible to create history on order creation time
      */

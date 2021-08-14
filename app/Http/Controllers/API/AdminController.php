@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Cost;
+use App\Exceptions\ViewHistoryDenied;
 use App\Exceptions\WrongProduct;
+use App\History;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CostResource;
+use App\Http\Resources\HistoryResource;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\NoteResource;
 use App\Http\Resources\OrderResource;
@@ -106,7 +109,7 @@ class AdminController extends Controller
             ];
             $user->images()->create($imageData);
         }
-        return response(['cost' => new CostResource($cost) ,'message' => trans('translate.cost_created')], 200);
+        return response(['cost' => new CostResource($cost), 'message' => trans('translate.cost_created')], 200);
     }
 
     /**
@@ -214,7 +217,7 @@ class AdminController extends Controller
     public function indexKargos()
     {
         $this->authorize('indexKargos', Admin::class);
-        $kargos =  Kargo::with('user','products')->get();
+        $kargos = Kargo::with('user', 'products')->get();
         return response(['kargos' => KargoResource::collection($kargos), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -228,7 +231,7 @@ class AdminController extends Controller
     public function showKargo(Kargo $kargo)
     {
         $this->authorize('indexSingleKargo', Admin::class);
-        $kargos =  $kargo->with('user','products')->get();
+        $kargos = $kargo->with('user', 'products')->get();
         return response(['kargos' => KargoResource::collection($kargos), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -350,7 +353,7 @@ class AdminController extends Controller
     public function removeFromKargo(Kargo $kargo, Product $product)
     {
         $this->authorize('updateKargo', Admin::class);
-        $kargo->products()->where('id','=', $product->id)->delete($product);
+        $kargo->products()->where('id', '=', $product->id)->delete($product);
         $kargo->refresh();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
 
@@ -364,10 +367,10 @@ class AdminController extends Controller
     public function kargoAssignment($key)
     {
         $this->authorize('indexOrder', Admin::class);
-        if($key == 1) {
+        if ($key == 1) {
             $condition = !null;
         }
-        if($key == 0) {
+        if ($key == 0) {
             $condition = null;
         }
         $products = Product::where('kargo_id', $condition)->get();
@@ -382,6 +385,16 @@ class AdminController extends Controller
         $this->authorize('indexNotes', Admin::class);
         $notes = Note::where(['notable_type' => $model, 'notable_id' => $id])->get();
         return response(['notes' => NoteResource::collection($notes), 'message' => trans('translate.retrieved')], 200);
+    }
+
+    /**
+     * index all histories related to a products
+     */
+    public function indexHistories(Product $product)
+    {
+        $this->authorize('indexHistories', Admin::class);
+        $histories = $product->histories()->with('status')->get();
+        return response(['histories' => HistoryResource::collection($histories), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
