@@ -102,6 +102,47 @@ class CostManagementTest extends TestCase
     }
 
     /** @test
+     * retailer can see all costs related to a specific model
+     * first BuyerAdmin should create a cost for a specific user and model
+     * then that user will be able to see created cost for him related to that record
+     * here we use product model for testing, using any other model is also possible
+     */
+    public function super_privilege_users_can_see_all_costs_related_to_a_specific_model()
+    {
+        $this->withoutExceptionHandling();
+        //create BuyerAdmin with permissions to see and create costs
+        $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($BuyerAdmin, 'api');
+        //create retailer with permission only to see costs
+        $this->prepNormalEnv('retailer', ['see-costs'], 0, 1);
+        $retailer1 = Auth::user();
+        $this->actingAs($retailer1, 'api');
+        $this->prepOrder(1,0);
+        $product = Product::find(1);
+        // acting as BuyerAdmin to create a costs for retailer.
+        $this->actingAs($BuyerAdmin, 'api');
+        $cost1 = factory('App\Cost')->create([
+            'user_id' => $retailer1->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id,
+            'description' => 'cost1'
+        ]);
+        $cost2 = factory('App\Cost')->create([
+            'user_id' => $retailer1->id,
+            'costable_type' => 'App\Product',
+            'costable_id' => $product->id,
+            'description' => 'cost2'
+        ]);
+        // BuyerAdmin can chek all cost for this product
+        $model = 'App\Product';
+        $id = $product->id;
+        $this->get('api/admin-index-costs-model/' . $id . '/' . $model)->assertSeeText($cost1->description);
+        $this->get('api/admin-index-costs-model/' . $id . '/' . $model)->assertSeeText($cost2->description);
+
+    }
+
+    /** @test
      * All super privilege users are able to see all costs created for a specific user
      */
     public function super_privilege_users_can_see_all_costs_related_to_any_user()
