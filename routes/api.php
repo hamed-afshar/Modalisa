@@ -116,6 +116,8 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
 
     Route::get('/admin-index-orders', 'API\AdminController@indexOrders')->name('admin.index-order');
     Route::get('/admin-index-orders/{order}', 'API\AdminController@indexSingleOrder')->name('admin.index-single-order');
+    Route::patch('/admin-update-weight/{product}', 'API\AdminController@updateWeight')->name('admin.update-weight');
+    Route::patch('/admin-update-ref/{product}', 'API\AdminController@updateRef')->name('admin.update-ref');
     Route::get('/admin-index-kargos', 'API\AdminController@indexKargos')->name('admin.index-kargos');
     Route::get('/admin-index-single-kargo/{kargo}', 'API\AdminController@showKargo')->name('admin.show-kargo');
     Route::post('/admin-create-kargo/{user}', 'API\AdminController@storeKargo')->name('admin.create-kargo');

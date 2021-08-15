@@ -212,5 +212,15 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can update weight field for a product
+     */
+    public function updateWeight(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
 
 }

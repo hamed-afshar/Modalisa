@@ -588,6 +588,57 @@ class OrderManagementTest extends TestCase
             ->assertSeeText($product->size);
     }
 
+    /**
+     * @test
+     * super privilege users can update weight filed for a product
+     */
+    public function super_privilege_users_can_update_weight_filed_for_a_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'],0 ,1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-orders','create-orders'],0,1);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->prepOrder(1,0);
+        //acting as the BuyerAdmin to update weight field for a product
+        $this->actingAs($BuyerAdmin);
+        $product = Product::find(1);
+        $productAttribute = [
+            'weight' => 250
+        ];
+        $this->patch('api/admin-update-weight/' . $product->id, $productAttribute);
+        $this->assertDatabaseHas('products', [
+            'weight' => 250,
+            'id' => $product->id
+        ]);
+    }
+
+    /**
+     * @test
+     * super privilege users can update ref filed for a product
+     */
+    public function super_privilege_users_can_update_ref_filed_for_a_product()
+    {
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['see-orders', 'create-orders'],0 ,1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['see-orders','create-orders'],0,1);
+        $BuyerAdmin = Auth::user();
+        $this->actingAs($retailer, 'api');
+        $this->prepOrder(1,0);
+        //acting as the BuyerAdmin to update weight field for a product
+        $this->actingAs($BuyerAdmin);
+        $product = Product::find(1);
+        $productAttribute = [
+            'ref' => 'A400bccvh789'
+        ];
+        $this->patch('api/admin-update-ref/' . $product->id, $productAttribute);
+        $this->assertDatabaseHas('products', [
+            'ref' => 'A400bccvh789',
+            'id' => $product->id
+        ]);
+    }
 
 
 

@@ -438,4 +438,40 @@ class AdminController extends Controller
             ->get();
         return response(['order' => new OrderResource($order), 'message' => trans('translate.retrieved')], 200);
     }
+
+    /**
+     * update weight filed for a product
+     * Super Privilege users can update this fields
+     * @throws AuthorizationException
+     */
+    public function updateWeight(Request $request, Product $product)
+    {
+        $this->authorize('updateWeight', Admin::class);
+        $request->validate([
+            'weight' => 'required | numeric'
+        ]);
+        $productData = [
+          'weight' => $request->input('weight')
+        ];
+        $product->update($productData);
+        return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
+    }
+
+    /**
+     * update weight filed for a product
+     * Super Privilege users can update this fields
+     * @throws AuthorizationException
+     */
+    public function updateRef(Request $request, Product $product)
+    {
+        $this->authorize('updateWeight', Admin::class);
+        $request->validate([
+            'ref' => 'required'
+        ]);
+        $productData = [
+            'ref' => $request->input('ref')
+        ];
+        $product->update($productData);
+        return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
+    }
 }
