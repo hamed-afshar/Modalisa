@@ -60,7 +60,7 @@ class AdminController extends Controller
     public function showCost(Cost $cost)
     {
         $this->authorize('indexSingleCost', Admin::class);
-        $cost = DB::table('costs')->where('id', '=', $cost->id)->get();
+        $cost = Cost::with(['images'])->where('id' , '=', $cost->id)->get();
         return response(['cost' => new CostResource($cost), 'message' => trans('translate.retrieved')], 200);
     }
 

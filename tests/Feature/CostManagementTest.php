@@ -371,8 +371,9 @@ class CostManagementTest extends TestCase
     /** @test
      * All super privilege users are able to see a single cost for a specific user
      */
-    public function super_privilege_users_can_see_a_single_cost()
+    public function super_privilege_users_can_see_a_single_cost_with_images()
     {
+        $this->withoutExceptionHandling();
         //create a BuyerAdmin user with permissions to see and create costs
         $this->prepNormalEnv('BuyerAdmin', ['create-costs', 'see-costs'], 0, 1);
         $BuyerAdmin = Auth::user();
@@ -386,9 +387,16 @@ class CostManagementTest extends TestCase
         factory('App\Cost')->create([
             'user_id' => $retailer->id,
             'costable_type' => 'App\Product',
-            'costable_id' => $product->id
+            'costable_id' => $product->id,
+            'description' => 'cost for this product'
         ]);
         $cost = Cost::find(1);
+        factory('App\Image')->create([
+            'user_id' => $retailer->id,
+            'image_name' => 'cost1.jpg',
+            'imagable_type' => 'App\Cost',
+            'imagable_id' => $cost->id,
+        ]);
         //assert to see the cost's description created for the retailer
         $this->actingAs($BuyerAdmin, 'api');
         $this->get('api/admin-index-single-cost/' . $cost->id)->assertSeeText($cost->description);
