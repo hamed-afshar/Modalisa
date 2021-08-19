@@ -100,7 +100,8 @@ class UserSeeder extends Seeder
         $Retailer2 = User::find(4);
 
         //assign required permissions to the role
-        $role = Role::where('name', 'Retailer')->first();
+        $retailerRole = Role::where('name', 'Retailer')->first();
+        $buyerAdminRole = Role::where('name', 'BuyerAdmin')->first();
         $permissionsArray =[
             'see-transactions',
             'create-transactions',
@@ -125,7 +126,8 @@ class UserSeeder extends Seeder
         ];
         foreach ($permissionsArray as $permission) {
             $permissionID = DB::table('permissions')->where('name', '=', $permission)->value('id');
-            $role->allowTo($permissionID);
+            $retailerRole->allowTo($permissionID);
+            $buyerAdminRole->allowTo($permissionID);
         }
         $role->changeRole($Retailer1);
         $role->changeRole($Retailer2);
