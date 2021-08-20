@@ -120,7 +120,7 @@ class AdminController extends Controller
     public function indexCostModel($id, $model)
     {
         $this->authorize('indexSingleCost', Admin::class);
-        $costs = Cost::where(['costable_type' => $model, 'costable_id' => $id])->get();
+        $costs = Cost::with('images')->where(['costable_type' => $model, 'costable_id' => $id])->get();
         return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
