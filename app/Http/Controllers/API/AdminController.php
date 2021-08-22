@@ -216,8 +216,8 @@ class AdminController extends Controller
             'sending_date' => $request->input('sending_date')
         ];
         $kargoList = $request->input('kargo_list');
-        $this->createKargo($user, $kargoData, $kargoList);
-        return response(['message' => trans('translate.kargo_created')], 200);
+        $kargo = $this->createKargo($user, $kargoData, $kargoList);
+        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.kargo_created')], 200);
 
     }
 

@@ -28,6 +28,7 @@ trait KargoTrait
             $kargo->setKargo($productList);
             $kargo->refresh();
             DB::commit();
+            return $kargo;
         } else {
             DB::rollBack();
             return Redirect::back()->withErrors(['msg', trans('translate.kargo_limit')]);
