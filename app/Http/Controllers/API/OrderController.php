@@ -56,7 +56,16 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        $orders = Auth::user()->orders()->with(['products.images', 'customer'])->get();
+        $orders = Auth::user()->orders()->with(
+            [
+                'products' => function($query)
+                {
+                    $query->with(['images'])->orderBy('id', 'desc');
+                },
+                'customer',
+            ]
+        )->get();
+        dd($orders);
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 

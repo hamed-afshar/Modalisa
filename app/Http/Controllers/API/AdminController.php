@@ -432,7 +432,14 @@ class AdminController extends Controller
     public function indexOrders()
     {
         $this->authorize('indexOrder', Admin::class);
-        $orders = Order::with(['products.images'])->get();
+        $orders = Order::with(
+            [
+                'products' => function($query)
+                {
+                    $query->with(['images'])->orderBy('id', 'desc');
+                }
+            ]
+        )->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
