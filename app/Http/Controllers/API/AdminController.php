@@ -60,7 +60,7 @@ class AdminController extends Controller
     public function showCost(Cost $cost)
     {
         $this->authorize('indexSingleCost', Admin::class);
-        $cost = Cost::with(['images'])->where('id' , '=', $cost->id)->get();
+        $cost = Cost::with(['images'])->where('id', '=', $cost->id)->get();
         return response(['cost' => new CostResource($cost), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -432,14 +432,23 @@ class AdminController extends Controller
     public function indexOrders()
     {
         $this->authorize('indexOrder', Admin::class);
+        // index all orders with products in descending order
+        //each product returns with all images and last history
         $orders = Order::with(
             [
-                'products' => function($query)
-                {
-                    $query->with(['images'])->orderBy('id', 'desc');
+                'products' => function ($query) {
+                    $query->with(
+                        [
+                            'images',
+                            'histories' => function ($q)
+                            {
+                                $q->orderBy('id', 'desc')->first();
+                            }
+                        ]
+                    )->orderBy('id', 'desc')->get();
                 }
             ]
-        )->get();
+        )->orderBy('id', 'desc')->get();
         return response(['orders' => OrderResource::collection($orders), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -471,7 +480,7 @@ class AdminController extends Controller
             'weight' => 'required | numeric'
         ]);
         $productData = [
-          'weight' => $request->input('weight')
+            'weight' => $request->input('weight')
         ];
         $product->update($productData);
         return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
