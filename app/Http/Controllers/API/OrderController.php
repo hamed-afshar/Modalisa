@@ -56,15 +56,15 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        $orders = Auth::user()->orders()->with(
-            [
-                'products' => function ($query) {
-                    $query->with(
-                        [
+        $orders = Auth::user()->orders()->with([
+                'products' => function ($query1) {
+                    $query1->with([
                             'images',
-                            'histories' => function($q)
-                            {
-                                $q->orderBy('id', 'desc')->first();
+                            'histories' => function ($query2) {
+                                $query2->with([
+                                    'status'
+                                ]
+                                )->latest()->first();
                             }
                         ]
                     )->orderBy('id', 'desc')->get();

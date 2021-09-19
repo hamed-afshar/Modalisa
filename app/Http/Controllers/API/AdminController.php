@@ -436,13 +436,14 @@ class AdminController extends Controller
         //each product returns with all images and last history
         $orders = Order::with(
             [
-                'products' => function ($query) {
-                    $query->with(
-                        [
+                'products' => function ($query1) {
+                    $query1->with([
                             'images',
-                            'histories' => function ($q)
-                            {
-                                $q->orderBy('id', 'desc')->first();
+                            'histories' => function ($query2) {
+                                $query2->with([
+                                    'status'
+                                    ]
+                                )->latest()->first();
                             }
                         ]
                     )->orderBy('id', 'desc')->get();
