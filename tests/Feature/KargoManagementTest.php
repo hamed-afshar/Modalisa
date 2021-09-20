@@ -174,6 +174,7 @@ class KargoManagementTest extends TestCase
             $kargoList[] = $product->id;
         }
         $attributes = factory('App\Kargo')->raw([
+            'receiver_name' => 'shahin',
             'kargo_list' => $kargoList,
         ]);
         //acting as BuyerAdmin to create the kargo

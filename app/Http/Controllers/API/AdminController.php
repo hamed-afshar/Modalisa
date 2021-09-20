@@ -217,8 +217,8 @@ class AdminController extends Controller
         ];
         $kargoList = $request->input('kargo_list');
         $kargo = $this->createKargo($user, $kargoData, $kargoList);
-        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.kargo_created')], 200);
-
+        $test = Kargo::find($kargo);
+        return response(['kargo' => new KargoResource($test), 'message' => trans('translate.kargo_created')], 200);
     }
 
 

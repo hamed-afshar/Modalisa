@@ -6,13 +6,18 @@
 
 namespace App\Traits;
 
+use App\Exceptions\KargoLimit;
 use App\Product;
 use App\User;
+use http\Env\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 trait KargoTrait
 {
+    /**
+     * @throws KargoLimit
+     */
     public function createKargo(User $user, $kargoData, $kargoList)
     {
         DB::beginTransaction();
@@ -31,7 +36,7 @@ trait KargoTrait
             return $kargo;
         } else {
             DB::rollBack();
-            return Redirect::back()->withErrors(['msg', trans('translate.kargo_limit')]);
+            throw new KargoLimit();
         }
     }
 }
