@@ -174,7 +174,8 @@ class KargoController extends Controller
     public function removeFrom(Kargo $kargo, Product $product)
     {
         $this->authorize('update', $kargo);
-        $kargo->products()->where('id', '=', $product->id)->delete();
+        $product->kargo()->dissociate();
+        $product->save();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.remove_from_kargo')], 200);
     }
 
