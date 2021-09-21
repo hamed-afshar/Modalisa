@@ -6,12 +6,14 @@
 
 namespace App\Traits;
 
+use App\Exceptions\ChangeHistoryNotAllowed;
 use App\Exceptions\KargoLimit;
 use App\Product;
 use App\User;
 use http\Env\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use App\Status;
 
 trait KargoTrait
 {

@@ -129,7 +129,6 @@ class HistoryManagementTest extends TestCase
      */
     public function only_super_privilege_users_can_delete_histories()
     {
-        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories', 'delete-histories'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->actingAs($BuyerAdmin, 'api');
@@ -200,7 +199,7 @@ class HistoryManagementTest extends TestCase
     /** @test */
     public function guests_can_not_access_history_management()
     {
-        $this->get('/histories/1')->assertRedirect('login');
+        $this->get('api/histories/1')->assertRedirect('login');
         $this->post('/histories/')->assertRedirect('login');
         $this->delete('/histories/1')->assertRedirect('login');
     }

@@ -4,6 +4,7 @@ namespace App;
 
 use App\Exceptions\SubscriptionExist;
 use App\Exceptions\WithoutSubscription;
+use App\Traits\HistoryTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,8 @@ use DateTimeInterface;
 
 class Kargo extends Model
 {
+    use HistoryTrait;
+
     protected $guarded = [];
     /**
      * Prepare a date for array / JSON serialization.
@@ -70,12 +73,17 @@ class Kargo extends Model
         return $this->belongsTo('App\User');
     }
 
-    /** set kargo number for product's list
+    /**
+     * set kargo number for product's list
+     * process items one by one and change the history to in-kargo-to-destination(next status = 5)
      * @param $productList
+     * @throws Exceptions\ChangeHistoryNotAllowed
      */
     public function setKargo($productList)
     {
+        $status = Status::find(5);
         foreach ($productList as $product) {
+            $this->storeHistory($product, $status);
             $this->products()->save($product);
         }
     }

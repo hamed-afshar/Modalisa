@@ -55,14 +55,7 @@ class HistoryController extends Controller
     public function store(Request $request, Product $product, Status $status)
     {
         $this->authorize('create', History::class);
-        $currentStatus = $this->getStatus($product);
-        $nextStatus = $status->id;
-        $statusManager = new StatusManager($product, $currentStatus, $nextStatus);
-        if($statusManager->check()) {
-            $statusManager->changeHistory();
-        } else {
-            throw new ChangeHistoryNotAllowed();
-        }
+        $this->storeHistory($product, $status);
         return response(['message' => trans('translate.history_changed')], 200);
     }
 

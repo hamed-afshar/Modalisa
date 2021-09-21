@@ -2,15 +2,21 @@
 
 namespace Database\Seeders;
 
+use App\Exceptions\ChangeHistoryNotAllowed;
 use App\Kargo;
 use App\Product;
+use App\Status;
+use App\Traits\HistoryTrait;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class KargoSeeder extends Seeder
 {
+    use HistoryTrait;
+
     /**
      * create a kargo seeder for user with id of 3 as a retailer
+     * @throws ChangeHistoryNotAllowed
      */
     public function run()
     {
@@ -21,37 +27,21 @@ class KargoSeeder extends Seeder
         $kargo1 = factory(Kargo::class)->create([
             'user_id' => 3
         ]);
-        $kargo2 = factory(Kargo::class)->create([
-        'user_id' => 3
-        ]);
 
-        $kargo3 = factory(Kargo::class)->create([
-            'user_id' => 4
-        ]);
-
-        //retrieved list of products for order with id of 1
+        // get the list of products for order with id of 1
+        // first change the status to bought then change it to in-office
+        // finally create kargo from this list
         $records1 = DB::table('products')->where('order_id', '=', 1)->get();
+        $boughtStatus = Status::find(3);
+        $inOfficestatus = Status::find(4);
         foreach ($records1 as $item) {
             $product = Product::find($item->id);
+            $this->storeHistory($product, $boughtStatus);
+            $this->storeHistory($product, $inOfficestatus);
             $kargoList1[] = $product;
-        }
-        //retrieved list of products for order with id of 2
-        $records2 = DB::table('products')->where('order_id', '=', 2)->get();
-        foreach ($records2 as $item) {
-            $product = Product::find($item->id);
-            $kargoList2[] = $product;
-        }
-
-        //retrieved list of products for order with id of 3
-        $records3 = DB::table('products')->where('order_id', '=', 3)->get();
-        foreach ($records3 as $item) {
-            $product = Product::find($item->id);
-            $kargoList3[] = $product;
         }
 
         //set kargo for these lists
         $kargo1->setKargo($kargoList1);
-        $kargo2->setKargo($kargoList2);
-        $kargo2->setKargo($kargoList3);
     }
 }
