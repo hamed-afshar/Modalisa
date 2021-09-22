@@ -386,7 +386,13 @@ class AdminController extends Controller
         if ($key == 0) {
             $condition = null;
         }
-        $products = Product::where('kargo_id', $condition)->get();
+        $products = DB::table('kargos')
+            ->join('products', 'kargos.id', '=', 'products.kargo_id')
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('kargos.*', 'products.kargo_id', 'histories.status_id')
+            ->where(['status_id' => 4, 'kargo_id' => $condition])
+            ->get();
+
         return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
     }
 

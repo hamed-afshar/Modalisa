@@ -4,12 +4,14 @@ namespace Tests;
 
 use App\Permission;
 use App\Role;
+use App\Status;
+use App\Traits\HistoryTrait;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Auth;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    use CreatesApplication, HistoryTrait;
 
     /**
      * prepare administrator environment
@@ -59,24 +61,80 @@ abstract class TestCase extends BaseTestCase
     protected function prepOrder($withKargo, $withoutKargo)
     {
         //create first two possible statuses. 0:Order Deleted, 1:Order Created
-        factory('App\Status', 2)->create();
+//        factory('App\Status', 2)->create();
+        factory('App\Status')->create([
+            'priority' => 1,
+            'name' => 'Order Deleted',
+            'description' => 'Order Deleted',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 2,
+            'name' => 'Order Created',
+            'description' => 'Order Created',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 3,
+            'name' => 'Order Bought',
+            'description' => 'Order has Bought',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 4,
+            'name' => 'Order In-Office',
+            'description' => 'Order is in office',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 5,
+            'name' => 'Order In Kargo To Destination',
+            'description' => 'Order is in kargo to the destination',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 6,
+            'name' => 'Order In Destination',
+            'description' => 'Order is in destination',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 7,
+            'name' => 'Order IN Kargo From Destination',
+            'description' => 'Order is in kargo from the destination to return',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 8,
+            'name' => 'Order Returned',
+            'description' => 'Order has returned to the seller',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 9,
+            'name' => 'Order Refunded',
+            'description' => 'Payment for the order has refunded',
+        ]);
+        factory('App\Status')->create([
+            'priority' => 10,
+            'name' => 'Order Edited',
+            'description' => 'Order has edited',
+        ]);
         $customer = factory('App\Customer')->create(['user_id' => Auth::user()->id]);
         $order = factory('App\Order')->create([
             'user_id' => Auth::user()->id,
             'customer_id' => $customer->id
         ]);
+        $boughtStatus = Status::find(3);
+        $inOfficeStatus = Status::find(4);
         for ($i = 0; $i < $withoutKargo; $i++) {
             $p = factory('App\Product')->create([
                 'order_id' => $order->id,
             ]);
+            $this->storeHistory($p, $boughtStatus);
+            $this->storeHistory($p, $inOfficeStatus);
         }
         if ($withKargo > 0) {
             $kargo = factory('App\Kargo')->create(['user_id' => Auth::user()->id]);
             for($i=0; $i<$withKargo; $i++) {
-                factory('App\Product')->create([
+                $p = factory('App\Product')->create([
                     'order_id' => $order->id,
                     'kargo_id' => $kargo->id
                 ]);
+                $this->storeHistory($p, $boughtStatus);
+                $this->storeHistory($p, $inOfficeStatus);
             }
         }
     }
@@ -86,7 +144,6 @@ abstract class TestCase extends BaseTestCase
      */
     public function prepStatus()
     {
-
         factory('App\Status')->create([
             'priority' => 3,
             'name' => 'Order Bought',

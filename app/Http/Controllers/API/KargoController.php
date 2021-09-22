@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exceptions\KargoLimit;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KargoResource;
 use App\Http\Resources\ProductResource;
@@ -49,7 +50,7 @@ class KargoController extends Controller
      * only users with create-kargos permission are allowed
      * @param Request $request
      * @return Application|ResponseFactory|Response
-     * @throws AuthorizationException
+     * @throws AuthorizationException|KargoLimit
      */
     public function store(Request $request)
     {
@@ -180,7 +181,7 @@ class KargoController extends Controller
     }
 
     /**
-     * check to see whether products has binded to any kargo or not
+     * check to see whether products has assigned to any kargo or not
      * users should have see-kargos permission to be allowed
      * key parameter will determine to check for null or not-null kargo fields
      */
@@ -194,6 +195,7 @@ class KargoController extends Controller
           $condition = null;
       }
       $products = Auth::user()->products()->where('kargo_id', $condition)->get();
+
       return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
     }
 }

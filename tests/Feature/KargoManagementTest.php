@@ -30,6 +30,7 @@ class KargoManagementTest extends TestCase
         if($withKargo>0) {
             for ($i = 1; $i <=$withKargo; $i++) {
                 $product = Product::find($i);
+
                 $kargoList[] = $product->id;
             }
         }
@@ -581,6 +582,24 @@ class KargoManagementTest extends TestCase
         $this->actingAs($BuyerAdmin, 'api');
         $this->patch('api/admin-remove-from-kargo/' . $kargo->id . '/' . $deleteProduct->id );
         $this->assertDatabaseMissing('products', ['id' => $deleteProduct, 'kargo_id' => $kargo->id]);
+    }
+
+    /** @test */
+    public function super_privilege_users_can_index_all_products_from_table_joining_kargo_to_history_and_status(){
+
+        $this->withoutExceptionHandling();
+        $this->prepNormalEnv('retailer', ['create-kargos', 'see-kargos'], 0, 1);
+        $retailer = Auth::user();
+        $this->prepNormalEnv('BuyerAdmin', ['create-kargos', 'see-kargos'], 0, 1);
+        $BuyerAdmin = Auth::user();
+        //acting as a retailer to create a kargo
+        $this->actingAs($retailer, 'api');
+        $this->prepKargo(10, 0);
+        $kargo= Kargo::find(1);
+        //assert existence of the created kargo
+        $this->assertDatabaseHas('kargos', ['id' => $kargo->id]);
+        $this->actingAs($BuyerAdmin, 'api');
+        $this->get('api/admin-index-kargo-assignment/' . $kargo->id )->assertSeeText('Ramin Bey');
     }
 
 
