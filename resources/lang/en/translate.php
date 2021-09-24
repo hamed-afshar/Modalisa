@@ -102,6 +102,7 @@ return [
     "added_to_kargo" => 'Item added to the kargo',
     "remove_from_kargo" => 'Item removed from the kargo',
     "confirm_kargo" => 'Kargo is confirmed',
+    "kargo_updated" => 'Kargo updated successfully',
     "transaction_created" => 'Transaction created successfully',
     "transaction_updated" => 'Transaction updated successfully',
     "transaction_confirmed" => 'Transaction confirmed successfully',

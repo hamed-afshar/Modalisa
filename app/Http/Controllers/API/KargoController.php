@@ -70,8 +70,9 @@ class KargoController extends Controller
         ];
         $user = Auth::user();
         $kargoList = $request->input('kargo_list');
-        $this->createKargo($user, $kargoData, $kargoList);
-        return response(['message' => trans('translate.kargo_created')], 200);
+        $kargo = $this->createKargo($user, $kargoData, $kargoList);
+        $kargoResult = Kargo::find($kargo);
+        return response(['kargo' => new KargoResource($kargoResult),'message' => trans('translate.kargo_created')], 200);
     }
 
     /**
@@ -125,7 +126,7 @@ class KargoController extends Controller
             'sending_date' => $request->input('sending_date')
         ];
         $kargo->update($kargoData);
-        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.retrieved')], 200);
+        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.kargo_updated')], 200);
     }
 
     /**
@@ -159,6 +160,7 @@ class KargoController extends Controller
     {
         $this->authorize('update', $kargo);
         $kargo->products()->save($product);
+        $kargo->refresh();
         return response(['kargo' => new KargoResource($kargo->with('products')->where('id', '=', $kargo->id)->get()), 'message' => trans('translate.added_to_kargo')], 200);
     }
 

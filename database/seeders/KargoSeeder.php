@@ -32,7 +32,6 @@ class KargoSeeder extends Seeder
          * first change the status to bought then change it to in-office
          * finally create kargo from this list
          */
-        //$kargotList1 = array();
         $boughtStatus = Status::find(3);
         $inOfficestatus = Status::find(4);
         $records1 = DB::table('products')->where('order_id', '=', 1)->get();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Cost;
+use App\Exceptions\KargoLimit;
 use App\Exceptions\ViewHistoryDenied;
 use App\Exceptions\WrongProduct;
 use App\History;
@@ -196,7 +197,7 @@ class AdminController extends Controller
      * @param Request $request
      * @param User $user
      * @return Application|ResponseFactory|Response
-     * @throws AuthorizationException
+     * @throws AuthorizationException|KargoLimit
      */
 
     public function storeKargo(Request $request, User $user)
@@ -376,6 +377,9 @@ class AdminController extends Controller
      * check to see whether products has binded to any kargo or not
      * users should have see-kargos permission to be allowed
      * key parameter will determine to check for null or not-null kargo fields
+     * @param $key
+     * @return ProductResource
+     * @throws AuthorizationException
      */
     public function kargoAssignment($key)
     {
@@ -404,6 +408,9 @@ class AdminController extends Controller
 
     /**
      * index all histories related to a products
+     * @param Product $product
+     * @return Application|ResponseFactory|Response
+     * @throws AuthorizationException
      */
     public function indexHistories(Product $product)
     {
@@ -474,6 +481,9 @@ class AdminController extends Controller
     /**
      * update weight filed for a product
      * Super Privilege users can update this fields
+     * @param Request $request
+     * @param Product $product
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function updateWeight(Request $request, Product $product)
@@ -492,6 +502,9 @@ class AdminController extends Controller
     /**
      * update weight filed for a product
      * Super Privilege users can update this fields
+     * @param Request $request
+     * @param Product $product
+     * @return Application|ResponseFactory|Response
      * @throws AuthorizationException
      */
     public function updateRef(Request $request, Product $product)

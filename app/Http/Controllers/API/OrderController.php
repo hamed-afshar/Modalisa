@@ -132,7 +132,8 @@ class OrderController extends Controller
         //upload image for the created product and create a record in the images table
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
-        return response(['message' => trans('translate.order_saved')], 200);
+        $orderResult = Product::find($order);
+        return response(['order' => new OrderResource($orderResult),'message' => trans('translate.order_saved')], 200);
     }
 
     /**
@@ -199,6 +200,7 @@ class OrderController extends Controller
             'currency' => $request->input('currency'),
         ];
         $product = $order->products()->create($productData);
+        $product->refresh();
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
         return response(['message' => trans('translate.product_added')], 200);

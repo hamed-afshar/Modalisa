@@ -61,8 +61,9 @@ class CustomerController extends Controller
             'address' => $request->input('address'),
             'email' => $request->input('email'),
         ];
-        $user->customers()->create($customerData);
-        return response(['message' => trans('translate.customer_created')], 200);
+        $customer = $user->customers()->create($customerData);
+        $customerResult = Customer::find($customer);
+        return response(['customer' => new CustomerResource($customerResult),'message' => trans('translate.customer_created')], 200);
     }
 
     /**

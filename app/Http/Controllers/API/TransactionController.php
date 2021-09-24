@@ -85,7 +85,8 @@ class TransactionController extends Controller
             ];
             $user->images()->create($imageData);
         }
-        return response(['message' => trans('translate.transaction_created')], 200);
+        $transactionResult = Transaction::find($transaction);
+        return response(['transaction' => TransactionResource::collection($transactionResult), 'message' => trans('translate.transaction_created')], 200);
     }
 
     /**
