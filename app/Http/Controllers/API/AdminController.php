@@ -380,20 +380,16 @@ class AdminController extends Controller
     public function kargoAssignment($key)
     {
         $this->authorize('indexOrder', Admin::class);
+        $joinTable = DB::table('products')
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('products.*', 'histories.status_id');
         if ($key == 1) {
-            $condition = !null;
+            $result = $joinTable->where(['products.kargo_id' => !null, 'histories.status_id' => 5])->get();
         }
         if ($key == 0) {
-            $condition = null;
+            $result = $joinTable->where(['products.kargo_id' => null, 'histories.status_id' => 4])->get();
         }
-        $products = DB::table('kargos')
-            ->join('products', 'kargos.id', '=', 'products.kargo_id')
-            ->join('histories', 'products.id', '=', 'histories.product_id')
-            ->select('kargos.*', 'products.kargo_id', 'histories.status_id')
-            ->where(['status_id' => 4, 'kargo_id' => $condition])
-            ->get();
-
-        return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
+        return new ProductResource($result);
     }
 
     /**
