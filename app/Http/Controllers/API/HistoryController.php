@@ -17,6 +17,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HistoryController extends Controller
 {
@@ -49,14 +50,18 @@ class HistoryController extends Controller
      * @param Request $request
      * @param Product $product
      * @param Status $status
-     * @return Application|ResponseFactory|Response
+     * @return string
      * @throws AuthorizationException|ChangeHistoryNotAllowed
      */
     public function store(Request $request, Product $product, Status $status)
     {
         $this->authorize('create', History::class);
         $this->storeHistory($product, $status);
-        return response(['message' => trans('translate.history_changed')], 200);
+        $joinTabel = DB::table('statuses')
+            ->join('histories', 'statuses.id', '=', 'histories.status_id')
+            ->select('statuses.name', 'histories.*');
+        $result = $joinTabel->where(['histories.product_id' => $product->id])->latest('created_at')->first();
+        return response(['history'=> new HistoryResource($result), 'message' => trans('translate.history_changed')], 200);
     }
 
     /**

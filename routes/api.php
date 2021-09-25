@@ -137,5 +137,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::post('/admin-update-cost/{cost}', 'API\AdminController@updateCost')->name('admin.update-cost');
     Route::delete('/admin-delete-cost/{cost}', 'API\AdminController@deleteCost')->name('admin.delete-cost');
 
+    Route::get('/buyer-admin-header-info', 'API\AdminController@adminHeaderInfo')->name('admin.info');
+
 });
 

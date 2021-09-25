@@ -90,28 +90,21 @@ class HistoryManagementTest extends TestCase
      */
     public function only_privilege_users_can_change_history()
     {
+        $this->withoutExceptionHandling();
         $this->prepNormalEnv('BuyerAdmin', ['create-histories', 'see-histories'], 0, 1);
         $BuyerAdmin = Auth::user();
         $this->actingAs($BuyerAdmin, 'api');
         $this->prepOrder(1, 0);
         $product = Product::find(1);
-        $nextStatusAllowed = factory('App\Status')->create([
-            'priority' => '2',
-            'name' => 'bought',
-            'description' => 'order has bought'
-        ]);
+
+        $nextStatusAllowed = Status::find(3);
         $tempStatus = factory('App\Status')->create([
             'priority' => '3',
             'name' => 'in-office',
             'description' => 'order is in office',
 
         ]);
-        $nextStatusForbidden = factory('App\Status')->create([
-            'priority' => '4',
-            'name' => 'in-kargo-to-iran',
-            'description' => 'order is in kargo to iran',
-
-        ]);
+        $nextStatusForbidden = Status::find(4);
         //order history will changed if next status will be valid
         $this->post('api/histories/' . $product->id . '/' . $nextStatusAllowed->id);
         $this->assertDatabaseHas('histories', ['product_id' => $product->id, 'status_id' => $nextStatusAllowed->id]);
