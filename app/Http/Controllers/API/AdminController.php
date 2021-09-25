@@ -520,5 +520,19 @@ class AdminController extends Controller
         $product->update($productData);
         return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
     }
+    /**
+     * get essential reports for Buyer Admin
+     * @throws AuthorizationException
+     */
+    public function adminHeaderInfo()
+    {
+        $this->authorize('reportInfo', Admin::class);
+        $joinTable = DB::table('products')
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('products.*', 'histories.status_id');
+        $inOfficeItems = $joinTable->where(['histories.status_id' => 4])->count();
+        $ordersInQueue = $joinTable->where([['histories.status_id' => 1], ['histories.status_id' => 9]]);
+        $todayTotalOrders = Product::whereDate('created_at', Carbon::today())->get();
 
+    }
 }

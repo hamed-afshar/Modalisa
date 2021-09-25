@@ -222,5 +222,15 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can get reports
+     */
+    public function reportInfo(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
 
 }
