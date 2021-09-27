@@ -450,14 +450,7 @@ class AdminController extends Controller
                 'products' => function ($query1) {
                     $query1->with([
                             'images',
-                            'histories' => function ($query2) {
-                                $query2->with([
-                                    'status'
-                                    ]
-                                )->latest()->first();
-                            }
-                        ]
-                    )->orderBy('id', 'desc')->get();
+                            'histories.status'])->orderBy('id', 'desc')->get();
                 }
             ]
         )->orderBy('id', 'desc')->get();
