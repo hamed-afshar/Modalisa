@@ -232,5 +232,15 @@ class AdminPolicy
         }
     }
 
+    /**
+     * determine whether admin can get user's list
+     */
+    public function userList(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
 
 }

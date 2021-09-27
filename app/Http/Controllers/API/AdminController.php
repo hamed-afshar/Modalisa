@@ -14,6 +14,8 @@ use App\Http\Resources\KargoResource;
 use App\Http\Resources\NoteResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\UserListResource;
+use App\Http\Resources\UserResource;
 use App\Kargo;
 use App\Note;
 use App\Order;
@@ -527,6 +529,16 @@ class AdminController extends Controller
         $inOfficeItems = $joinTable->where(['histories.status_id' => 4])->count();
         $ordersInQueue = $joinTable->where([['histories.status_id' => 1], ['histories.status_id' => 9]]);
         $todayTotalOrders = Product::whereDate('created_at', Carbon::today())->get();
+    }
 
+    /**
+     * Buyer Admin can get user's list
+     * @throws AuthorizationException
+     */
+    public function userList()
+    {
+        $this->authorize('userList', Admin::class);
+        $users = DB::table('users')->select('id', 'name', 'tel', 'communication_media')->get();
+        return response(['users' => UserListResource::collection($users), 'message' => trans('translate.retrieved')], 200);
     }
 }
