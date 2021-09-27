@@ -419,8 +419,11 @@ class AdminController extends Controller
     public function indexHistories(Product $product)
     {
         $this->authorize('indexHistories', Admin::class);
-        $histories = $product->histories()->with('status')->get();
-        return response(['histories' => HistoryResource::collection($histories), 'message' => trans('translate.retrieved')], 200);
+        $joinTabel = DB::table('statuses')
+            ->join('histories', 'statuses.id', '=', 'histories.status_id')
+            ->select('statuses.name', 'histories.*');
+        $result = $joinTabel->where(['histories.product_id' => $product->id])->get();
+        return response(['histories' => HistoryResource::collection($result), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
