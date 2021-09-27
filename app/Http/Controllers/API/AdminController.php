@@ -385,9 +385,10 @@ class AdminController extends Controller
     public function kargoAssignment($key)
     {
         $this->authorize('indexOrder', Admin::class);
-        $joinTable = DB::table('products')
-            ->join('histories', 'products.id', '=', 'histories.product_id')
-            ->select('products.*', 'histories.status_id');
+        $joinTable = DB::table('orders')
+            ->join('products', 'orders.id', '=', 'products.order_id')
+            ->join ('histories','products.id', '=', 'histories.product_id')
+            ->select('orders.user_id','products.*', 'histories.status_id');
         if ($key == 1) {
             $result = $joinTable->where(['products.kargo_id' => !null, 'histories.status_id' => 5])->get();
         }
