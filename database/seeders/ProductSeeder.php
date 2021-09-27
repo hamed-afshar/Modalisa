@@ -2,16 +2,23 @@
 
 namespace Database\Seeders;
 
+use App\Exceptions\ChangeHistoryNotAllowed;
 use App\Order;
 use App\Product;
+use App\Status;
+use App\Traits\HistoryTrait;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProductSeeder extends Seeder
 {
+    use HistoryTrait;
+
     /**
      * Run the database seeds.
      *
      * @return void
+     * @throws ChangeHistoryNotAllowed
      */
     public function run()
     {
@@ -51,9 +58,18 @@ class ProductSeeder extends Seeder
             'order_id' => $order2
         ]);
 
+        //all products for this order should get in-office status
+        $boughtStatus = Status::find(3);
+        $inOfficeStatus = Status::find(4);
         factory(Product::class, 20)->create([
             'order_id' => $order3
         ]);
+        $records1 = DB::table('products')->where('order_id', '=', 3)->get();
+        foreach ($records1 as $item) {
+            $product = Product::find($item->id);
+            $this->storeHistory($product, $boughtStatus);
+            $this->storeHistory($product, $inOfficeStatus);
+        }
 
         factory(Product::class, 40)->create([
             'order_id' => $order4
