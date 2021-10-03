@@ -35,10 +35,13 @@ class HistoryController extends Controller
     {
         $this->authorize('viewAny', History::class);
         $owner = $product->order->user;
-        //if products belongs to the current authenticated user then return all related histories, otherwise returns null
+        //if products belongs to the current authenticated user then return all related histories, otherwise throw exception
         if($owner->id == Auth::user()->id) {
-            $histories = $product->histories()->with('status')->get();
-            return response(['histories' => HistoryResource::collection($histories), 'message'=>trans('translate.retrieved')], 200);
+            $joinTabel = DB::table('statuses')
+                ->join('histories', 'statuses.id', '=', 'histories.status_id')
+                ->select('statuses.name', 'histories.*');
+            $result = $joinTabel->where(['histories.product_id' => $product->id])->get();
+            return response(['histories' => HistoryResource::collection($result), 'message'=>trans('translate.retrieved')], 200);
         } else {
             throw new ViewHistoryDenied();
         }

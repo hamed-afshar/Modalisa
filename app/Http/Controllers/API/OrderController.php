@@ -60,14 +60,7 @@ class OrderController extends Controller
                 'products' => function ($query1) {
                     $query1->with([
                             'images',
-                            'histories' => function ($query2) {
-                                $query2->with([
-                                    'status'
-                                ]
-                                )->latest()->first();
-                            }
-                        ]
-                    )->orderBy('id', 'desc')->get();
+                            'histories.status'])->orderBy('id', 'desc')->get();
                 },
                 'customer',
             ]
@@ -147,10 +140,10 @@ class OrderController extends Controller
     {
         $order = $product->order;
         $this->authorize('view', $order);
-        $product = $product->with('images')
+        $result = $product->with(['images'])
             ->where('id', '=', $product->id)
             ->get();
-        return response(['product' => new ProductResource($product), 'message' => trans('translate.retrieved')], 200);
+        return response(['product' => new ProductResource($result), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
@@ -310,7 +303,8 @@ class OrderController extends Controller
                 $this->deleteOne('public', [$oldImageName]);
                 $this->uploadImage($user, $product, $image);
             }
-            return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
+            $result = Product::with('images')->get();
+            return response(['product' => new ProductResource($result), 'message' => trans('translate.product_updated')], 200);
         } else {
             throw new ProductEditNotAllowed();
         }

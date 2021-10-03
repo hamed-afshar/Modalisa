@@ -37,13 +37,13 @@ class CostController extends Controller
      * retailers can only see its own records
      * @param $id
      * @param $model
-     * @return Cost|Application|ResponseFactory|Response
+     * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      */
     public function indexModel($id, $model)
     {
         $this->authorize('viewAny', Cost::class);
-        $costs =  Auth::user()->costs()->where(['costable_type' => $model, 'costable_id' => $id])->get();
+        $costs =  Auth::user()->costs()->with('images')->where(['costable_type' => $model, 'costable_id' => $id])->get();
         return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 

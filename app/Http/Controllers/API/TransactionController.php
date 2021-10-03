@@ -164,7 +164,7 @@ class TransactionController extends Controller
             // update image record for the given user
             $oldImage->update($imageData);
         }
-        return response(['message' => trans('translate.transaction_updated')], 200);
+        return response(['transaction' => new TransactionResource($transaction),'message' => trans('translate.transaction_updated')], 200);
     }
 
     /**

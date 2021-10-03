@@ -71,7 +71,7 @@ class CustomerController extends Controller
      * users should have see-customers permission to be allowed
      * VueJs shows this customer
      * @param Customer $customer
-     * @return Customer|Application|ResponseFactory|Response
+     * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      */
     public function show(Customer $customer)
@@ -119,7 +119,8 @@ class CustomerController extends Controller
             'email' => $request->input('email'),
         ];
         $customer->update($data);
-        return response(['message' => trans('translate.customer_updated')], 200);
+        $result = Customer::where('id', '=', $customer->id)->get();
+        return response(['customer' => new CustomerResource($result),'message' => trans('translate.customer_updated')], 200);
     }
 
     /**
