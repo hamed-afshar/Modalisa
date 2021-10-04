@@ -28,7 +28,7 @@ class TransactionController extends Controller
     {
         $this->authorize('viewAny', Transaction::class);
         //users can only index transactions belongs to them
-        $transactions =  Auth::user()->transactions;
+        $transactions =  Auth::user()->transactions()->get();
         return response(['transactions' => TransactionResource::collection($transactions), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -85,7 +85,7 @@ class TransactionController extends Controller
             ];
             $user->images()->create($imageData);
         }
-        $transactionResult = Transaction::find($transaction);
+        $transactionResult = Transaction::where('id', '=', $transaction->id)->get();
         return response(['transaction' => TransactionResource::collection($transactionResult), 'message' => trans('translate.transaction_created')], 200);
     }
 
@@ -94,13 +94,13 @@ class TransactionController extends Controller
      * user should have see-transactions permission to be allowed
      * VueJs shows this single transaction
      * @param Transaction $transaction
-     * @return mixed
+     * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      */
     public function show(Transaction $transaction)
     {
         $this->authorize('view', $transaction);
-        $transaction =  Auth::user()->transactions->find($transaction);
+        $transaction =  Auth::user()->transactions()->with(['images'])->find($transaction);
         return response(['transaction' => new TransactionResource($transaction), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -164,7 +164,8 @@ class TransactionController extends Controller
             // update image record for the given user
             $oldImage->update($imageData);
         }
-        return response(['transaction' => new TransactionResource($transaction),'message' => trans('translate.transaction_updated')], 200);
+        $result = Transaction::where('id', '=', $transaction->id)->get();
+        return response(['transaction' => new TransactionResource($result),'message' => trans('translate.transaction_updated')], 200);
     }
 
     /**

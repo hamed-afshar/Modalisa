@@ -126,7 +126,8 @@ class KargoController extends Controller
             'sending_date' => $request->input('sending_date')
         ];
         $kargo->update($kargoData);
-        return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.kargo_updated')], 200);
+        $result = Kargo::where('id', '=', $kargo->id)->get();
+        return response(['kargo' => new KargoResource($result), 'message' => trans('translate.kargo_updated')], 200);
     }
 
     /**
