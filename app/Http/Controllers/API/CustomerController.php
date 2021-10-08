@@ -62,7 +62,7 @@ class CustomerController extends Controller
             'email' => $request->input('email'),
         ];
         $customer = $user->customers()->create($customerData);
-        $customerResult = Customer::find($customer);
+        $customerResult = Customer::find($customer->id);
         return response(['customer' => new CustomerResource($customerResult),'message' => trans('translate.customer_created')], 200);
     }
 
