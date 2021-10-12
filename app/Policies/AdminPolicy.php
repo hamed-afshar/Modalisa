@@ -177,6 +177,16 @@ class AdminPolicy
     }
 
     /**
+     * determine whether admin can create a history
+     */
+    public function createHistory(User $user)
+    {
+        if($user->checkPrivilegeRole()) {
+            return true;
+        }
+    }
+
+    /**
      * determine whether admin can confirm Transaction
      * @param User $user
      * @return bool

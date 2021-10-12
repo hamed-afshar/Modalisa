@@ -50,13 +50,13 @@ class HistoryController extends Controller
     /**
      * create history
      * BuyerAdmin and users with privilege permissions are allowed
-     * @param Request $request
      * @param Product $product
      * @param Status $status
-     * @return string
-     * @throws AuthorizationException|ChangeHistoryNotAllowed
+     * @return Application|Response|ResponseFactory
+     * @throws AuthorizationException
+     * @throws ChangeHistoryNotAllowed
      */
-    public function store(Request $request, Product $product, Status $status)
+    public function store(Product $product, Status $status)
     {
         $this->authorize('create', History::class);
         $this->storeHistory($product, $status);

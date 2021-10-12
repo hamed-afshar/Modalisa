@@ -91,7 +91,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/kargos/index-kargo-bind/{key}', 'API\KargoController@kargoBind')->name('kargo.bind');
 
     Route::get('/histories/{product}', 'API\HistoryController@index')->name('history.index');
-    Route::post('/histories/{product}/{status}', 'API\HistoryController@store')->name('history.store');
+    Route::post('/retailer-histories/{product}/{status}', 'API\HistoryController@store')->name('history.store');
     Route::delete('/histories/{history}', 'API\HistoryController@destroy')->name('history.destroy');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
@@ -129,6 +129,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/admin-index-kargo-assignment/{key}', 'API\AdminController@kargoAssignment')->name('kargo.bind');
     Route::get('/admin-index-notes/{id}/{model}', 'API\AdminController@indexNotes')->name('admin.index-notes');
     Route::get('/admin-index-histories/{product}', 'API\AdminController@indexHistories')->name('admin.index-histories');
+    Route::post('/histories/{product}/{status}', 'API\AdminController@createHistory')->name('history.store');
     Route::post('/confirm-transaction/{transaction}', 'API\AdminController@confirmTransaction')->name('admin.confirm-transaction');
     Route::get('/admin-index-costs', 'API\AdminController@indexCosts')->name('admin.index-costs');
     Route::post('/admin-create-cost/{user}', 'API\AdminController@storeCost')->name('admin.create-cost');

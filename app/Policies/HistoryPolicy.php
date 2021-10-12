@@ -55,6 +55,7 @@ class HistoryPolicy
      */
     public function create(User $user)
     {
+        dd('policy');
         if($user->checkPrivilegeRole())
         {
             return true;

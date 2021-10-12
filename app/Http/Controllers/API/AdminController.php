@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Cost;
+use App\Exceptions\ChangeHistoryNotAllowed;
 use App\Exceptions\KargoLimit;
 use App\Exceptions\ViewHistoryDenied;
 use App\Exceptions\WrongProduct;
@@ -20,6 +21,8 @@ use App\Kargo;
 use App\Note;
 use App\Order;
 use App\Product;
+use App\Status;
+use App\Traits\HistoryTrait;
 use App\Traits\ImageTrait;
 use App\Traits\KargoTrait;
 use App\Transaction;
@@ -39,7 +42,7 @@ use mysql_xdevapi\Table;
 
 class AdminController extends Controller
 {
-    use KargoTrait, ImageTrait;
+    use KargoTrait, ImageTrait, HistoryTrait;
 
     /**
      * index all costs for all users
@@ -424,6 +427,21 @@ class AdminController extends Controller
             ->select('statuses.name', 'histories.*');
         $result = $joinTabel->where(['histories.product_id' => $product->id])->get();
         return response(['histories' => HistoryResource::collection($result), 'message' => trans('translate.retrieved')], 200);
+    }
+
+    /**
+     * change history for a product
+     * @throws AuthorizationException|ChangeHistoryNotAllowed
+     */
+    public function createHistory(Product $product, Status $status)
+    {
+        $this->authorize('indexHistories', Admin::class);
+        $this->storeHistory($product, $status);
+        $joinTabel = DB::table('statuses')
+            ->join('histories', 'statuses.id', '=', 'histories.status_id')
+            ->select('statuses.name', 'histories.*');
+        $result = $joinTabel->where(['histories.product_id' => $product->id])->latest('created_at')->first();
+        return response(['history'=> new HistoryResource($result), 'message' => trans('translate.history_changed')], 200);
     }
 
     /**
