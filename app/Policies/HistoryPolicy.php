@@ -29,7 +29,7 @@ class HistoryPolicy
      */
     public function viewAny(User $user)
     {
-        if($user->checkPermission('see-histories') )
+        if($user->checkPermission('see-histories'))
         {
             return true;
         }
@@ -55,8 +55,7 @@ class HistoryPolicy
      */
     public function create(User $user)
     {
-        dd('policy');
-        if($user->checkPrivilegeRole())
+        if($user->checkPermission('create-histories'))
         {
             return true;
         }

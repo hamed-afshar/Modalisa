@@ -51,15 +51,19 @@ class HistoryController extends Controller
      * create history
      * BuyerAdmin and users with privilege permissions are allowed
      * @param Product $product
-     * @param Status $status
      * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      * @throws ChangeHistoryNotAllowed
      */
-    public function store(Product $product, Status $status)
+    public function received(Product $product)
     {
         $this->authorize('create', History::class);
-        $this->storeHistory($product, $status);
+        if($product->user()->id != Auth::user()->id) {
+            throw new ChangeHistoryNotAllowed();
+        }
+        //next status will be order received
+        $nextStatus = Status::find(6);
+        $this->storeHistory($product, $nextStatus);
         $joinTabel = DB::table('statuses')
             ->join('histories', 'statuses.id', '=', 'histories.status_id')
             ->select('statuses.name', 'histories.*');

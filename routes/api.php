@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::delete('/customers/{customer}', 'API\CustomerController@destroy')->name('customers.destroy');
 
     Route::get('/notes/{id}/{model}' , 'API\NoteController@index')->name('notes.index');
-    Route::post('/notes', 'API\NoteController@store')->name('note.store');
+    Route::post('/notes', 'API\NoteController@received')->name('note.received');
     Route::get('/notes/{note}' , 'API\NoteController@show')->name('notes.show');
     Route::patch('/notes/{note}', 'API\NoteController@update')->name('notes.update');
     Route::delete('/notes/{note}', 'API\NoteController@destroy')->name('notes.destroy');
@@ -91,7 +91,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::get('/kargos/index-kargo-bind/{key}', 'API\KargoController@kargoBind')->name('kargo.bind');
 
     Route::get('/histories/{product}', 'API\HistoryController@index')->name('history.index');
-    Route::post('/retailer-histories/{product}/{status}', 'API\HistoryController@store')->name('history.store');
+    Route::post('/received/{product}', 'API\HistoryController@received')->name('history.received');
     Route::delete('/histories/{history}', 'API\HistoryController@destroy')->name('history.destroy');
 
     Route::get('/orders', 'API\OrderController@index')->name('orders.index');
