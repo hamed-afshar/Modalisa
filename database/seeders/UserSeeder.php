@@ -116,6 +116,7 @@ class UserSeeder extends Seeder
             'create-images',
             'delete-images',
             'see-histories',
+            'create-histories',
             'see-costs',
             'see-kargos',
             'create-kargos',
