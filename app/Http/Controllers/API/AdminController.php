@@ -9,6 +9,7 @@ use App\Exceptions\ViewHistoryDenied;
 use App\Exceptions\WrongProduct;
 use App\History;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BuyerAdminHeader;
 use App\Http\Resources\CostResource;
 use App\Http\Resources\HistoryResource;
 use App\Http\Resources\KargoResource;
@@ -548,8 +549,14 @@ class AdminController extends Controller
             ->join('histories', 'products.id', '=', 'histories.product_id')
             ->select('products.*', 'histories.status_id');
         $inOfficeItems = $joinTable->where(['histories.status_id' => 4])->count();
-        $ordersInQueue = $joinTable->where([['histories.status_id' => 1], ['histories.status_id' => 9]]);
-        $todayTotalOrders = Product::whereDate('created_at', Carbon::today())->get();
+        $ordersInQueue = $joinTable->where(['histories.status_id' => 1], ['histories.status_id' => 9])->count();
+        $todayTotalOrders = Product::whereDate('created_at', Carbon::today())->count();
+        $result = [
+            'inOfficeItems' => $inOfficeItems,
+            'ordersInQueue' => $ordersInQueue,
+            'todayTotalOrders' => $todayTotalOrders,
+        ];
+        return response(['info' => new BuyerAdminHeader($result), 'message' =>trans('translate.retrieved')], 200);
     }
 
     /**
