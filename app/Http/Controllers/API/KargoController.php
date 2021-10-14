@@ -72,7 +72,7 @@ class KargoController extends Controller
         $kargoList = $request->input('kargo_list');
         $kargo = $this->createKargo($user, $kargoData, $kargoList);
         $kargoResult = Kargo::find($kargo);
-        return response(['kargo' => new KargoResource($kargoResult),'message' => trans('translate.kargo_created')], 200);
+        return response(['kargo' => new KargoResource($kargoResult), 'message' => trans('translate.kargo_created')], 200);
     }
 
     /**
@@ -86,7 +86,7 @@ class KargoController extends Controller
     public function show(Kargo $kargo)
     {
         $this->authorize('view', $kargo);
-        $kargo = $kargo->with('products')->where('id' , '=', $kargo->id)->get();
+        $kargo = $kargo->with('products')->where('id', '=', $kargo->id)->get();
         return response(['kargo' => new KargoResource($kargo), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -190,15 +190,17 @@ class KargoController extends Controller
      */
     public function kargoAssignment($key)
     {
-      $this->authorize('viewAny', Kargo::class);
-      if($key == 1) {
-          $condition = !null;
-      }
-      if($key == 0) {
-          $condition = null;
-      }
-      $products = Auth::user()->products()->where('kargo_id', $condition)->get();
-
-      return response(['products' => new ProductResource($products), 'message' => trans('translate.retrieved')], 200);
+        $this->authorize('viewAny', Kargo::class);
+        $joinTable = DB::table('orders')
+            ->join('products', 'orders.id', '=', 'products.order_id')
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('orders.user_id', 'products.*', 'histories.status_id');
+        if ($key == 1) {
+            $result = $joinTable->where(['orders.user_id' => Auth::user()->id,'products.kargo_id' => !null, 'histories.status_id' => 5])->get();
+        }
+        if ($key == 0) {
+            $result = $joinTable->where(['orders.user_id' => Auth::user()->id, 'products.kargo_id' => null, 'histories.status_id' => 4])->get();
+        }
+        return response(['products' => new ProductResource($result), 'message' => trans('translate.retrieved')], 200);
     }
 }
