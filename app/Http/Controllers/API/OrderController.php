@@ -9,6 +9,7 @@ use App\Helper\StatusManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\UpdatedProductResource;
 use App\Order;
 use App\Product;
 use App\Traits\HistoryTrait;
@@ -20,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Collection\Collection;
 
 class OrderController extends Controller
 {
@@ -303,7 +305,13 @@ class OrderController extends Controller
                 $this->deleteOne('public', [$oldImageName]);
                 $this->uploadImage($user, $product, $image);
             }
-            $result = Product::with('images')->where('id', '=', $product->id)->get();
+            $result = Product::with([
+                'images',
+                'histories' => function($query) {
+                    $query->with('status')
+                        ->latest()
+                        ->first();
+            }])->where('id', '=', $product->id)->get();
             return response(['product' => new ProductResource($result), 'message' => trans('translate.product_updated')], 200);
         } else {
             throw new ProductEditNotAllowed();
