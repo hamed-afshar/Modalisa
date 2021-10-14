@@ -88,7 +88,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::delete('/kargos/{kargo}', 'API\KargoController@destroy')->name('kargos.destroy');
     Route::patch('/add-to-kargo/{kargo}/{product}', 'API\KargoController@addTO')->name('kargos.add');
     Route::patch('/remove-from-kargo/{kargo}/{product}', 'API\KargoController@removeFrom')->name('kargos.remove');
-    Route::get('/kargos/index-kargo-bind/{key}', 'API\KargoController@kargoBind')->name('kargo.bind');
+    Route::get('/kargos/retailer-index-kargo-assignment/{key}', 'API\KargoController@kargoAssignment')->name('kargo.assignment');
 
     Route::get('/histories/{product}', 'API\HistoryController@index')->name('history.index');
     Route::post('/received/{product}', 'API\HistoryController@received')->name('history.received');
