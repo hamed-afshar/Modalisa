@@ -303,7 +303,7 @@ class OrderController extends Controller
                 $this->deleteOne('public', [$oldImageName]);
                 $this->uploadImage($user, $product, $image);
             }
-            $result = Product::with('images')->get();
+            $result = Product::with('images')->where('id', '=', $product->id)->get();
             return response(['product' => new ProductResource($result), 'message' => trans('translate.product_updated')], 200);
         } else {
             throw new ProductEditNotAllowed();
