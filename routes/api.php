@@ -76,7 +76,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::delete('/customers/{customer}', 'API\CustomerController@destroy')->name('customers.destroy');
 
     Route::get('/notes/{id}/{model}' , 'API\NoteController@index')->name('notes.index');
-    Route::post('/notes', 'API\NoteController@received')->name('note.received');
+    Route::post('/notes', 'API\NoteController@store')->name('note.store');
     Route::get('/notes/{note}' , 'API\NoteController@show')->name('notes.show');
     Route::patch('/notes/{note}', 'API\NoteController@update')->name('notes.update');
     Route::delete('/notes/{note}', 'API\NoteController@destroy')->name('notes.destroy');
