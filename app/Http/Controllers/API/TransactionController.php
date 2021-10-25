@@ -164,7 +164,7 @@ class TransactionController extends Controller
             // update image record for the given user
             $oldImage->update($imageData);
         }
-        $result = Transaction::where('id', '=', $transaction->id)->get();
+        $result = Transaction::with(['images'])->where('id', '=', $transaction->id)->get();
         return response(['transaction' => new TransactionResource($result),'message' => trans('translate.transaction_updated')], 200);
     }
 
