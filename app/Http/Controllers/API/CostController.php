@@ -27,7 +27,7 @@ class CostController extends Controller
     {
         $this->authorize('viewAny', Cost::class);
         //users can only index costs belongs to them
-        $costs =  Auth::user()->costs;
+        $costs =  Cost::with('images')->where('user_id', '=', Auth::user()->id)->get();
         return response(['costs' => CostResource::collection($costs), 'message' => trans('translate.retrieved')], 200);
     }
 
@@ -73,13 +73,13 @@ class CostController extends Controller
      * show a single cost
      * users with see-costs permission only can see cost records belong to them
      * @param Cost $cost
-     * @return Cost|Application|ResponseFactory|Response
+     * @return Application|Response|ResponseFactory
      * @throws AuthorizationException
      */
     public function show(Cost $cost)
     {
         $this->authorize('view', $cost);
-        $cost =  Auth::user()->costs->find($cost);
+        $cost = Cost::With(['images'])->where('id', '=', $cost->id)->get();
         return response(['cost' => new CostResource($cost), 'message' => trans('translate.retrieved')], 200);
     }
 
