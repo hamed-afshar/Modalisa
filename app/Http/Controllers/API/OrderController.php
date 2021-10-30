@@ -127,7 +127,7 @@ class OrderController extends Controller
         //upload image for the created product and create a record in the images table
         $image = $request->file('image');
         $this->uploadImage($user, $product, $image);
-        $orderResult = Order::find($order->id)->with(['products'])->get();
+        $orderResult = Order::with(['products'])->where('id', '=', $order->id)->get();
         return response(['order' => new OrderResource($orderResult),'message' => trans('translate.order_saved')], 200);
     }
 
