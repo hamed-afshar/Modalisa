@@ -57,7 +57,7 @@ class TransactionController extends Controller
         $request->validate([
             'currency' => 'required',
             'amount' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'comment' => 'required',
         ]);
         // prepare transaction data
