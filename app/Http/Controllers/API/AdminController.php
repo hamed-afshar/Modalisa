@@ -393,8 +393,8 @@ class AdminController extends Controller
         $this->authorize('indexOrder', Admin::class);
         $joinTable = DB::table('orders')
             ->join('products', 'orders.id', '=', 'products.order_id')
-            ->join ('histories','products.id', '=', 'histories.product_id')
-            ->select('orders.user_id','products.*', 'histories.status_id');
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('orders.user_id', 'products.*', 'histories.status_id');
         if ($key == 1) {
             $result = $joinTable->where(['products.kargo_id' => !null, 'histories.status_id' => 5])->get();
         }
@@ -442,7 +442,7 @@ class AdminController extends Controller
             ->join('histories', 'statuses.id', '=', 'histories.status_id')
             ->select('statuses.name', 'histories.*');
         $result = $joinTabel->where(['histories.product_id' => $product->id])->latest('created_at')->first();
-        return response(['history'=> new HistoryResource($result), 'message' => trans('translate.history_changed')], 200);
+        return response(['history' => new HistoryResource($result), 'message' => trans('translate.history_changed')], 200);
     }
 
     /**
@@ -473,8 +473,8 @@ class AdminController extends Controller
             [
                 'products' => function ($query1) {
                     $query1->with([
-                            'images',
-                            'histories.status'])->orderBy('id', 'desc')->get();
+                        'images',
+                        'histories.status'])->orderBy('id', 'desc')->get();
                 }
             ]
         )->orderBy('id', 'desc')->get();
@@ -538,6 +538,7 @@ class AdminController extends Controller
         $product->update($productData);
         return response(['product' => new ProductResource($product), 'message' => trans('translate.product_updated')], 200);
     }
+
     /**
      * get essential reports for Buyer Admin
      * @throws AuthorizationException
@@ -547,16 +548,48 @@ class AdminController extends Controller
         $this->authorize('reportInfo', Admin::class);
         $joinTable = DB::table('products')
             ->join('histories', 'products.id', '=', 'histories.product_id')
-            ->select('products.*', 'histories.status_id');
-        $inOfficeItems = $joinTable->where(['histories.status_id' => 4])->count();
-        $ordersInQueue = $joinTable->where(['histories.status_id' => 1], ['histories.status_id' => 9])->count();
-        $todayTotalOrders = Product::whereDate('created_at', Carbon::today())->count();
+            ->select('products.*', 'histories.status_id')->get();
+        $inOfficeItems = $joinTable->where('status_id', '=', 4)->count();
+        $kargoToOffice = $joinTable->where('status_id', '=', 3)->count();
+        $ordersInQueue = $joinTable->where('status_id', '=', 2)->count();
+        $dailyOrders = Product::whereDate('created_at', Carbon::today())->count();
+        $monthlyOrders = Product::whereBetween('created_at',
+            [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]
+        )->count();
+        $yearlyOrders = Product::whereBetween('created_at',
+            [
+                Carbon::now()->startOfYear(),
+                Carbon::now()->endOfYear()
+            ]
+        )->count();
+        $totalDaily = Product::whereDate('created_at', Carbon::today())->sum('products.price');
+        $totalMonthly = Product::whereBetween('created_at',
+            [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]
+        )->sum('products.price');
+        $totalYearly = Product::whereBetween('created_at',
+            [
+                Carbon::now()->startOfYear(),
+                Carbon::now()->endOfYear()
+            ]
+        )->sum('products.price');
         $result = [
             'inOfficeItems' => $inOfficeItems,
+            'kargoToOffice' => $kargoToOffice,
             'ordersInQueue' => $ordersInQueue,
-            'todayTotalOrders' => $todayTotalOrders,
+            'dailyOrders' => $dailyOrders,
+            'monthlyOrders' => $monthlyOrders,
+            'yearlyOrders' => $yearlyOrders,
+            'totalDaily' => $totalDaily,
+            'totalMonthly' => $totalMonthly,
+            'totalYearly' => $totalYearly
         ];
-        return response(['info' => new BuyerAdminHeader($result), 'message' =>trans('translate.retrieved')], 200);
+        return response(['info' => new BuyerAdminHeader($result), 'message' => trans('translate.retrieved')], 200);
     }
 
     /**
