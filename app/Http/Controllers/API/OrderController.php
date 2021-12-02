@@ -9,11 +9,13 @@ use App\Helper\StatusManager;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\RetailerHeader;
 use App\Http\Resources\UpdatedProductResource;
 use App\Order;
 use App\Product;
 use App\Traits\HistoryTrait;
 use App\Traits\ImageTrait;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -251,7 +253,6 @@ class OrderController extends Controller
     }
 
     /**
-     * @test
      * edit the given product
      * users can only edit products that has not been bought yet
      * users should have create-orders permission to be allowed
@@ -317,5 +318,59 @@ class OrderController extends Controller
         } else {
             throw new ProductEditNotAllowed();
         }
+    }
+
+    /**
+     * get all required header information for retailers
+     */
+    public function retailerHeaderInfo()
+    {
+        $this->authorize('reportInfo', Order::class);
+        $joinTable = DB::table('orders')
+            ->join('products', 'orders.id', '=', 'products.order_id')
+            ->join('histories', 'products.id', '=', 'histories.product_id')
+            ->select('products.*', 'histories.status_id', 'orders.user_id')->get();
+        $inOfficeItems = $joinTable->where('status_id', '=', 4)->where('user_id', '=', Auth::user()->id)->count();
+        $kargoToOffice = $joinTable->where('status_id', '=', 3)->where( 'user_id', '=', Auth::user()->id)->count();
+        $ordersInQueue = $joinTable->where('status_id', '=', 2)->where('user_id', '=', Auth::user()->id)->count();
+        $dailyOrders = $joinTable->where('created_at', '>=', date('Y-m-d').' 00:00:00')->count();
+        $monthlyOrders = $joinTable->whereBetween('created_at',
+            [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]
+        )->where('user_id', '=', Auth::user()->id)->count();
+        $yearlyOrders = $joinTable->whereBetween('created_at',
+            [
+                Carbon::now()->startOfYear(),
+                Carbon::now()->endOfYear()
+            ]
+        )->where('user_id', '=', Auth::user()->id)->count();;
+        $totalDaily = $joinTable->where('created_at', '>=', date('Y-m-d').' 00:00:00')
+            ->where('user_id', '=', Auth::user()->id)->sum('price');
+        $totalMonthly = $joinTable->whereBetween('created_at',
+            [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]
+        )->where('user_id', '=', Auth::user()->id)->sum('price');
+        $totalYearly = $joinTable->whereBetween('created_at',
+            [
+                Carbon::now()->startOfYear(),
+                Carbon::now()->endOfYear()
+            ]
+        )->sum('price');
+        $result = [
+            'inOfficeItems' => $inOfficeItems,
+            'kargoToOffice' => $kargoToOffice,
+            'ordersInQueue' => $ordersInQueue,
+            'dailyOrders' => $dailyOrders,
+            'monthlyOrders' => $monthlyOrders,
+            'yearlyOrders' => $yearlyOrders,
+            'totalDaily' => $totalDaily,
+            'totalMonthly' => $totalMonthly,
+            'totalYearly' => $totalYearly
+        ];
+        return response(['info' => new RetailerHeader($result), 'message' => trans('translate.retrieved')], 200);
     }
 }

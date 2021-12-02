@@ -101,6 +101,7 @@ Route::group(['middleware' => ['auth:api', 'cors']], function () {
     Route::patch('/edit-product/{product}', 'API\OrderController@editProduct')->name('orders.editProduct');
     Route::delete('/delete-product/{product}', 'API\OrderController@deleteProduct')->name('orders.deleteProduct');
     Route::post('/assign-customer/{customer}/{order}', 'API\OrderController@assignCustomer')->name('orders.assignCustomer');
+    Route::get('/retailer-header-info', 'API\OrderController@retailerHeaderInfo')->name('retailer.info');
 
     Route::post('/images' , 'API\ImageController@store')->name('images.store');
     Route::get('/images/{image}', 'API\ImageController@show')->name('images.show');

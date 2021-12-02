@@ -113,4 +113,12 @@ class OrderPolicy
     {
         //
     }
+
+    /**
+     * determine whether the user can see reports
+     */
+    public function reportInfo(User $user)
+    {
+        return true;
+    }
 }
