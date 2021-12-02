@@ -578,6 +578,9 @@ class AdminController extends Controller
                 Carbon::now()->endOfYear()
             ]
         )->sum('products.price');
+
+        $totallUsers = User::all()->count();
+        $pendingUsers = DB::table('users')->where('confirmed', '=', 0)->count();
         $result = [
             'inOfficeItems' => $inOfficeItems,
             'kargoToOffice' => $kargoToOffice,
@@ -587,8 +590,11 @@ class AdminController extends Controller
             'yearlyOrders' => $yearlyOrders,
             'totalDaily' => $totalDaily,
             'totalMonthly' => $totalMonthly,
-            'totalYearly' => $totalYearly
+            'totalYearly' => $totalYearly,
+            'totalUsers' => $totallUsers,
+            'pendingUsers' => $pendingUsers,
         ];
+
         return response(['info' => new BuyerAdminHeader($result), 'message' => trans('translate.retrieved')], 200);
     }
 
