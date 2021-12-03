@@ -579,8 +579,11 @@ class AdminController extends Controller
             ]
         )->sum('products.price');
 
-        $totallUsers = User::all()->count();
-        $pendingUsers = DB::table('users')->where('confirmed', '=', 0)->count();
+        $totalUsers = User::all()->count();
+        $totalRoles = DB::table('roles')->count();
+        $totalPermissions = DB::table('permissions')->count();
+        $totalSubscriptions = DB::table('subscriptions')->count();
+        $totalStatuses = DB::table('statuses')->count();
         $result = [
             'inOfficeItems' => $inOfficeItems,
             'kargoToOffice' => $kargoToOffice,
@@ -591,8 +594,11 @@ class AdminController extends Controller
             'totalDaily' => $totalDaily,
             'totalMonthly' => $totalMonthly,
             'totalYearly' => $totalYearly,
-            'totalUsers' => $totallUsers,
-            'pendingUsers' => $pendingUsers,
+            'totalUsers' => $totalUsers,
+            'totalRoles' => $totalRoles,
+            'totalPermissions' => $totalPermissions,
+            'totalSubscriptions' => $totalSubscriptions,
+            'totalStatuses' => $totalStatuses
         ];
 
         return response(['info' => new BuyerAdminHeader($result), 'message' => trans('translate.retrieved')], 200);
