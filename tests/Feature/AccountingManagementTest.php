@@ -24,8 +24,7 @@ class AccountingManagementTest extends TestCase
         $this->prepAdminEnv('SystemAdmin', 0, 1);
         $SystemAdmin = Auth::user();
         $transaction = factory('App\Transaction')->create(['user_id' => $retailer->id]);
-        $this->actingAs($SystemAdmin);
-        $this->patch('/confirm-transaction' . $transaction->id);
-
+        $this->actingAs($SystemAdmin, 'api');
+        $this->post('api/confirm-transaction/' . $transaction->id);
     }
 }
