@@ -130,8 +130,8 @@ class UserSeeder extends Seeder
             $retailerRole->allowTo($permissionID);
             $buyerAdminRole->allowTo($permissionID);
         }
-        $role->changeRole($Retailer1);
-        $role->changeRole($Retailer2);
+        $retailerRole->changeRole($Retailer1);
+        $retailerRole->changeRole($Retailer2);
         //assign subscription to the retailer1 and retailer2
         $subscription = Subscription::find(1);
         $subscription->changeSubscription($Retailer1);
